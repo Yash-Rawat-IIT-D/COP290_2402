@@ -1,0 +1,11 @@
+Basic Info about the structs being used :
+
+1) Cell : Stores the value of the cell (a double) and its integer
+          coordinates (row and column) in the spreadsheet.
+          (Should be enough as per the requirements of the assignment)
+
+2) Cell1D : It is a dynamically sized array of pointers to Cell objects.
+            This will be used to store the cells that are dependent on the
+            current cell, which will be necessary for updating the values
+            and checking for cyclic dependencies.
+
