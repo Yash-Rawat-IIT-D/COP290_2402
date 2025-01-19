@@ -1,8 +1,12 @@
 // ------------------------------------------------------------------------- //
 
+// Cell1D Struct Definition and Functions
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "../header/cell.h"
+#include "../header/cell1d.h"
+
 #define LO_RESIZE_THRESHOLD 16
 
 // ------------------------------------------------------------------------- //
