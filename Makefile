@@ -12,8 +12,8 @@ HEADER_DIR = header
 # Source files
 SRC_FILES = $(SRC_DIR)/main.c \
             $(SRC_DIR)/cell.c \
+            $(SRC_DIR)/cell1d.c \
             $(SRC_DIR)/node.c \
-            $(SRC_DIR)/node1d.c \
             $(SRC_DIR)/spreadsheet.c \
 
 # Object files (replace .c with .o)

@@ -4,6 +4,7 @@
 
 #ifndef CELL_H
 #define CELL_H
+#include <stdlib.h>
 
 // ------------------------------------------------------------------------- //
 typedef struct Cell

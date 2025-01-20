@@ -2,7 +2,11 @@
 
 #ifndef CELL1D_H
 #define CELL1D_H
+
+#include <stdio.h>
+#include <stdlib.h>
 #include "cell.h"
+#define LO_RESIZE_THRESHOLD 16
 
 // ------------------------------------------------------------------------- //
 

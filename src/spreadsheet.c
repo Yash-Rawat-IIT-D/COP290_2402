@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../header/node.h"
+#include "../header/spreadsheet.h"
 
 typedef struct Spread_Sheet
 {
@@ -16,6 +17,7 @@ typedef struct Spread_Sheet
 void init_Spread_Sheet(Spread_Sheet *ss)
 {
     ss->arr = (Node **)malloc(ss->SS_ROWS * sizeof(Node *));
+    
     if (ss->arr == NULL)
     {
         printf("Memory allocation failed - Allocating Spread_Sheet Memory\n");

@@ -2,22 +2,8 @@
 
 // Cell1D Struct Definition and Functions
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "../header/cell.h"
 #include "../header/cell1d.h"
-
-#define LO_RESIZE_THRESHOLD 16
-
-// ------------------------------------------------------------------------- //
-
-typedef struct Cell1D
-{
-    Cell **cell_ptrs;
-    int size;
-    int capacity;
-
-} Cell1D;
 
 // ------------------------------------------------------------------------- //
 
@@ -39,7 +25,7 @@ void init_cell_ptrs(Cell1D *arr, int init_capacity, int init_size)
 
 void resize_cell_ptrs(Cell1D *arr, int new_capacity)
 {
-    arr->cell_ptrs = (Cell *)realloc(arr->cell_ptrs, arr->capacity * sizeof(Cell *));
+    arr->cell_ptrs = (Cell **)realloc(arr->cell_ptrs, arr->capacity * sizeof(Cell *));
 
     if (arr->cell_ptrs == NULL)
     {
@@ -63,7 +49,7 @@ void push_back_cell_ptrs(Cell1D *arr, Cell *cell_ptr)
 
     if (arr->size == arr->capacity)
     {
-        resize_cell_arr(arr, arr->capacity * 2); // Resize if the array is full
+        resize_cell_ptrs(arr, arr->capacity * 2); // Resize if the array is full
     }
 
     arr->cell_ptrs[arr->size] = cell_ptr;
@@ -80,7 +66,7 @@ void pop_back_cell_ptrs(Cell1D *arr)
         if (arr->size > 0 && arr->size <= arr->capacity / 2 && arr->capacity > LO_RESIZE_THRESHOLD )
         {
             // Resize if the array is less than half full, but not if the capacity is less than the threshold
-            resize_node_arr(arr, arr->capacity / 2); 
+            resize_cell_ptrs(arr, (arr->capacity) / 2); 
         }
     }
     else

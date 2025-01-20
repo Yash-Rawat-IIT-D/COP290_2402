@@ -2,21 +2,11 @@
 
 // Node Struct Definition and Functions
 
-#include <stdlib.h>
 #include "../header/cell.h"
 #include "../header/cell1d.h"
 #include "../header/node.h"
 
-// ------------------------------------------------------------------------- //
-
-typedef struct Node
-{
-    Cell cell;
-    Cell1D cell1D;
-
-} Node;
-
-// ------------------------------------------------------------------------- //
+//   ------------------------------------------------------------------------- //
 
 // Initializing the Node
 void init_node(Node *node, int row, int col, double value)
@@ -55,6 +45,13 @@ void print_node(Node *node)
             node->cell.row, node->cell.col, node->cell.value);
     printf("Node's Cell1D Array Size: %d, Capacity: %d\n", 
             node->cell1D.size, node->cell1D.capacity);
+
+    for(int i = 0; i < node->cell1D.size; i++)
+    {
+        Cell * cptr = (Cell *)at_cell_ptrs(&(node->cell1D),i);
+        printf("Cell : %d || x = %d || y = %d || Value = %.4f\n",i+1,get_cell_row(cptr),get_cell_col(cptr),get_cell_value(cptr));
+    }
+    
 }
 
 // ------------------------------------------------------------------------- //

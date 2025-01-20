@@ -1,17 +1,6 @@
 // Cell Struct Definition and Functions
 
-#include <stdlib.h>
 #include "../header/cell.h"  // Include the header file for declaration
-
-// ------------------------------------------------------------------------- //
-
-typedef struct Cell
-{
-    int row;
-    int col;
-    double value;
-
-} Cell;
 
 // ------------------------------------------------------------------------- //
 
