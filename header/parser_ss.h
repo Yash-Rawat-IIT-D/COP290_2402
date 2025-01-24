@@ -11,12 +11,21 @@
 #define COL_DATA_BUFF_SIZE 12
 #define SPACER "|"
 #define COL_SPACER ' '
+
 // ------------------------------------------------------------------------- //
+
+enum USER_INPUTS
+{
+    CONTROL_IN = 0,
+    FORMULA_IN = 1,
+    INVALID_IN = 2
+};
 
 // Function Prototypes
 
 void col_encoder(int col_num, char *col_data_buff);
 int col_decoder(char *col_data_buff);
+int is_cell(char data_buff[], int SS_ROWS, int SS_COLS);
 void set_out_buff(char *obuff, char *col_data_buff);
 void render_ss(Spread_Sheet *ss, int row, int col);
 
