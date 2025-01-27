@@ -29,6 +29,7 @@ void init_spread_sheet(Spread_Sheet *ss)
             for (int j = 0; j < ss->SS_COLS; j++)
             {
                 init_node(&(ss->arr[i][j]), i, j, 0.0);
+                printf("Initialising %d %d\n",i,j);
             }
         }
     }

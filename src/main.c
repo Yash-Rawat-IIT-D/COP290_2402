@@ -11,8 +11,8 @@
 
 int main()
 {
-    int rows = 200;
-    int cols = 200;
+    int rows = 100;
+    int cols = 4000;
 
     // Setting the const values of the struct
     // Expected First Step of Spread Sheet Creation

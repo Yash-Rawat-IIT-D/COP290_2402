@@ -216,6 +216,7 @@ int safe_render_dim(int rc, int rc_max)
 // Need to take a look at this function's error handling
 // Will implement generic error handling later I guess
 
+
 int next_render_dim(int rc, int rc_max, int step_size)
 {
     return (rc+step_size)%rc_max;
@@ -256,9 +257,11 @@ void render_ss(Spread_Sheet *ss, int row, int col)
         set_out_buff(obuff, col_data_buff);
         printf("%*s%s", MIN_COL_WIDTH, obuff, SPACER);
 
-        for (int j = col; j < safe_render_dim(col,ss->SS_ROWS); j++)
+        // printf("Hi printing row [%d]",i);
+        for (int j = col; j < safe_render_dim(col,ss->SS_COLS); j++)
         {
             sprintf(col_data_buff, "%.2f", (((ss->arr[i][j]).cell).value));
+            // printf("Value at [%d][%d] = %.2f\n",i,j,(((ss->arr[i][j]).cell).value));
             set_out_buff(obuff, col_data_buff);
             printf("%*s%s", MIN_COL_WIDTH, obuff, SPACER);
         }
