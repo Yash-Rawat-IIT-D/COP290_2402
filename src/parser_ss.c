@@ -146,13 +146,12 @@ int is_cell(char data_buff[], int SS_ROWS, int SS_COLS)
         }
         else if (isdigit(data_buff[i]))
         {
-            if (! col_part_processed)
+            if (!col_part_processed)
             {
-                col_part_processed = 1;    
+                col_part_processed = 1;
             }
 
             row_buff[rbuff_p++] = data_buff[i];
-            
         }
         else
         {
@@ -167,8 +166,7 @@ int is_cell(char data_buff[], int SS_ROWS, int SS_COLS)
 
     // printf("Row Buff=%s, Col Buff=%s\n",row_buff,col_buff);
 
-    
-    if(cbuff_p == 0  || rbuff_p == 0)
+    if (cbuff_p == 0 || rbuff_p == 0)
     {
         printf("Error: Invalid Cell Input\n");
         return 0;
@@ -184,9 +182,7 @@ int is_cell(char data_buff[], int SS_ROWS, int SS_COLS)
     }
 
     return 1;
-
 }
-
 
 // ------------------------------------------------------------------------- //
 // void parse_input(int *user_input, int *target_cell)
@@ -202,8 +198,28 @@ int is_cell(char data_buff[], int SS_ROWS, int SS_COLS)
 //         exit(-1);
 //     }
 // }
-
 // ------------------------------------------------------------------------- //
+
+int safe_render_dim(int rc, int rc_max)
+{
+    if(rc + MAX_RENDER_DIM > rc_max)
+    {
+        return rc_max;
+    }
+    else
+    {
+        return rc+MAX_RENDER_DIM;
+    }
+}
+
+
+// Need to take a look at this function's error handling
+// Will implement generic error handling later I guess
+
+int next_render_dim(int rc, int rc_max, int step_size)
+{
+    return (rc+step_size)%rc_max;
+}
 
 // Renders the Spread_Sheet , with the cell at row and col as the top left cell
 // The Spread_Sheet is rendered in the terminal with
@@ -222,7 +238,7 @@ void render_ss(Spread_Sheet *ss, int row, int col)
     printf("%s", SPACER);
     printf("%*s%s", MIN_COL_WIDTH, "==============", SPACER);
 
-    for (int j = col; j < ss->SS_COLS; j++)
+    for (int j = col; j < safe_render_dim(col,ss->SS_COLS); j++)
     {
         col_encoder(j + 1, col_header_buff);
         set_out_buff(obuff, col_header_buff);
@@ -231,7 +247,7 @@ void render_ss(Spread_Sheet *ss, int row, int col)
 
     // Printing the Rows
 
-    for (int i = row; i < ss->SS_ROWS; i++)
+    for (int i = row; i < safe_render_dim(row,ss->SS_ROWS); i++)
     {
         printf("\n");
 
@@ -240,7 +256,7 @@ void render_ss(Spread_Sheet *ss, int row, int col)
         set_out_buff(obuff, col_data_buff);
         printf("%*s%s", MIN_COL_WIDTH, obuff, SPACER);
 
-        for (int j = col; j < ss->SS_COLS; j++)
+        for (int j = col; j < safe_render_dim(col,ss->SS_ROWS); j++)
         {
             sprintf(col_data_buff, "%.2f", (((ss->arr[i][j]).cell).value));
             set_out_buff(obuff, col_data_buff);
@@ -251,4 +267,62 @@ void render_ss(Spread_Sheet *ss, int row, int col)
     printf("\n");
 }
 
+void terminal_control_unit(Spread_Sheet *ss)
+{
+    int row_render = 0, col_render = 0;
+    int error_flag = 0;
+    char command_buff[100];
+    char error_buff[100];
+
+    while (1)
+    {
+        render_ss(ss, row_render, col_render);
+        if (error_flag)
+        {
+            printf("[0.1] (%s) > ", error_buff);
+            error_flag = 0;
+        }
+
+        else
+        {
+            printf("[0.0] (ok) > ");
+        }
+
+        if (fgets(command_buff, sizeof(command_buff), stdin) != NULL)
+        {
+            if (strcmp(command_buff, "q\n") == 0)
+            {
+                printf("Quitting the Spreadsheet Program\n");
+                break;
+            }
+            else if(strcmp(command_buff, "w\n") == 0)
+            {
+                row_render = next_render_dim(row_render, ss->SS_ROWS, -MAX_RENDER_DIM);
+            }
+            else if(strcmp(command_buff, "s\n") == 0)
+            {
+                row_render = next_render_dim(row_render, ss->SS_ROWS, MAX_RENDER_DIM);
+            }
+            else if(strcmp(command_buff, "a\n") == 0)
+            {
+                col_render = next_render_dim(col_render, ss->SS_COLS, -MAX_RENDER_DIM);
+            }
+            else if(strcmp(command_buff, "d\n") == 0)
+            {
+                col_render = next_render_dim(col_render, ss->SS_COLS, MAX_RENDER_DIM);
+            }
+            else
+            {
+                printf("You entered %s", command_buff);
+            }
+        }
+        else
+        {
+            printf("Error while reading input !\n");
+            exit(-1);
+        }
+    }
+
+    return;
+}
 // ------------------------------------------------------------------------- //

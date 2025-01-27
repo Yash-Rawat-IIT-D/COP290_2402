@@ -31,4 +31,29 @@ int get_cell_col(Cell *cell)
     return cell->col;
 }
 
+int is_valid_cell_range(Cell_Range *cell_range)
+{
+
+    if (cell_range == NULL || cell_range->start_cell == NULL || cell_range->end_cell == NULL) {
+        printf("Error in memory allocation of cell_range\n");
+        return 2;
+    }
+
+    if(cell_range->start_cell->row <= cell_range->end_cell->row )
+    {
+        if(cell_range->start_cell->col <= cell_range->end_cell->col)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 // ------------------------------------------------------------------------- //
