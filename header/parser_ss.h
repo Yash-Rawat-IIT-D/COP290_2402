@@ -17,56 +17,66 @@
 
 // ------------------------------------------------------------------------- //
 
-enum SIM_BOOL
+typedef enum 
 {
     FALSE = 0,
     TRUE = 1
-};
+} SIM_BOOL;
 
-enum USER_INPUTS
+typedef enum 
 {
     CONTROL_IN = 0,
     FORMULA_IN = 1,
     INVALID_IN = 2
-};
+} USER_INPUTS;
 
-enum VALID_EXP
+typedef enum 
 {
     VALUE = 0,
     VALUE_OP_VALUE = 1,
-    FUNCTION = 2,
-};
+    FUNCT_ON_RANGE = 2
+} VALID_EXP;
 
-enum ARITHMETIC_OP
+typedef enum 
 {
     ADDITION = 0,
     SUBTRACTION = 1,
     MULTIPLICATION = 2,
     DIVISION = 3
-};
+} ARITHMETIC_OP;
 
-enum FUNCTION
+typedef enum 
 {
     MIN = 0,
     MAX = 1,
     AVG = 2,
     SUM = 3,
     STDEV = 4,
-    SLEEP = 5,
-};
+    SLEEP = 5
+} FUNCTION;
+
+typedef enum 
+{
+    OK = 0,
+    INVALID_INPUT = 1,
+    OUT_OF_RANGE = 2,
+    MALLOC_FAILED = 3,
+    UNKNOWN_ERROR = 4
+} ERROR_CODE;
+
 
 typedef struct Cell_Formula
 {
-    enum VALID_EXP valid_exp_type;
+    VALID_EXP valid_exp_type;
     
     // valid_exp_type = VALUE
-    enum ARITHMETIC_OP arithmetic_op;
-    enum SIM_BOOL is_left_value_constant, is_right_value_constant;
+    ARITHMETIC_OP arithmetic_op;
+    SIM_BOOL is_left_value_constant, is_right_value_constant;
     double left_value, right_value;
     Cell *left_cell, *right_cell;
 
     // valid_exp_type = FUNCTION
-    enum FUNCTION function;
+    FUNCTION function;
     Cell_Range *cell_range;
 
 } Cell_Formula;
