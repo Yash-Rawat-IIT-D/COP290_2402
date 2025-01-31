@@ -69,7 +69,14 @@ typedef struct Cell_Formula
 {
     VALID_EXP valid_exp_type;
     
+
     // valid_exp_type = VALUE
+    SIM_BOOL is_constant;
+    double value;
+    Cell *cell;
+
+
+    // valid_exp_type = VALUE_OP_VALUE
     ARITHMETIC_OP arithmetic_op;
     SIM_BOOL is_left_value_constant, is_right_value_constant;
     double left_value, right_value;

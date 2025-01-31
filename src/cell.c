@@ -9,6 +9,9 @@ void init_cell(Cell *cell, int row, int col, double value)
     cell->row = row;
     cell->col = col;
     cell->value = value;
+    cell->cell_range_left = NULL;
+    cell->cell_range_right = NULL;
+    return;
 }
 
 void set_cell_value(Cell *cell, double value)
@@ -29,6 +32,16 @@ int get_cell_row(Cell *cell)
 int get_cell_col(Cell *cell)
 {
     return cell->col;
+}
+
+Cell_Range * get_cell_left(Cell *cell)
+{
+    return cell->cell_range_left;
+}
+
+Cell_Range * get_cell_right(Cell *cell)
+{
+    return cell->cell_range_right;
 }
 
 int is_valid_cell_range(Cell_Range *cell_range)
