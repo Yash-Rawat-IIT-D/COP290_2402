@@ -1,9 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-
-#include "../header/spreadsheet.h"
 #include "../header/parser_ss.h"
 
 // ------------------------------------------------------------------------- //
@@ -123,7 +117,7 @@ int is_cell(char data_buff[], int SS_ROWS, int SS_COLS)
     int len_dbuff = strlen(data_buff), i = 0;
     if ((len_dbuff < 2) || (len_dbuff > 6))
     {
-        printf("Error : Not a valid Cell Input");
+        printf("Error : Not a valid Cell Input\n");
         return -1;
     }
 
@@ -186,14 +180,14 @@ int is_cell(char data_buff[], int SS_ROWS, int SS_COLS)
 
 // ------------------------------------------------------------------------- //
 
-void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[], Spread_Sheet *ss, ERROR_CODE *error_code)
+void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[], Spread_Sheet *ss, TCU_EXIT_CODE *exit_code)
 {
     int len = strlen(command_buff);
     int i = 0;
 
     if (len < 3 || len > 100)
     {
-        *(error_code) = INVALID_INPUT;
+        *(exit_code) = INVALID_INPUT;
         return;
     }
 
@@ -214,7 +208,7 @@ void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[]
 
     if (!is_cell(target_cell_buff, ss->SS_ROWS, ss->SS_COLS))
     {
-        *(error_code) = INVALID_INPUT;
+        *(exit_code) = INVALID_INPUT;
         return;
     }
 
@@ -228,7 +222,7 @@ void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[]
     // Check for '=' sign
     if (i >= len || command_buff[i] != '=')
     {
-        *(error_code) = INVALID_INPUT;
+        *(exit_code) = INVALID_INPUT;
         return;
     }
 
@@ -250,7 +244,7 @@ void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[]
 
     // If we reach here, the command is of the form Cell=Expression
     // We can now use cell_buff and expression_buff as needed
-    *(error_code) = OK;
+    *(exit_code) = TCU_OK;
 }
 
 void parse_expression()
@@ -281,21 +275,21 @@ int safe_render_dim(int rc, int rc_max)
 // Will implement generic error handling later I guess
 // Right now, just loops back to the 0th index
 
-int next_render_dim(int rc, int rc_max, int step_size, ERROR_CODE *error_flag)
+int next_render_dim(int rc, int rc_max, int step_size, TCU_EXIT_CODE *exit_code)
 {
     if (rc + step_size < 0)
     {
-        *(error_flag) = OUT_OF_RANGE;
+        *(exit_code) = OUT_OF_RANGE;
         return 0;
     }
     else if (rc + step_size >= rc_max)
     {
-        *(error_flag) = OUT_OF_RANGE;
+        *(exit_code) = OUT_OF_RANGE;
         return rc;
     }
     else
     {
-        *(error_flag) = OK;
+        *(exit_code) = TCU_OK;
         return rc + step_size;
     }
 }
@@ -340,7 +334,7 @@ void render_ss(Spread_Sheet *ss, int row, int col)
         // printf("Hi printing row [%d]",i);
         for (int j = col; j < safe_render_dim(col, ss->SS_COLS); j++)
         {
-            sprintf(col_data_buff, "%.2f", (((ss->arr[i][j]).cell).value));
+            sprintf(col_data_buff, "%.2f", ((ss->arr[i][j]).cell)->value);
             // printf("Value at [%d][%d] = %.2f\n",i,j,(((ss->arr[i][j]).cell).value));
             set_out_buff(obuff, col_data_buff);
             printf("%*s%s", MIN_COL_WIDTH, obuff, SPACER);
@@ -355,11 +349,11 @@ void render_ss(Spread_Sheet *ss, int row, int col)
 // Sets the error message based on the error code, to be displayed in the terminal
 // On next render based on the error code set by reference
 
-void set_error_message(ERROR_CODE error_code, char error_buff[])
+void set_error_message(TCU_EXIT_CODE exit_code, char error_buff[])
 {
-    switch (error_code)
+    switch (exit_code)
     {
-    case OK:
+    case TCU_OK:
         strcpy(error_buff, "ok");
         break;
     case INVALID_INPUT:
@@ -388,56 +382,50 @@ void set_error_message(ERROR_CODE error_code, char error_buff[])
 void terminal_control_unit(Spread_Sheet *ss)
 {
     int row_render = 0, col_render = 0;
-    ERROR_CODE error_flag = OK;
+    TCU_EXIT_CODE exit_code = TCU_OK;
 
-    char command_buff[100], target_cell_buff[10], exp_buff[100], error_buff[100];
+    char command_buff[100], target_cell_buff[10], exp_buff[100], exit_message_buff[100];
+    
+    set_error_message(exit_code, exit_message_buff);
 
     while (1)
     {
         render_ss(ss, row_render, col_render);
+        printf("[0.0] (%s) > ", exit_message_buff);
 
-        if (error_flag == OK)
-        {
-            printf("[0.0] (ok) > ");
-        }
-        else
-        {
-            printf("[0.0] (%s) > ", error_buff);
-            error_flag = 0;
-        }
 
         if (fgets(command_buff, sizeof(command_buff), stdin) != NULL)
         {
             if (strcmp(command_buff, "q\n") == 0)
             {
                 printf("Quitting the Spreadsheet Program\n");
-                error_flag = OK;
+                exit_code = TCU_OK;
                 break;
             }
             else if (strcmp(command_buff, "w\n") == 0)
             {
-                row_render = next_render_dim(row_render, ss->SS_ROWS, -MAX_RENDER_DIM, &error_flag);
+                row_render = next_render_dim(row_render, ss->SS_ROWS, -MAX_RENDER_DIM, &exit_code);
                 
             }
             else if (strcmp(command_buff, "s\n") == 0)
             {
-                row_render = next_render_dim(row_render, ss->SS_ROWS, MAX_RENDER_DIM, &error_flag);
+                row_render = next_render_dim(row_render, ss->SS_ROWS, MAX_RENDER_DIM, &exit_code);
                 
             }
             else if (strcmp(command_buff, "a\n") == 0)
             {
-                col_render = next_render_dim(col_render, ss->SS_COLS, -MAX_RENDER_DIM, &error_flag);
+                col_render = next_render_dim(col_render, ss->SS_COLS, -MAX_RENDER_DIM, &exit_code);
                 
             }
             else if (strcmp(command_buff, "d\n") == 0)
             {
-                col_render = next_render_dim(col_render, ss->SS_COLS, MAX_RENDER_DIM, &error_flag);
+                col_render = next_render_dim(col_render, ss->SS_COLS, MAX_RENDER_DIM, &exit_code);
             }
             else
             {
                 // printf("You entered %s", command_buff);
-                parse_command(command_buff, target_cell_buff, exp_buff, ss, &error_flag);
-                if(error_flag == OK)
+                parse_command(command_buff, target_cell_buff, exp_buff, ss, &exit_code);
+                if(exit_code == TCU_OK)
                 {
                     printf("Target Cell: %s, Eval Expression: %s\n", target_cell_buff, exp_buff);
                     parse_expression();
@@ -446,10 +434,10 @@ void terminal_control_unit(Spread_Sheet *ss)
         }
         else
         {
-            error_flag = UNKNOWN_ERROR;
+            exit_code = UNKNOWN_ERROR;
         }
 
-        set_error_message(error_flag, error_buff);
+        set_error_message(exit_code, exit_message_buff);
     }
 
     return;

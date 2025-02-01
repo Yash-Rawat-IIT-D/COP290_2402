@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 
     int rows = 100;
     int cols = 100;
-    SS_EXIT_CODE exit_code_ss_init;
+    SS_ERROR_CODE exit_code_ss_init;
 
     // Setting the const values of the struct
     // Expected First Step of Spread Sheet Creation
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
     }
 
     // printf("Rows: %d, Cols: %d\n", ss_my.SS_ROWS ,ss_my.SS_COLS);
-    terminal_control_unit(&ss_my);
+    // terminal_control_unit(&ss_my);
 
     return 0;
 }

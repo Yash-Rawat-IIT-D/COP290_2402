@@ -2,21 +2,26 @@
 
 #ifndef SPREADSHEET_H
 #define SPREADSHEET_H
-
-#include "node.h"
-
+#include "cell.h"
+#include "cell1d.h"
+#include "scell.h"
+#include "constants.h"
 // ------------------------------------------------------------------------- //
 
 typedef struct Spread_Sheet
+
 {
-    Node **arr;
+    SCell **arr;
     const int SS_ROWS;
-    const int SS_COLS;
+    const int SS_COLS;    
 } Spread_Sheet;
+
 
 // Function Prototypes
 
-void init_spread_sheet(Spread_Sheet *ss);
+void init_spread_sheet(Spread_Sheet *ss, SS_EXIT_CODE *exit_code);
+SCell *get_scell(Spread_Sheet *ss, int row, int col);
+
 
 // ------------------------------------------------------------------------- //
 

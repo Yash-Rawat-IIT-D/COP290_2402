@@ -2,12 +2,11 @@
 
 // Cell1D Struct Definition and Functions
 
-#include "../header/cell.h"
 #include "../header/cell1d.h"
 
 // ------------------------------------------------------------------------- //
 
-void init_cell_ptrs(Cell1D *arr, int init_capacity, int init_size)
+void init_cell_ptrs(Cell1D *arr, int init_capacity, int init_size, SS_EXIT_CODE *exit_code)
 {
     arr->size = init_size;
     arr->capacity = init_capacity; 
@@ -16,9 +15,14 @@ void init_cell_ptrs(Cell1D *arr, int init_capacity, int init_size)
 
     if (arr->cell_ptrs == NULL)
     {
-        printf("Malloc Failed during Cell1D Initialization\n");
-        exit(1);
+        // printf("Malloc Failed during Cell1D Initialization\n");
+        // exit(1);
+        *(exit_code) = MALLOC_CELL1D_CELL_PTR;
+        return;
     }
+
+    *(exit_code) = SS_OK; 
+    return;
 }
 
 // ------------------------------------------------------------------------- //

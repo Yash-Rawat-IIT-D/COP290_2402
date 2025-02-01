@@ -12,10 +12,11 @@ HEADER_DIR = header
 # Source files
 SRC_FILES = $(SRC_DIR)/main.c \
             $(SRC_DIR)/cell.c \
-            $(SRC_DIR)/cell1d.c \
-            $(SRC_DIR)/node.c \
-            $(SRC_DIR)/spreadsheet.c \
+            $(SRC_DIR)/cell1d.c\
+			$(SRC_DIR)/scell.c\
+			$(SRC_DIR)/spreadsheet.c \
             $(SRC_DIR)/parser_ss.c \
+			
 
 # Object files (replace .c with .o)
 OBJ_FILES = $(SRC_FILES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
