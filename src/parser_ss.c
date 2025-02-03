@@ -1,4 +1,5 @@
 #include "../header/parser_ss.h"
+#include <stdbool.h>
 
 // ------------------------------------------------------------------------- //
 
@@ -187,82 +188,284 @@ void is_cell(char data_buff[], int SS_ROWS, int SS_COLS, int *tcell_row, int *tc
     return;
 }
 
+
+bool is_valid_cell(char data_buff[], int SS_ROWS, int SS_COLS, int *tcell_row, int *tcell_col, TCU_EXIT_CODE *exit_code) {
+    int col = 0, row = 0, i = 0;
+
+    // Check for empty input
+    if (data_buff == NULL || strlen(data_buff) == 0) {
+        *exit_code = INVALID_INPUT;
+        return false;
+    }
+
+    // Extract column letters (only uppercase A-Z allowed)
+    while (isalpha(data_buff[i]) && i < 3) {
+        if (islower(data_buff[i])) {
+            *exit_code = INVALID_INPUT; // Reject lowercase letters
+            return false;
+        }
+        col = col * 26 + (data_buff[i] - 'A' + 1);
+        i++;
+    }
+
+    // Ensure at least one column letter was processed
+    if (col == 0) {
+        *exit_code = INVALID_INPUT;
+        return false;
+    }
+
+    // Extract row number (must be at least 1 and at most 999)
+    if (!isdigit(data_buff[i])) {
+        *exit_code = INVALID_INPUT;
+        return false; // No row number found after column letters
+    }
+
+    row = atoi(&data_buff[i]); // Convert remaining part to integer
+
+    // Validate row and column limits
+    if (row > SS_ROWS || col > SS_COLS || row < 1 || col < 1) {
+        *exit_code = INVALID_INPUT;
+        return false;
+    }
+
+    // Convert to 0-based indexing
+    *tcell_row = row - 1;
+    *tcell_col = col - 1;
+    *exit_code = TCU_OK;
+    return true;
+}
+
+
+bool is_range(char data_buff[], int SS_ROWS, int SS_COLS, TCU_EXIT_CODE *exit_code) {
+    char cell1[10], cell2[10];
+    int row1, col1, row2, col2;
+    int i = 0, j = 0;
+
+    // Check for empty input
+    if (data_buff == NULL || strlen(data_buff) == 0) {
+        *exit_code = INVALID_INPUT;
+        return false;
+    }
+
+    // Split range into two cells (e.g., "A1:D10" -> "A1", "D10")
+    while (data_buff[i] != ':' && data_buff[i] != '\0') {
+        cell1[i] = data_buff[i];
+        i++;
+    }
+    cell1[i] = '\0';  // Null-terminate first cell
+
+    if (data_buff[i] != ':') {
+        *exit_code = INVALID_INPUT;
+        return false; // No ':' found, not a valid range
+    }
+
+    i++; // Move past ':'
+    while (data_buff[i] != '\0') {
+        cell2[j++] = data_buff[i++];
+    }
+    cell2[j] = '\0'; // Null-terminate second cell
+
+    // Validate both cells
+    int dummy_row, dummy_col; 
+    if (!is_valid_cell(cell1, SS_ROWS, SS_COLS, &dummy_row, &dummy_col, exit_code) || !is_valid_cell(cell2, SS_ROWS, SS_COLS, &dummy_row, &dummy_col, exit_code)) {
+        *exit_code = INVALID_INPUT;
+        return false; // One of the cells is invalid
+    }
+
+    // Extract row and column values for both cells
+    col1 = 0, col2 = 0;
+    i = 0;
+    while (isalpha(cell1[i])) {
+        if (islower(cell1[i])) {
+            *exit_code = INVALID_INPUT; // Reject lowercase letters
+            return false;
+        }
+        col1 = col1 * 26 + (cell1[i] - 'A' + 1);
+        i++;
+    }
+    row1 = atoi(&cell1[i]); // Convert remaining part to row number
+
+    i = 0;
+    while (isalpha(cell2[i])) {
+        if (islower(cell2[i])) {
+            *exit_code = INVALID_INPUT; // Reject lowercase letters
+            return false;
+        }
+        col2 = col2 * 26 + (cell2[i] - 'A' + 1);
+        i++;
+    }
+    row2 = atoi(&cell2[i]); // Convert remaining part to row number
+
+    // Ensure valid range (top-left to bottom-right)
+    if (row1 > row2 || col1 > col2) {
+        *exit_code = INVALID_INPUT;
+        return false;
+    }
+
+    return true; // Range is valid
+}
+
+
 // ------------------------------------------------------------------------- //
 
-void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[], Spread_Sheet *ss, TCU_EXIT_CODE *exit_code)
-{
-    int len = strlen(command_buff);
-    int i = 0;
 
-    if (len < 3 || len > 100)
-    {
-        *(exit_code) = INVALID_INPUT;
-        return;
+// Function to check if a function call is valid (e.g., SUM(A1:A10))
+bool is_function(char data_buff[], int SS_ROWS, int SS_COLS, TCU_EXIT_CODE *exit_code) {
+    char func_name[10], func_arg[20];
+    int i = 0, j = 0;
+
+    // Extract function name
+    while (isalpha(data_buff[i])) {
+        func_name[j++] = data_buff[i++];
+    }
+    func_name[j] = '\0'; // Null-terminate function name
+
+    // Ensure '(' follows function name
+    if (data_buff[i] != '(') {
+        *exit_code = INVALID_INPUT;
+        return false;
+    }
+    i++; // Move past '('
+
+    // Extract function argument
+    j = 0;
+    while (data_buff[i] != ')' && data_buff[i] != '\0') {
+        func_arg[j++] = data_buff[i++];
+    }
+    func_arg[j] = '\0'; // Null-terminate argument
+
+    // Ensure ')' is present
+    if (data_buff[i] != ')') {
+        *exit_code = INVALID_INPUT;
+        return false;
     }
 
-    // Skip leading spaces
-    while (i < len && isspace(command_buff[i]))
-    {
-        i++;
+    // Validate function name
+    if (strcmp(func_name, "SUM") == 0 || strcmp(func_name, "MIN") == 0 ||
+        strcmp(func_name, "MAX") == 0 || strcmp(func_name, "AVG") == 0 ||
+        strcmp(func_name, "STDEV") == 0) {
+        return is_range(func_arg, SS_ROWS, SS_COLS, exit_code);
+    } else if (strcmp(func_name, "SLEEP") == 0) {
+        int dummy_row, dummy_col;
+        return is_valid_cell(func_arg, SS_ROWS, SS_COLS, &dummy_row, &dummy_col, exit_code) || atoi(func_arg) > 0;
     }
 
-    // Check if the command starts with a valid cell
-
-    int cbuff_index = 0;
-    while (i < len && cbuff_index < 9 && (isupper(command_buff[i]) || isdigit(command_buff[i])))
-    {
-        target_cell_buff[cbuff_index++] = command_buff[i++];
-    }
-    target_cell_buff[cbuff_index] = '\0';
-    int target_cell_row, target_cell_col;
-    TCU_EXIT_CODE pc_is_cell_exit_code;
-    is_cell(target_cell_buff, ss->SS_ROWS, ss->SS_COLS, &target_cell_row, &target_cell_col, &pc_is_cell_exit_code);
-
-    if (pc_is_cell_exit_code != TCU_OK)
-    {
-        *(exit_code) = pc_is_cell_exit_code;
-        return;
-    }
-
-
-    // Skip spaces between cell and '='
-    while (i < len && isspace(command_buff[i]))
-    {
-        i++;
-    }
-
-    // Check for '=' sign
-    if (i >= len || command_buff[i] != '=')
-    {
-        *(exit_code) = INVALID_INPUT;
-        return;
-    }
-
-    i++; // Skip the '='
-
-    // Skip spaces after '='
-    while (i < len && isspace(command_buff[i]))
-    {
-        i++;
-    }
-
-    // Copy the expression into expression_buff
-    int exp_buff_index = 0;
-    while (i < len && command_buff[i] != '\n')
-    {
-        exp_buff[exp_buff_index++] = command_buff[i++];
-    }
-    exp_buff[exp_buff_index] = '\0';
-
-    // If we reach here, the command is of the form Cell=Expression
-    // We can now use cell_buff and expression_buff as needed
-    *(exit_code) = TCU_OK;
+    *exit_code = INVALID_INPUT;
+    return false;
 }
 
-void parse_expression()
-{
-    // Parse the expression
+void trim_whitespace(char *str) {
+    int start = 0, end = strlen(str) - 1;
+
+    // Trim leading spaces
+    while (isspace((unsigned char)str[start])) {
+        start++;
+    }
+
+    // Trim trailing spaces
+    while (end >= start && isspace((unsigned char)str[end])) {
+        end--;
+    }
+
+    // Shift the trimmed string
+    if (start > 0 || end < (int)strlen(str) - 1) {
+        memmove(str, str + start, end - start + 1);
+    }
+
+    // Null-terminate the trimmed string
+    str[end - start + 1] = '\0';
 }
+
+void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[], Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
+    regex_t regex;
+    regmatch_t matches[3];
+    int reti;
+
+    // Compile regex
+    reti = regcomp(&regex, REGEX_PATTERN, REG_EXTENDED);
+    if (reti) {
+        printf("Could not compile regex\n");
+        *exit_code = UNKNOWN_ERROR;
+        return;
+    }
+
+    // Execute regex match
+    reti = regexec(&regex, command_buff, 3, matches, 0);
+    if (!reti) {
+        // Extract target cell
+        int start = matches[1].rm_so;
+        int end = matches[1].rm_eo;
+        strncpy(target_cell_buff, command_buff + start, end - start);
+        target_cell_buff[end - start] = '\0';
+
+        // Extract expression
+        start = matches[2].rm_so;
+        end = matches[2].rm_eo;
+        strncpy(exp_buff, command_buff + start, end - start);
+        exp_buff[end - start] = '\0';
+
+        // Trim whitespace from expression
+        trim_whitespace(exp_buff);
+
+        // Reject empty expressions after trimming
+        if (strlen(exp_buff) == 0) {
+            printf("Invalid: Expression is empty\n");
+            *exit_code = INVALID_INPUT;
+            return;
+        }
+
+        // Validate the target cell
+        int tcell_row, tcell_col;
+        if (!is_valid_cell(target_cell_buff, ss->SS_ROWS, ss->SS_COLS, &tcell_row, &tcell_col, exit_code)) {
+            printf("Invalid cell reference: %s\n", target_cell_buff);
+            return;
+        }
+
+        // Validate expression (cells, functions, or ranges)
+        if (strchr(exp_buff, '(') != NULL) {
+            if (!is_function(exp_buff, ss->SS_ROWS, ss->SS_COLS, exit_code)) {
+                printf("Invalid function expression: %s\n", exp_buff);
+                return;
+            }
+        } else {
+            // Tokenize and check individual terms
+            char exp_copy[100];
+            strcpy(exp_copy, exp_buff);
+            char *token = strtok(exp_copy, " +-*/(),");
+
+            while (token != NULL) {
+                if (strchr(token, ':')) {
+                    // Validate range
+                    if (!is_range(token, ss->SS_ROWS, ss->SS_COLS, exit_code)) {
+                        printf("Invalid range reference: %s\n", token);
+                        return;
+                    }
+                } else if (isalpha(token[0])) {
+                    // Validate cell
+                    int tcell_row, tcell_col;
+                    if (!is_valid_cell(token, ss->SS_ROWS, ss->SS_COLS, &tcell_row, &tcell_col, exit_code)) {
+                        printf("Invalid cell reference: %s\n", token);
+                        return;
+                    }
+                }
+                token = strtok(NULL, " +-*/(),");
+            }
+        }
+
+        printf("Valid formula: Target Cell = %s, Expression = %s\n", target_cell_buff, exp_buff);
+        *exit_code = TCU_OK;
+    } else {
+        *exit_code = INVALID_INPUT;
+    }
+
+    regfree(&regex);
+}
+
+// Assumes a valid instruction has been provided by the user
+// void parse_expression(char exp_buff[], Spread_Sheet *ss, TCU_EXIT_CODE *exit_code)
+// {
+//     strncmp("Hello", "Hello", 5);
+// }
 
 // ------------------------------------------------------------------------- //
 
@@ -454,7 +657,8 @@ void terminal_control_unit(Spread_Sheet *ss)
 
                 sscanf(command_buff, "scroll_to %6s", &target_cell_buff);
 
-                is_cell(target_cell_buff, ss->SS_ROWS, ss->SS_COLS, &tcell_row, &tcell_col, &exit_code);
+                is_valid_cell(target_cell_buff, ss->SS_ROWS, ss->SS_COLS, &tcell_row, &tcell_col, &exit_code);
+
                 if(exit_code == TCU_OK)
                 {
                     row_render = tcell_row;
@@ -468,7 +672,7 @@ void terminal_control_unit(Spread_Sheet *ss)
                 if(exit_code == TCU_OK)
                 {
                     printf("Target Cell: %s, Eval Expression: %s\n", target_cell_buff, exp_buff);
-                    parse_expression();
+                    // parse_expression();
                 }
             }
         }

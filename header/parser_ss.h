@@ -2,7 +2,11 @@
 
 #ifndef RENDER_SS_H
 #define RENDER_SS_H
-
+#define REGEX_PATTERN "^[ \t]*([A-Z]{1,3}[1-9][0-9]{0,2})[ \t]*=[ \t]*(.*?)[ \t]*$"
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+#include <regex.h>
 #include "cell.h"
 #include "spreadsheet.h"
 #include "constants.h"
