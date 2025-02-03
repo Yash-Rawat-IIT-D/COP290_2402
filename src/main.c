@@ -11,8 +11,8 @@ int main(int argc, char *argv[])
 {
     // Later we will take the input from the user
 
-    int rows = 100;
-    int cols = 100;
+    int rows = 50;
+    int cols = 50;
     SS_EXIT_CODE exit_code_ss_init;
 
     // Setting the const values of the struct

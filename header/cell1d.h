@@ -17,6 +17,15 @@ typedef struct Cell1D
     
 } Cell1D;
 
+typedef struct Queue_Cell_Ptr
+{
+    int front;
+    int rear;
+    int capacity;
+    int size; 
+    struct Cell** queue;
+} Queue_Cell_Ptr;
+
 // ------------------------------------------------------------------------- //
 
 // Function Prototypes of Cell1D Struct
@@ -26,6 +35,14 @@ void push_back_cell_ptrs(Cell1D *arr, Cell *cell_ptr);
 void pop_back_cell_ptrs(Cell1D *arr);
 Cell * at_cell_ptrs(Cell1D *arr, int index);
 void free_cell_ptrs(Cell1D *arr);
+
+// Function Prototypes of Queue_Cell_Ptr
+// Queue_Cell_Ptr * create_queue(int init_capacity)
+// {
+//     Queue_Cell_Ptr *q = (Queue_Cell_Ptr *)malloc
+// }
+
+
 
 // ------------------------------------------------------------------------- //
 

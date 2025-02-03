@@ -112,13 +112,14 @@ void set_out_buff(char *obuff, char *col_data_buff)
 // Return Value = 1 ---> Is a Valid Cell
 // Return Value = 0 ---> Invalid Cell
 
-int is_cell(char data_buff[], int SS_ROWS, int SS_COLS)
+void is_cell(char data_buff[], int SS_ROWS, int SS_COLS, int *tcell_row, int *tcell_col, TCU_EXIT_CODE *exit_code)
 {
     int len_dbuff = strlen(data_buff), i = 0;
     if ((len_dbuff < 2) || (len_dbuff > 6))
     {
-        printf("Error : Not a valid Cell Input\n");
-        return -1;
+        *(exit_code) = INVALID_INPUT;
+        // printf("Error : Not a valid Cell Input\n");
+        return;
     }
 
     int col_part_processed = 0;
@@ -133,8 +134,9 @@ int is_cell(char data_buff[], int SS_ROWS, int SS_COLS)
         {
             if (col_part_processed)
             {
-                printf("Error: Invalid Cell Input\n");
-                return 0;
+                *(exit_code) = INVALID_INPUT;
+                // printf("Error: Invalid Cell Input\n");
+                return;
             }
             col_buff[cbuff_p++] = data_buff[i];
         }
@@ -149,8 +151,9 @@ int is_cell(char data_buff[], int SS_ROWS, int SS_COLS)
         }
         else
         {
-            printf("Error: Invalid Cell Input\n");
-            return 0;
+            *(exit_code) = INVALID_INPUT;
+            // printf("Error: Invalid Cell Input\n");
+            return;
         }
         i++;
     }
@@ -162,8 +165,9 @@ int is_cell(char data_buff[], int SS_ROWS, int SS_COLS)
 
     if (cbuff_p == 0 || rbuff_p == 0)
     {
-        printf("Error: Invalid Cell Input\n");
-        return 0;
+        *(exit_code) = INVALID_INPUT;
+        // printf("Error: Invalid Cell Input\n");
+        return;
     }
 
     int col_num = col_decoder(col_buff);
@@ -171,11 +175,16 @@ int is_cell(char data_buff[], int SS_ROWS, int SS_COLS)
 
     if (col_num < 1 || col_num > SS_COLS || row_num < 1 || row_num > SS_ROWS)
     {
-        printf("Error: Cell Out of Range\n");
-        return 0;
+        // printf("Error: Cell Out of Range\n");
+        *(exit_code) = OUT_OF_RANGE;
+        return;
     }
 
-    return 1;
+    *tcell_row = row_num - 1;
+    *tcell_col = col_num - 1;
+    *(exit_code) = TCU_OK;
+
+    return;
 }
 
 // ------------------------------------------------------------------------- //
@@ -205,10 +214,13 @@ void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[]
         target_cell_buff[cbuff_index++] = command_buff[i++];
     }
     target_cell_buff[cbuff_index] = '\0';
+    int target_cell_row, target_cell_col;
+    TCU_EXIT_CODE pc_is_cell_exit_code;
+    is_cell(target_cell_buff, ss->SS_ROWS, ss->SS_COLS, &target_cell_row, &target_cell_col, &pc_is_cell_exit_code);
 
-    if (!is_cell(target_cell_buff, ss->SS_ROWS, ss->SS_COLS))
+    if (pc_is_cell_exit_code != TCU_OK)
     {
-        *(exit_code) = INVALID_INPUT;
+        *(exit_code) = pc_is_cell_exit_code;
         return;
     }
 
@@ -277,12 +289,7 @@ int safe_render_dim(int rc, int rc_max)
 
 int next_render_dim(int rc, int rc_max, int step_size, TCU_EXIT_CODE *exit_code)
 {
-    if (rc + step_size < 0)
-    {
-        *(exit_code) = OUT_OF_RANGE;
-        return 0;
-    }
-    else if (rc + step_size >= rc_max)
+    if (rc + step_size < 0 || rc + step_size >= rc_max)
     {
         *(exit_code) = OUT_OF_RANGE;
         return rc;
@@ -307,7 +314,6 @@ void render_ss(Spread_Sheet *ss, int row, int col)
     char obuff[MIN_COL_WIDTH];
     char col_header_buff[COL_HEADER_BUFF_SIZE];
     char col_data_buff[COL_DATA_BUFF_SIZE];
-
     // Printing the Column Names
 
     printf("%s", SPACER);
@@ -383,6 +389,8 @@ void terminal_control_unit(Spread_Sheet *ss)
 {
     int row_render = 0, col_render = 0;
     TCU_EXIT_CODE exit_code = TCU_OK;
+    SIM_BOOL en_ss_render = TRUE;
+    int tcell_row, tcell_col;
 
     char command_buff[100], target_cell_buff[10], exp_buff[100], exit_message_buff[100];
     
@@ -390,7 +398,11 @@ void terminal_control_unit(Spread_Sheet *ss)
 
     while (1)
     {
-        render_ss(ss, row_render, col_render);
+        if (en_ss_render)
+        {
+            render_ss(ss, row_render, col_render);
+        }
+
         printf("[0.0] (%s) > ", exit_message_buff);
 
 
@@ -420,6 +432,34 @@ void terminal_control_unit(Spread_Sheet *ss)
             else if (strcmp(command_buff, "d\n") == 0)
             {
                 col_render = next_render_dim(col_render, ss->SS_COLS, MAX_RENDER_DIM, &exit_code);
+            }
+            else if(strcmp(command_buff, "disable_output\n") == 0)
+            {
+                if(en_ss_render)
+                {
+                    en_ss_render = FALSE;
+                }
+                exit_code = TCU_OK;
+            }
+            else if(strcmp(command_buff, "enable_output\n") == 0)
+            {
+                if(!en_ss_render)
+                {
+                    en_ss_render = TRUE;
+                }
+                exit_code = TCU_OK;
+            }
+            else if(strncmp(command_buff, "scroll_to ",10) == 0)
+            {
+
+                sscanf(command_buff, "scroll_to %6s", &target_cell_buff);
+
+                is_cell(target_cell_buff, ss->SS_ROWS, ss->SS_COLS, &tcell_row, &tcell_col, &exit_code);
+                if(exit_code == TCU_OK)
+                {
+                    row_render = tcell_row;
+                    col_render = tcell_col;
+                }
             }
             else
             {

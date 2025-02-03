@@ -22,7 +22,7 @@ typedef struct Spread_Sheet
 void init_spread_sheet(Spread_Sheet *ss, SS_EXIT_CODE *exit_code);
 SCell *get_scell(Spread_Sheet *ss, int row, int col);
 
-
+    
 // ------------------------------------------------------------------------- //
 
 #endif 

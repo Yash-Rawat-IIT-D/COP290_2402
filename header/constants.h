@@ -17,6 +17,7 @@
 #define COL_DATA_BUFF_SIZE 12
 #define SPACER "|"
 #define COL_SPACER ' '
+#define LO_RESIZE_THRESHOLD 16
 
 // ------------------------------------------------------------------------- //
 
@@ -91,9 +92,6 @@ typedef enum
     UNKNOWN_ERROR = 4
 } TCU_EXIT_CODE;
 
-
-
-#define LO_RESIZE_THRESHOLD 16
 // ------------------------------------------------------------------------- //
 
 #endif 
