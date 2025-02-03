@@ -4,7 +4,7 @@
 
 // ------------------------------------------------------------------------- //
 
-void init_cell(Cell *cell, int row, int col, double value)
+void init_cell(Cell *cell, int row, int col, int value)
 {
     cell->row = row;
     cell->col = col;

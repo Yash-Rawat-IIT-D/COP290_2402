@@ -3,37 +3,26 @@
 // Assumes that SS_ROWS and SS_COLS are already set.
 
 void init_spread_sheet(Spread_Sheet *ss, SS_EXIT_CODE * exit_code)
-{
-    ss->arr = (SCell **)malloc(ss->SS_ROWS * sizeof(SCell *));
+{   
+    ss->arr = (SCell *)malloc(ss->SS_ROWS * ss->SS_COLS * sizeof(SCell));
+    // ss->arr = (SCell **)malloc(ss->SS_ROWS * sizeof(SCell *));
 
     if (ss->arr == NULL)
     {
-        // printf("Memory allocation failed - Allocating Spread_Sheet Memory\n");
-        // exit(1); // Need to discuss this implementation with the team
         *exit_code = MALLOC_SCELL_PTR;
         return;
     }
 
     for (int i = 0; i < ss->SS_ROWS; i++)
     {
-        ss->arr[i] = (SCell *)malloc(ss->SS_COLS * sizeof(SCell));
-
-        if (ss->arr[i] == NULL)
+        SS_EXIT_CODE ex_cell_mem;
+        for (int j = 0; j < ss->SS_COLS; j++)
         {
-           *exit_code = MALLOC_SCELL;
-            return;
-        }
-        else
-        {
-            SS_EXIT_CODE ex_cell_mem;
-            for (int j = 0; j < ss->SS_COLS; j++)
+            init_scell(&(ss->arr[i*(ss->SS_COLS)+j]), i, j, 0, &ex_cell_mem);
+            if(ex_cell_mem != SS_OK)
             {
-                init_scell(&(ss->arr[i][j]), i, j, 0.0, &ex_cell_mem);
-                if(ex_cell_mem != SS_OK)
-                {
-                    *exit_code = ex_cell_mem;
-                    return;
-                }
+                *exit_code = ex_cell_mem;
+                return;
             }
         }
     }
@@ -52,7 +41,7 @@ SCell * get_scell(Spread_Sheet *ss, int row, int col)
     {
         return NULL;
     }
-    return &(ss->arr[row][col]);
+    return &(ss->arr[row*(ss->SS_COLS)+col]);
 }   
 
  

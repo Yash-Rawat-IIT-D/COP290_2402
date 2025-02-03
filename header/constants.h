@@ -90,8 +90,20 @@ typedef enum
     OUT_OF_RANGE = 2,
     MALLOC_FAILED = 3,
     UNKNOWN_ERROR = 4
+
 } TCU_EXIT_CODE;
 
+typedef enum
+{
+    Q_OK = 0,
+    MALLOC_QUEUE = 1,
+    EMPTY_QUEUE = 2,
+    FULL_QUEUE = 3,
+    INVALID_QUEUE = 4,
+    RESIZE_QUEUE = 5
+
+} Q_EXIT_CODE;
+ 
 // ------------------------------------------------------------------------- //
 
 #endif 

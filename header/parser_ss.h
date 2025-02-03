@@ -4,6 +4,8 @@
 #define RENDER_SS_H
 
 #include "cell.h"
+#include "scell.h"  
+#include "scell1d.h"
 #include "spreadsheet.h"
 #include "constants.h"
 

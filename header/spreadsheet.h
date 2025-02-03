@@ -3,7 +3,7 @@
 #ifndef SPREADSHEET_H
 #define SPREADSHEET_H
 #include "cell.h"
-#include "cell1d.h"
+#include "scell1d.h"
 #include "scell.h"
 #include "constants.h"
 // ------------------------------------------------------------------------- //
@@ -11,7 +11,7 @@
 typedef struct Spread_Sheet
 
 {
-    SCell **arr;
+    SCell *arr;
     const int SS_ROWS;
     const int SS_COLS;    
 } Spread_Sheet;

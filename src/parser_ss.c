@@ -340,7 +340,7 @@ void render_ss(Spread_Sheet *ss, int row, int col)
         // printf("Hi printing row [%d]",i);
         for (int j = col; j < safe_render_dim(col, ss->SS_COLS); j++)
         {
-            sprintf(col_data_buff, "%.2f", ((ss->arr[i][j]).cell)->value);
+            sprintf(col_data_buff, "%d", ((ss->arr[i*(ss->SS_COLS)+j]).cell)->value);
             // printf("Value at [%d][%d] = %.2f\n",i,j,(((ss->arr[i][j]).cell).value));
             set_out_buff(obuff, col_data_buff);
             printf("%*s%s", MIN_COL_WIDTH, obuff, SPACER);

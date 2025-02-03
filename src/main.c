@@ -11,8 +11,14 @@ int main(int argc, char *argv[])
 {
     // Later we will take the input from the user
 
-    int rows = 50;
-    int cols = 50;
+    if(argc != 3)
+    {
+        printf("Error - Usage of form : %s <rows> <cols>\n",argv[0]);
+        return 1;
+    }
+
+    int rows = (int) strtol(argv[1], NULL, 10);
+    int cols = (int) strtol(argv[2], NULL, 10);
     SS_EXIT_CODE exit_code_ss_init;
 
     // Setting the const values of the struct

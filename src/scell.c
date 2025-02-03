@@ -6,7 +6,7 @@
 
 // ------------------------------------------------------------------------- //
 
-void init_scell(SCell *scell, int row, int col, double value, SS_EXIT_CODE *exit_code)
+void init_scell(SCell *scell, int row, int col, int value, SS_EXIT_CODE *exit_code)
 {
     scell->cell = (Cell *)malloc(sizeof(Cell));
     if (scell->cell == NULL)
@@ -19,9 +19,9 @@ void init_scell(SCell *scell, int row, int col, double value, SS_EXIT_CODE *exit
 
     init_cell(scell->cell, row, col, value);
 
-    scell->dependent_cells = (Cell1D *)malloc(sizeof(Cell1D));
+    scell->dependent_scells = (Cell1D *)malloc(sizeof(Cell1D));
 
-    if (scell->dependent_cells == NULL)
+    if (scell->dependent_scells == NULL)
     {
         // printf("Memory allocation failed - Allocating Cell1D Memory\n");
         // exit(1);
@@ -30,7 +30,7 @@ void init_scell(SCell *scell, int row, int col, double value, SS_EXIT_CODE *exit
     }
 
     SS_EXIT_CODE cptrs_exit_code;
-    init_cell_ptrs(scell->dependent_cells, 10, 0,&cptrs_exit_code);
+    init_cell_ptrs(scell->dependent_scells, 10, 0, &cptrs_exit_code);
 
     if(cptrs_exit_code != SS_OK)
     {
