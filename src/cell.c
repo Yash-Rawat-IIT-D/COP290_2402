@@ -17,7 +17,7 @@ void set_cell_value(Cell *cell, double value)
     cell->value = value;
 }
 
-double get_cell_value(Cell *cell)
+int get_cell_value(Cell *cell)
 {
     return cell->value;
 }
@@ -55,6 +55,12 @@ SIM_BOOL is_valid_cell_range(Cell_Range *cell_range)
     {
         return FALSE;
     }
+}
+
+void debug_print_cell(Cell *cell)
+{
+    printf("Cell : Row = %d, Col = %d, Value = %d", cell->row, cell->col, cell->value);
+    return;
 }
 
 // ------------------------------------------------------------------------- //
