@@ -462,10 +462,10 @@ void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[]
 }
 
 // Assumes a valid instruction has been provided by the user
-// void parse_expression(char exp_buff[], Spread_Sheet *ss, TCU_EXIT_CODE *exit_code)
-// {
-//     strncmp("Hello", "Hello", 5);
-// }
+void parse_expression(char target_cell_buff[],char exp_buff[], Spread_Sheet *ss, TCU_EXIT_CODE *exit_code)
+{
+    
+}
 
 // ------------------------------------------------------------------------- //
 
@@ -588,8 +588,13 @@ void set_error_message(TCU_EXIT_CODE exit_code, char error_buff[])
 // The terminal control unit for the Spread_Sheet
 // Takes in the Spread_Sheet and allows the user to interact with it
 
+
+
+
 void terminal_control_unit(Spread_Sheet *ss)
 {
+    // ss->arr[i*ss->SS_COLS +j].cell_formula
+
     int row_render = 0, col_render = 0;
     TCU_EXIT_CODE exit_code = TCU_OK;
     SIM_BOOL en_ss_render = TRUE;

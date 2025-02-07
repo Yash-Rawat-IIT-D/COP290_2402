@@ -31,14 +31,14 @@ typedef struct Cell_Formula
 
     // valid_exp_type = VALUE
     SIM_BOOL is_constant;
-    double value;
+    int value;
     Cell *cell;
 
 
     // valid_exp_type = VALUE_OP_VALUE
     ARITHMETIC_OP arithmetic_op;
     SIM_BOOL is_left_value_constant, is_right_value_constant;
-    double left_value, right_value;
+    int left_value, right_value;
     Cell *left_cell, *right_cell;
 
     // valid_exp_type = FUNCTION
