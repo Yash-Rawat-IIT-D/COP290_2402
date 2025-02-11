@@ -25,7 +25,7 @@ typedef struct SCell
 
 
 void init_scell(SCell *scell, int row, int col, int value, SS_EXIT_CODE *exit_code);
-
+void debug_print_scell(SCell *scell);
 // ------------------------------------------------------------------------- //
 
 #endif

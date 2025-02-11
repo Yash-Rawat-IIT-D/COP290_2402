@@ -77,7 +77,6 @@ void pop_back_scell_ptrs(SCell1D *arr)
     else
     {
         fprintf(stderr,"Array is empty, cannot pop\n");
-        return NULL;
     }
 
 
@@ -357,7 +356,7 @@ void dfs_cycle_check(SCell *node, SCell *target_node_tl, SCell *target_node_br, 
     node->visited = TRUE;
 
     printf("Visiting Node: ");
-    debug_print_cell(node->cell);
+    debug_print_scell(node);
 
     if(is_node_in_target(node, target_node_tl, target_node_br) == TRUE)
     {
@@ -386,7 +385,7 @@ void pop_and_unmark(Stack_SCell *visitedStack)
     {
         SCell *node = pop_stack(visitedStack);
         node->visited = FALSE;
-        debug_print_cell(node->cell);
+        debug_print_scell(node);
     }
     return;
 }
