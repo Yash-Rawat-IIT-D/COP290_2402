@@ -3,6 +3,12 @@
 // ------------------------------------------------------------------------- //
 
 #include "../header/scell.h"
+#include "scell.h"
+#include "scell1d.h"
+#include "stack_scell.h"
+#include "queue_scell.h" // assuming you have this from scell1d.h
+#include <stdlib.h>
+#include <stdio.h>
 
 // ------------------------------------------------------------------------- //
 
@@ -67,4 +73,93 @@ void debug_print_scell(SCell *scell)
         printf("Dependent Cell %d: Row: %d, Col: %d, Value: %d\n", i, get_cell_row(scell->dependent_scells->scell_ptrs[i]->cell), get_cell_col(scell->dependent_scells->scell_ptrs[i]->cell), get_cell_value(scell->dependent_scells->scell_ptrs[i]->cell));
     }
     return;
+}
+
+SIM_BOOL check_for_cycle(SCell *start, SCell *target) {
+    // Create a temporary stack for visited nodes.
+    Stack_SCell visitedStack;
+    if (init_stack(&visitedStack, 10) != Q_OK) {
+        fprintf(stderr, "Error: Could not initialize visited stack.\n");
+        return TRUE; // Fail safe: assume cycle exists.
+    }
+
+    // Create a queue for BFS. (Re-use your Queue_SCell from scell1d)
+    Q_EXIT_CODE q_exit;
+    Queue_SCell *q = create_queue(10, &q_exit);
+    if (q == NULL) {
+        fprintf(stderr, "Error: Could not create BFS queue.\n");
+        free_stack(&visitedStack);
+        return TRUE;
+    }
+
+    // Enqueue the starting cell (e.g., operand cell such as A2)
+    enqueue(q, start, &q_exit);
+    if(q_exit != Q_OK) {
+        fprintf(stderr, "Error: Enqueue failed in cycle check.\n");
+        free_stack(&visitedStack);
+        free_queue(q, &q_exit);
+        return TRUE;
+    }
+
+    while (q->size > 0) {
+        SCell *current = dequeue(q, &q_exit);
+        if (q_exit != Q_OK) {
+            fprintf(stderr, "Error: Dequeue failed in cycle check.\n");
+            break;
+        }
+        // If we find the target cell in the dependency chain, then a cycle exists.
+        if (current == target) {
+            // Before returning, unmark visited nodes.
+            while (visitedStack.top >= 0) {
+                SCell *node = pop_stack(&visitedStack);
+                node->visited = FALSE;
+            }
+            free_stack(&visitedStack);
+            free_queue(q, &q_exit);
+            return TRUE;
+        }
+
+        // If current is not yet marked, mark it and record it in our stack.
+        if (!current->visited) {
+            current->visited = TRUE;
+            if (push_stack(&visitedStack, current) != Q_OK) {
+                fprintf(stderr, "Error: Push to visited stack failed.\n");
+                // Clean up before returning.
+                while (visitedStack.top >= 0) {
+                    SCell *node = pop_stack(&visitedStack);
+                    node->visited = FALSE;
+                }
+                free_stack(&visitedStack);
+                free_queue(q, &q_exit);
+                return TRUE;
+            }
+        }
+        // Enqueue all dependent cells (i.e. cells that depend on current)
+        for (int i = 0; i < current->dependent_scells->size; i++) {
+            SCell *dep = current->dependent_scells->scell_ptrs[i];
+            if (!dep->visited) {
+                enqueue(q, dep, &q_exit);
+                if (q_exit != Q_OK) {
+                    fprintf(stderr, "Error: Enqueue failed during dependency traversal.\n");
+                    // Clean up before returning.
+                    while (visitedStack.top >= 0) {
+                        SCell *node = pop_stack(&visitedStack);
+                        node->visited = FALSE;
+                    }
+                    free_stack(&visitedStack);
+                    free_queue(q, &q_exit);
+                    return TRUE;
+                }
+            }
+        }
+    }
+
+    // No cycle detected. Unmark all visited nodes.
+    while (visitedStack.top >= 0) {
+        SCell *node = pop_stack(&visitedStack);
+        node->visited = FALSE;
+    }
+    free_stack(&visitedStack);
+    free_queue(q, &q_exit);
+    return FALSE;
 }

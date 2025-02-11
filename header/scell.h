@@ -17,7 +17,7 @@ typedef struct SCell
     Cell * cell;
     SCell1D *dependent_scells;
     Cell_Formula * cell_formula;
-
+    SIM_BOOL visited;
 } SCell;
 
 

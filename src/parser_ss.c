@@ -464,7 +464,61 @@ void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[]
 // Assumes a valid instruction has been provided by the user
 void parse_expression(char target_cell_buff[],char exp_buff[], Spread_Sheet *ss, TCU_EXIT_CODE *exit_code)
 {
-    
+    int target_row, target_col;
+    // Retrieve the SCell pointer for the target cell.
+    if (!is_valid_cell(target_cell_buff, ss->SS_ROWS, ss->SS_COLS, &target_row, &target_col, exit_code)) {
+        printf("Invalid target cell in expression.\n");
+        *exit_code = INVALID_INPUT;
+        return;
+    }
+    SCell *targetCell = get_scell(ss, target_row, target_col);
+
+    // Make a copy of the expression string since strtok will modify it.
+    char exp_copy[100];
+    strcpy(exp_copy, exp_buff);
+
+    // Tokenize the expression by '+' (assuming a simple binary operator formula).
+    // (If you need more complex parsing, you can extend this logic without altering the parsing work done by your teammate.)
+    char *token = strtok(exp_copy, "+");
+    while (token != NULL) {
+        // Remove any extra whitespace.
+        trim_whitespace(token);
+
+        // Get the SCell pointer for the operand cell.
+        int op_row, op_col;
+        if (!is_valid_cell(token, ss->SS_ROWS, ss->SS_COLS, &op_row, &op_col, exit_code)) {
+            printf("Invalid operand cell: %s\n", token);
+            *exit_code = INVALID_INPUT;
+            return;
+        }
+        SCell *operandCell = get_scell(ss, op_row, op_col);
+
+        // Check for cyclic dependency:
+        // For example, if operandCell (like A2) already depends on targetCell (A1),
+        // then adding the dependency would create a cycle.
+        if (check_for_cycle(operandCell, targetCell)) {
+            printf("Cyclic dependency detected: Adding dependency from %s to %s creates a cycle.\n",
+                   token, target_cell_buff);
+            *exit_code = INVALID_INPUT;
+            return;
+        }
+
+        // If no cycle is found, update the dependency list of the operand cell:
+        // Add targetCell to operandCell's dependent_scells.
+        if (push_back_scell_ptrs(operandCell->dependent_scells, targetCell) != SS_OK) {
+            printf("Failed to update dependency list for operand: %s\n", token);
+            *exit_code = MALLOC_CELL1D_CELL_PTR;
+            return;
+        }
+
+        // Get the next operand token (if any)
+        token = strtok(NULL, "+");
+    }
+
+    // After processing all operands, update the target cell (e.g., propagate recalculations)
+    update_bfs(targetCell);  // Ensure update_bfs is defined in scell.c
+
+    *exit_code = TCU_OK;   
 }
 
 // ------------------------------------------------------------------------- //
