@@ -360,9 +360,16 @@ void dfs_cycle_check(SCell *node, SCell *target_node_tl, SCell *target_node_br, 
 
     if(is_node_in_target(node, target_node_tl, target_node_br) == TRUE)
     {
+        push_stack(visitedStack, node);
         *cycle_exists = TRUE;
         return;
     }
+    else if(node->dependent_scells->size == 0)
+    {
+        push_stack(visitedStack, node);
+        return;
+    }
+
 
     for(int i = 0; i < node->dependent_scells->size; i++)
     {
@@ -370,9 +377,11 @@ void dfs_cycle_check(SCell *node, SCell *target_node_tl, SCell *target_node_br, 
 
         if(*cycle_exists == TRUE)
         {
+            push_stack(visitedStack, node);
             return;
         }
     }
+
 
     push_stack(visitedStack, node);
 
@@ -389,3 +398,8 @@ void pop_and_unmark(Stack_SCell *visitedStack)
     }
     return;
 }
+
+
+
+
+// ------------------------------------------------------------------------------------------- //

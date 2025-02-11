@@ -70,9 +70,13 @@ int main(int argc, char *argv[])
     ss_my.arr[0*ss_my.SS_COLS+0].dependent_scells->scell_ptrs[3] = &(ss_my.arr[2*ss_my.SS_COLS+1]);
 
 
-    for(int i = 1; i < 20; i++)
+    for(int i = 1; i < 5; i++)
     {
-        push_back_scell_ptrs(ss_my.arr[0*ss_my.SS_COLS+0].dependent_scells, &(ss_my.arr[i*ss_my.SS_COLS+0]));
+        for(int j = 1; j < 5; j++)
+        {
+            push_back_scell_ptrs(ss_my.arr[0*ss_my.SS_COLS+0].dependent_scells, &(ss_my.arr[i*ss_my.SS_COLS+j]));
+
+        }
     }
     // ss_my.arr[0*ss_my.SS_COLS+0].dependent_scells->size = 4;
 
@@ -82,9 +86,17 @@ int main(int argc, char *argv[])
     Stack_SCell visitedStack;
     init_stack(&visitedStack, 10);
 
-    dfs_cycle_check(&ss_my.arr[0*ss_my.SS_COLS+0],&ss_my.arr[4*ss_my.SS_COLS+4],&ss_my.arr[5*ss_my.SS_COLS+5],&visitedStack,&cycle_exists);
+    dfs_cycle_check(&ss_my.arr[0*ss_my.SS_COLS+0],&ss_my.arr[6*ss_my.SS_COLS+4],&ss_my.arr[6*ss_my.SS_COLS+40],&visitedStack,&cycle_exists);
     // (ss_my.arr[0*ss_my.SS_COLS+0].cell)->value ;
     printf("\n");
+    if(cycle_exists == TRUE)
+    {
+        printf("Cycle Exists\n");
+    }
+    else
+    {
+        printf("Cycle Does Not Exist\n");
+    }
     pop_and_unmark(&visitedStack);
 
     return 0;

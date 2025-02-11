@@ -86,6 +86,15 @@ void debug_print_scell(SCell *scell)
     return;
 }
 
+void swap_scell_ptrs(SCell1D *arr, int index1, int index2)
+{
+    SCell *temp = arr->scell_ptrs[index1];
+    arr->scell_ptrs[index1] = arr->scell_ptrs[index2];
+    arr->scell_ptrs[index2] = temp;
+    return;
+}
+
+
 SIM_BOOL check_for_cycle(SCell *start, SCell *target)
 {
     // Create a temporary stack for visited nodes.
