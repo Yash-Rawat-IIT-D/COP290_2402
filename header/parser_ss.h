@@ -2,7 +2,30 @@
 
 #ifndef RENDER_SS_H
 #define RENDER_SS_H
-#define REGEX_PATTERN "^[ \t]*([A-Z]{1,3}[1-9][0-9]{0,2})[ \t]*=[ \t]*(.*?)[ \t]*$"
+#define REGEX_PATTERN \
+  "^[ \t]*" \
+  "([A-Z]{1,3}[1-9][0-9]{0,2})" \
+  "[ \t]*=[ \t]*" \
+  "(" \
+    /* 1) A pure integer constant */ \
+    "([0-9]+)" \
+    /* 2) A single cell reference */ \
+    "|([A-Z]{1,3}[1-9][0-9]{0,2})" \
+    /* 3) An arithmetic expression: (constant|cell) OP (constant|cell) */ \
+    "|((([0-9]+)|([A-Z]{1,3}[1-9][0-9]{0,2}))[ \t]*[+*/-][ \t]*" \
+       "(([0-9]+)|([A-Z]{1,3}[1-9][0-9]{0,2})))" \
+    /* 4) A range function call: MIN|MAX|AVG|SUM|STDEV(...) */ \
+    "|((MIN|MAX|AVG|SUM|STDEV)\\([ \t]*" \
+       "([A-Z]{1,3}[1-9][0-9]{0,2}:[A-Z]{1,3}[1-9][0-9]{0,2})" \
+       "[ \t]*\\))" \
+    /* 5) A SLEEP(...) call, which takes either int or cell */ \
+    "|(SLEEP\\([ \t]*" \
+       "(([0-9]+)|([A-Z]{1,3}[1-9][0-9]{0,2}))" \
+       "[ \t]*\\))" \
+  ")" \
+  "[ \t]*$"
+
+
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>

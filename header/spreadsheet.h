@@ -20,7 +20,7 @@ typedef struct Spread_Sheet
 // Function Prototypes
 
 void init_spread_sheet(Spread_Sheet *ss, SS_EXIT_CODE *exit_code);
-SCell *get_scell(Spread_Sheet *ss, int row, int col);
+SCell *get_scell_by_coordinates(Spread_Sheet *ss, int row, int col);
 
     
 // ------------------------------------------------------------------------- //
