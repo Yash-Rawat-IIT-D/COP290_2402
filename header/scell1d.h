@@ -6,11 +6,12 @@
 #include "constants.h"  
 #include "cell.h"
 #include "scell.h"
+// #include "spreadsheet.h"
 #include <stdbool.h>
 // ------------------------------------------------------------------------- //
 
 typedef struct SCell SCell;
-
+typedef struct Spread_Sheet Spread_Sheet;
 typedef struct SCell1D
 {
     SCell **scell_ptrs;
@@ -69,6 +70,20 @@ void dfs_cycle_check(SCell *node, SCell *target_node_tl, SCell *target_node_br, 
 void pop_and_unmark(Stack_SCell *visitedStack);
 
 // ------------------------------------------------------------------------- //
+
+//sharma bhai start
+
+// Remove the target cell from all precedent cells’ dependent lists.
+void remove_old_dependencies(SCell *target);
+
+// Add new dependency links based on the new formula.
+// new_precedents is a dynamic array (SCell1D) containing pointers to the new precedent cells.
+void add_new_dependencies(SCell *target, SCell1D *new_precedents);
+
+// Perform a DFS-based topological sort on the dependency subgraph starting at 'target',
+// then update (recalculate) the cell values in topologically sorted order.
+
+void dfs_topological(SCell *node, Stack_SCell *stack);
 
 #endif 
 // SCELL1D_H // End of Header File

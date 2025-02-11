@@ -400,6 +400,64 @@ void pop_and_unmark(Stack_SCell *visitedStack)
 }
 
 
+//sharma bhai start
+
+// Helper: Remove a specific SCell pointer from a dynamic array (SCell1D) by swapping with the last element.
+void remove_scell_ptr(SCell1D *arr, SCell *target) {
+    if (arr == NULL) return;
+    int index = -1;
+    for (int i = 0; i < arr->size; i++) {
+        if (arr->scell_ptrs[i] == target) {
+            index = i;
+            break;
+        }
+    }
+    if (index == -1) return;
+    // Swap with the last element and decrement size.
+    arr->scell_ptrs[index] = arr->scell_ptrs[arr->size - 1];
+    arr->size--;
+}
+
+// (1) Remove Old Dependencies  
+// For each cell in target->precedent_scells, remove target from that cell's dependent list.
+void remove_old_dependencies(SCell *target) {
+    if (target == NULL || target->precedent_scells == NULL) return;
+    for (int i = 0; i < target->precedent_scells->size; i++) {
+         SCell *prec = target->precedent_scells->scell_ptrs[i];
+         remove_scell_ptr(prec->dependent_scells, target);
+    }
+    // Clear target's precedent list.
+    target->precedent_scells->size = 0;
+}
+
+// (2) Add New Dependencies  
+// For each new precedent cell, add target to its dependent list and add that precedent cell to target->precedent_scells.
+void add_new_dependencies(SCell *target, SCell1D *new_precedents) {
+    if (target == NULL || new_precedents == NULL) return;
+    for (int i = 0; i < new_precedents->size; i++) {
+         SCell *prec = new_precedents->scell_ptrs[i];
+         // Add target to the precedent's dependent list.
+         push_back_scell_ptrs(prec->dependent_scells, target);
+         // Also add the precedent to target's precedent list.
+         push_back_scell_ptrs(target->precedent_scells, prec);
+    }
+}
+
+// Helper: DFS-based topological sort.
+// Recursively visits dependent cells and pushes nodes (after processing) onto the stack.
+void dfs_topological(SCell *node, Stack_SCell *stack) {
+    if (node->visited)
+         return;
+    node->visited = TRUE;
+    for (int i = 0; i < node->dependent_scells->size; i++) {
+         SCell *dep = node->dependent_scells->scell_ptrs[i];
+         dfs_topological(dep, stack);
+    }
+    push_stack(stack, node);
+}
+
+
+
 
 
 // ------------------------------------------------------------------------------------------- //

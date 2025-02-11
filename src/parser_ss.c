@@ -760,6 +760,7 @@ double sqrt(double x) {
          This function uses your cell functions (such as get_cell_value) and iterates
          over a range when needed.  
 */
+
 static int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
     if (formula->valid_exp_type == VALUE) {
         if (formula->is_constant == TRUE)
@@ -838,6 +839,7 @@ static int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CO
     return 0;
 }
 
+
 /* === Main Function: parse_expression ===
    This function extracts the target cell (using the cell name from target_cell_buff),
    parses the expression in exp_buff (which can be a constant, cell reference, arithmetic expression,
@@ -889,6 +891,43 @@ void parse_expression(char target_cell_buff[], char exp_buff[], Spread_Sheet *ss
     target_scell->cell_formula = formula;
     int result = evaluate_formula(formula, ss, exit_code);
     set_cell_value(target_scell->cell, result);
+}
+
+
+// Helper: Recalculate the cell's value based on its formula.
+// You might already have an evaluate_formula() function; here we wrap it in recalc_cell.
+static void recalc_cell(SCell *node, Spread_Sheet *ss) {
+    if (node->cell_formula == NULL)
+         return;
+    TCU_EXIT_CODE exit_code = TCU_OK;
+    int new_value = evaluate_formula(node->cell_formula, ss, &exit_code);
+    if (exit_code == TCU_OK) {
+         set_cell_value(node->cell, new_value);
+    } else {
+         printf("Error recalculating cell at row %d, col %d\n",
+                get_cell_row(node->cell), get_cell_col(node->cell));
+    }
+}
+
+// (3) Update Propagation  
+// Perform a DFS-based topological sort starting at the target cell and then update cell values in order.
+void update_propagation(SCell *target, Spread_Sheet *ss) {
+    Stack_SCell stack;
+    if (init_stack(&stack, 10) != Q_OK) {
+         fprintf(stderr, "Error: Could not initialize update stack.\n");
+         return;
+    }
+    
+    // Build topological order starting from the target cell.
+    dfs_topological(target, &stack);
+    
+    // Pop nodes from the stack in topological order and recalc cell values.
+    while (stack.top >= 0) {
+         SCell *node = pop_stack(&stack);
+         node->visited = FALSE;  // Reset the visited flag.
+         recalc_cell(node, ss);
+    }
+    free_stack(&stack);
 }
 
 

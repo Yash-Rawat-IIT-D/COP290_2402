@@ -48,7 +48,9 @@ void set_out_buff(char *obuff, char *col_data_buff);
 void render_ss(Spread_Sheet *ss, int row, int col);
 void terminal_control_unit(Spread_Sheet *ss);
 
+static int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code);
 
+void update_propagation(SCell *target, Spread_Sheet *ss);
 
 // ------------------------------------------------------------------------- //
 

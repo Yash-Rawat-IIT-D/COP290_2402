@@ -54,7 +54,7 @@ typedef struct Cell_Formula
 // Function Prototypes of Cell Struct and Cell Range Struct
 
 void init_cell(Cell *cell, int row, int col, int value);
-void set_cell_value(Cell *cell, double value);
+void set_cell_value(Cell *cell, int value);
 int get_cell_value(Cell *cell);
 int get_cell_row(Cell *cell);
 int get_cell_col(Cell *cell);
