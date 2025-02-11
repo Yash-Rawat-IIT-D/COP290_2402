@@ -844,6 +844,7 @@ static int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CO
    or a function call), and finally evaluates the formula and assigns the result to the target cell.
 */
 void parse_expression(char target_cell_buff[], char exp_buff[], Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
+    
     int target_row, target_col;
     parse_cell_name(target_cell_buff, &target_row, &target_col);
     SCell *target_scell = get_scell_by_coordinates(ss, target_row, target_col);
@@ -853,24 +854,32 @@ void parse_expression(char target_cell_buff[], char exp_buff[], Spread_Sheet *ss
     }
 
     Cell_Formula *formula = malloc(sizeof(Cell_Formula));
+
     if (!formula) {
         *exit_code = MALLOC_FAILED;
         return;
     }
 
-    /* Decide the expression type based on exp_buff.
-       Function calls are tested first, then arithmetic expressions, then simple values.
+    /* 
+        Decide the expression type based on exp_buff.
+        Function calls are tested first, then arithmetic expressions, then simple values.
     */
     if ((strncmp(exp_buff, "MIN(", 4) == 0) ||
         (strncmp(exp_buff, "MAX(", 4) == 0) ||
         (strncmp(exp_buff, "AVG(", 4) == 0) ||
         (strncmp(exp_buff, "SUM(", 4) == 0) ||
         (strncmp(exp_buff, "STDEV(", 6) == 0) ||
-        (strncmp(exp_buff, "SLEEP(", 6) == 0)) {
+        (strncmp(exp_buff, "SLEEP(", 6) == 0)) 
+    {
         parse_function(exp_buff, formula, ss, exit_code);
     }
-    else if (strchr(exp_buff, '+') || strchr(exp_buff, '-') ||
-             strchr(exp_buff, '*') || strchr(exp_buff, '/')) {
+
+    /* 
+        Checking for Value_OP_Value
+    */
+
+    else if (strchr(exp_buff, '+') || strchr(exp_buff, '-') ||  strchr(exp_buff, '*') || strchr(exp_buff, '/')) 
+    {
         parse_arithmetic(exp_buff, formula, ss, exit_code);
     }
     else {
@@ -1005,8 +1014,6 @@ void set_error_message(TCU_EXIT_CODE exit_code, char error_buff[])
 // Takes in the Spread_Sheet and allows the user to interact with it
 
 
-
-
 void terminal_control_unit(Spread_Sheet *ss)
 {
     // ss->arr[i*ss->SS_COLS +j].cell_formula
@@ -1034,32 +1041,33 @@ void terminal_control_unit(Spread_Sheet *ss)
         {
                 // Strip trailing newline if present
             command_buff[strcspn(command_buff, "\n")] = '\0';
-            if (strcmp(command_buff, "q\n") == 0)
+
+            if (strcmp(command_buff, "q") == 0)
             {
                 printf("Quitting the Spreadsheet Program\n");
                 exit_code = TCU_OK;
                 break;
             }
-            else if (strcmp(command_buff, "w\n") == 0)
+            else if (strcmp(command_buff, "w") == 0)
             {
                 row_render = next_render_dim(row_render, ss->SS_ROWS, -MAX_RENDER_DIM, &exit_code);
                 
             }
-            else if (strcmp(command_buff, "s\n") == 0)
+            else if (strcmp(command_buff, "s") == 0)
             {
                 row_render = next_render_dim(row_render, ss->SS_ROWS, MAX_RENDER_DIM, &exit_code);
                 
             }
-            else if (strcmp(command_buff, "a\n") == 0)
+            else if (strcmp(command_buff, "a") == 0)
             {
                 col_render = next_render_dim(col_render, ss->SS_COLS, -MAX_RENDER_DIM, &exit_code);
                 
             }
-            else if (strcmp(command_buff, "d\n") == 0)
+            else if (strcmp(command_buff, "d") == 0)
             {
                 col_render = next_render_dim(col_render, ss->SS_COLS, MAX_RENDER_DIM, &exit_code);
             }
-            else if(strcmp(command_buff, "disable_output\n") == 0)
+            else if(strcmp(command_buff, "disable_output") == 0)
             {
                 if(en_ss_render)
                 {
@@ -1067,7 +1075,7 @@ void terminal_control_unit(Spread_Sheet *ss)
                 }
                 exit_code = TCU_OK;
             }
-            else if(strcmp(command_buff, "enable_output\n") == 0)
+            else if(strcmp(command_buff, "enable_output") == 0)
             {
                 if(!en_ss_render)
                 {
@@ -1090,7 +1098,7 @@ void terminal_control_unit(Spread_Sheet *ss)
             }
             else
             {
-                printf("You entered %s", command_buff);
+                printf("You entered %s\n", command_buff);
                 parse_command(command_buff, target_cell_buff, exp_buff, ss, &exit_code);
                 if(exit_code == TCU_OK)
                     {

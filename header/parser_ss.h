@@ -35,7 +35,7 @@
 #include "scell1d.h"
 #include "spreadsheet.h"
 #include "constants.h"
-
+#include <stdbool.h>
 // ------------------------------------------------------------------------- //
 
 // Function Prototypes
@@ -47,6 +47,8 @@ int safe_render_dim(int rc, int rc_max);
 void set_out_buff(char *obuff, char *col_data_buff);
 void render_ss(Spread_Sheet *ss, int row, int col);
 void terminal_control_unit(Spread_Sheet *ss);
+
+
 
 // ------------------------------------------------------------------------- //
 

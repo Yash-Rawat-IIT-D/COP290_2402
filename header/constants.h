@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
 #define MAX_SS_ROWS 999
 #define MAX_SS_COLS 18278 // 26^3 + 26^2 + 26
 #define MAX_RENDER_DIM 10
@@ -17,7 +18,7 @@
 #define COL_DATA_BUFF_SIZE 12
 #define SPACER "|"
 #define COL_SPACER ' '
-#define LO_RESIZE_THRESHOLD 16
+#define LO_RESIZE_THRESHOLD 32
 
 // ------------------------------------------------------------------------- //
 

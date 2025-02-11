@@ -6,7 +6,7 @@
 #include "constants.h"  
 #include "cell.h"
 #include "scell.h"
-
+#include <stdbool.h>
 // ------------------------------------------------------------------------- //
 
 typedef struct SCell SCell;
@@ -29,9 +29,17 @@ typedef struct Queue_SCell
 
 } Queue_SCell;
 
+
+typedef struct Stack_SCell {
+    SCell **items;
+    int top;
+    int capacity;
+} Stack_SCell;
+
 // ------------------------------------------------------------------------- //
 
 // Function Prototypes of Cell1D Struct
+
 void init_scell_ptrs(SCell1D *arr, int init_capacity, int init_size,SS_EXIT_CODE *exit_code);
 void resize_scell_ptrs(SCell1D *arr, int new_capacity);
 void push_back_scell_ptrs(SCell1D *arr, SCell *scell_ptr);
@@ -48,9 +56,17 @@ SCell * front(Queue_SCell *q, Q_EXIT_CODE *exit_code);
 SCell * rear(Queue_SCell *q, Q_EXIT_CODE *exit_code);
 void free_queue(Queue_SCell *q, Q_EXIT_CODE *exit_code);
 
+// Function prototypes for the stack:
+int init_stack(Stack_SCell *stack, int capacity);
+int push_stack(Stack_SCell *stack, SCell *item);
+SCell *pop_stack(Stack_SCell *stack);
+void free_stack(Stack_SCell *stack);
 
 
-
+// Function prototypes for the stack:
+SIM_BOOL is_node_in_target(SCell *node, SCell *target_node_tl, SCell *target_node_br);
+void dfs_cycle_check(SCell *node, SCell *target_node_tl, SCell *target_node_br, Stack_SCell *visitedStack, SIM_BOOL *cycle_exists);
+void pop_and_unmark(Stack_SCell *visitedStack);
 
 // ------------------------------------------------------------------------- //
 

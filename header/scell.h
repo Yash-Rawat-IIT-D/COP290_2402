@@ -7,6 +7,7 @@
 #include "cell.h"
 #include "scell1d.h"
 #include "constants.h"  
+#include <stdbool.h>
 
 // ------------------------------------------------------------------------- //
 
@@ -16,6 +17,8 @@ typedef struct SCell
 {
     Cell * cell;
     SCell1D *dependent_scells;
+    SCell1D *precedent_scells;
+
     Cell_Formula * cell_formula;
     SIM_BOOL visited;
 } SCell;

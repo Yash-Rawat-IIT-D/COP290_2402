@@ -5,7 +5,7 @@
 #ifndef CELL_H
 #define CELL_H
 #include "constants.h"
-
+#include <stdbool.h>
 // ------------------------------------------------------------------------- //
 
 typedef struct Cell
