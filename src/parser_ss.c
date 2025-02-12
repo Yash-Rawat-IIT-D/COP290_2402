@@ -1,5 +1,6 @@
 #include "../header/parser_ss.h"
 #include <stdbool.h>
+#include <time.h>
 
 // ------------------------------------------------------------------------- //
 
@@ -188,19 +189,22 @@ void is_cell(char data_buff[], int SS_ROWS, int SS_COLS, int *tcell_row, int *tc
     return;
 }
 
-
-bool is_valid_cell(char data_buff[], int SS_ROWS, int SS_COLS, int *tcell_row, int *tcell_col, TCU_EXIT_CODE *exit_code) {
+bool is_valid_cell(char data_buff[], int SS_ROWS, int SS_COLS, int *tcell_row, int *tcell_col, TCU_EXIT_CODE *exit_code)
+{
     int col = 0, row = 0, i = 0;
 
     // Check for empty input
-    if (data_buff == NULL || strlen(data_buff) == 0) {
+    if (data_buff == NULL || strlen(data_buff) == 0)
+    {
         *exit_code = INVALID_INPUT;
         return false;
     }
 
     // Extract column letters (only uppercase A-Z allowed)
-    while (isalpha(data_buff[i]) && i < 3) {
-        if (islower(data_buff[i])) {
+    while (isalpha(data_buff[i]) && i < 3)
+    {
+        if (islower(data_buff[i]))
+        {
             *exit_code = INVALID_INPUT; // Reject lowercase letters
             return false;
         }
@@ -209,13 +213,15 @@ bool is_valid_cell(char data_buff[], int SS_ROWS, int SS_COLS, int *tcell_row, i
     }
 
     // Ensure at least one column letter was processed
-    if (col == 0) {
+    if (col == 0)
+    {
         *exit_code = INVALID_INPUT;
         return false;
     }
 
     // Extract row number (must be at least 1 and at most 999)
-    if (!isdigit(data_buff[i])) {
+    if (!isdigit(data_buff[i]))
+    {
         *exit_code = INVALID_INPUT;
         return false; // No row number found after column letters
     }
@@ -223,7 +229,8 @@ bool is_valid_cell(char data_buff[], int SS_ROWS, int SS_COLS, int *tcell_row, i
     row = atoi(&data_buff[i]); // Convert remaining part to integer
 
     // Validate row and column limits
-    if (row > SS_ROWS || col > SS_COLS || row < 1 || col < 1) {
+    if (row > SS_ROWS || col > SS_COLS || row < 1 || col < 1)
+    {
         *exit_code = INVALID_INPUT;
         return false;
     }
@@ -235,39 +242,44 @@ bool is_valid_cell(char data_buff[], int SS_ROWS, int SS_COLS, int *tcell_row, i
     return true;
 }
 
-
-bool is_range(char data_buff[], int SS_ROWS, int SS_COLS, TCU_EXIT_CODE *exit_code) {
+bool is_range(char data_buff[], int SS_ROWS, int SS_COLS, TCU_EXIT_CODE *exit_code)
+{
     char cell1[10], cell2[10];
     int row1, col1, row2, col2;
     int i = 0, j = 0;
 
     // Check for empty input
-    if (data_buff == NULL || strlen(data_buff) == 0) {
+    if (data_buff == NULL || strlen(data_buff) == 0)
+    {
         *exit_code = INVALID_INPUT;
         return false;
     }
 
     // Split range into two cells (e.g., "A1:D10" -> "A1", "D10")
-    while (data_buff[i] != ':' && data_buff[i] != '\0') {
+    while (data_buff[i] != ':' && data_buff[i] != '\0')
+    {
         cell1[i] = data_buff[i];
         i++;
     }
-    cell1[i] = '\0';  // Null-terminate first cell
+    cell1[i] = '\0'; // Null-terminate first cell
 
-    if (data_buff[i] != ':') {
+    if (data_buff[i] != ':')
+    {
         *exit_code = INVALID_INPUT;
         return false; // No ':' found, not a valid range
     }
 
     i++; // Move past ':'
-    while (data_buff[i] != '\0') {
+    while (data_buff[i] != '\0')
+    {
         cell2[j++] = data_buff[i++];
     }
     cell2[j] = '\0'; // Null-terminate second cell
 
     // Validate both cells
-    int dummy_row, dummy_col; 
-    if (!is_valid_cell(cell1, SS_ROWS, SS_COLS, &dummy_row, &dummy_col, exit_code) || !is_valid_cell(cell2, SS_ROWS, SS_COLS, &dummy_row, &dummy_col, exit_code)) {
+    int dummy_row, dummy_col;
+    if (!is_valid_cell(cell1, SS_ROWS, SS_COLS, &dummy_row, &dummy_col, exit_code) || !is_valid_cell(cell2, SS_ROWS, SS_COLS, &dummy_row, &dummy_col, exit_code))
+    {
         *exit_code = INVALID_INPUT;
         return false; // One of the cells is invalid
     }
@@ -275,8 +287,10 @@ bool is_range(char data_buff[], int SS_ROWS, int SS_COLS, TCU_EXIT_CODE *exit_co
     // Extract row and column values for both cells
     col1 = 0, col2 = 0;
     i = 0;
-    while (isalpha(cell1[i])) {
-        if (islower(cell1[i])) {
+    while (isalpha(cell1[i]))
+    {
+        if (islower(cell1[i]))
+        {
             *exit_code = INVALID_INPUT; // Reject lowercase letters
             return false;
         }
@@ -286,8 +300,10 @@ bool is_range(char data_buff[], int SS_ROWS, int SS_COLS, TCU_EXIT_CODE *exit_co
     row1 = atoi(&cell1[i]); // Convert remaining part to row number
 
     i = 0;
-    while (isalpha(cell2[i])) {
-        if (islower(cell2[i])) {
+    while (isalpha(cell2[i]))
+    {
+        if (islower(cell2[i]))
+        {
             *exit_code = INVALID_INPUT; // Reject lowercase letters
             return false;
         }
@@ -297,7 +313,8 @@ bool is_range(char data_buff[], int SS_ROWS, int SS_COLS, TCU_EXIT_CODE *exit_co
     row2 = atoi(&cell2[i]); // Convert remaining part to row number
 
     // Ensure valid range (top-left to bottom-right)
-    if (row1 > row2 || col1 > col2) {
+    if (row1 > row2 || col1 > col2)
+    {
         *exit_code = INVALID_INPUT;
         return false;
     }
@@ -305,23 +322,24 @@ bool is_range(char data_buff[], int SS_ROWS, int SS_COLS, TCU_EXIT_CODE *exit_co
     return true; // Range is valid
 }
 
-
 // ------------------------------------------------------------------------- //
 
-
 // Function to check if a function call is valid (e.g., SUM(A1:A10))
-bool is_function(char data_buff[], int SS_ROWS, int SS_COLS, TCU_EXIT_CODE *exit_code) {
+bool is_function(char data_buff[], int SS_ROWS, int SS_COLS, TCU_EXIT_CODE *exit_code)
+{
     char func_name[10], func_arg[20];
     int i = 0, j = 0;
 
     // Extract function name
-    while (isalpha(data_buff[i])) {
+    while (isalpha(data_buff[i]))
+    {
         func_name[j++] = data_buff[i++];
     }
     func_name[j] = '\0'; // Null-terminate function name
 
     // Ensure '(' follows function name
-    if (data_buff[i] != '(') {
+    if (data_buff[i] != '(')
+    {
         *exit_code = INVALID_INPUT;
         return false;
     }
@@ -329,13 +347,15 @@ bool is_function(char data_buff[], int SS_ROWS, int SS_COLS, TCU_EXIT_CODE *exit
 
     // Extract function argument
     j = 0;
-    while (data_buff[i] != ')' && data_buff[i] != '\0') {
+    while (data_buff[i] != ')' && data_buff[i] != '\0')
+    {
         func_arg[j++] = data_buff[i++];
     }
     func_arg[j] = '\0'; // Null-terminate argument
 
     // Ensure ')' is present
-    if (data_buff[i] != ')') {
+    if (data_buff[i] != ')')
+    {
         *exit_code = INVALID_INPUT;
         return false;
     }
@@ -343,9 +363,12 @@ bool is_function(char data_buff[], int SS_ROWS, int SS_COLS, TCU_EXIT_CODE *exit
     // Validate function name
     if (strcmp(func_name, "SUM") == 0 || strcmp(func_name, "MIN") == 0 ||
         strcmp(func_name, "MAX") == 0 || strcmp(func_name, "AVG") == 0 ||
-        strcmp(func_name, "STDEV") == 0) {
+        strcmp(func_name, "STDEV") == 0)
+    {
         return is_range(func_arg, SS_ROWS, SS_COLS, exit_code);
-    } else if (strcmp(func_name, "SLEEP") == 0) {
+    }
+    else if (strcmp(func_name, "SLEEP") == 0)
+    {
         int dummy_row, dummy_col;
         return is_valid_cell(func_arg, SS_ROWS, SS_COLS, &dummy_row, &dummy_col, exit_code) || atoi(func_arg) > 0;
     }
@@ -354,21 +377,25 @@ bool is_function(char data_buff[], int SS_ROWS, int SS_COLS, TCU_EXIT_CODE *exit
     return false;
 }
 
-void trim_whitespace(char *str) {
+void trim_whitespace(char *str)
+{
     int start = 0, end = strlen(str) - 1;
 
     // Trim leading spaces
-    while (isspace((unsigned char)str[start])) {
+    while (isspace((unsigned char)str[start]))
+    {
         start++;
     }
 
     // Trim trailing spaces
-    while (end >= start && isspace((unsigned char)str[end])) {
+    while (end >= start && isspace((unsigned char)str[end]))
+    {
         end--;
     }
 
     // Shift the trimmed string
-    if (start > 0 || end < (int)strlen(str) - 1) {
+    if (start > 0 || end < (int)strlen(str) - 1)
+    {
         memmove(str, str + start, end - start + 1);
     }
 
@@ -376,17 +403,23 @@ void trim_whitespace(char *str) {
     str[end - start + 1] = '\0';
 }
 
-void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[], Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
+void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[], Spread_Sheet *ss, TCU_EXIT_CODE *exit_code)
+{
     regex_t regex;
     regmatch_t matches[3];
     int reti;
 
     // Compile regex
     reti = regcomp(&regex, REGEX_PATTERN, REG_EXTENDED);
-    printf("Regex Compile Return Value: %d\n", reti);
-    if (reti) {
+    if(!reti)
+    {
+        printf("Regex compiled successfully\n");
+    }
+    else
+    if (reti)
+    {
         char errbuf[256];
-        size_t errlen = regerror(reti, &regex, errbuf, sizeof(errbuf));
+        // size_t errlen = regerror(reti, &regex, errbuf, sizeof(errbuf));
         fprintf(stderr, "Regex compile failed: %s\n", errbuf);
 
         printf("Could not compile regex\n");
@@ -396,8 +429,15 @@ void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[]
 
     // Execute regex match
     reti = regexec(&regex, command_buff, 3, matches, 0);
-    printf("Regex Match Return Value: %d\n", reti);
-    if (!reti) {
+    if(reti == REG_NOMATCH)
+    {
+        printf("No match\n");
+        *exit_code = INVALID_INPUT;
+        return;
+    }
+    else
+    if (!reti)
+    {
         // Extract target cell
         int start = matches[1].rm_so;
         int end = matches[1].rm_eo;
@@ -415,7 +455,8 @@ void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[]
         trim_whitespace(exp_buff);
 
         // Reject empty expressions after trimming
-        if (strlen(exp_buff) == 0) {
+        if (strlen(exp_buff) == 0)
+        {
             printf("Invalid: Expression is empty\n");
             *exit_code = INVALID_INPUT;
             return;
@@ -423,34 +464,45 @@ void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[]
 
         // Validate the target cell
         int tcell_row, tcell_col;
-        if (!is_valid_cell(target_cell_buff, ss->SS_ROWS, ss->SS_COLS, &tcell_row, &tcell_col, exit_code)) {
+        if (!is_valid_cell(target_cell_buff, ss->SS_ROWS, ss->SS_COLS, &tcell_row, &tcell_col, exit_code))
+        {
             printf("Invalid cell reference: %s\n", target_cell_buff);
             return;
         }
 
         // Validate expression (cells, functions, or ranges)
-        if (strchr(exp_buff, '(') != NULL) {
-            if (!is_function(exp_buff, ss->SS_ROWS, ss->SS_COLS, exit_code)) {
+        if (strchr(exp_buff, '(') != NULL)
+        {
+            if (!is_function(exp_buff, ss->SS_ROWS, ss->SS_COLS, exit_code))
+            {
                 printf("Invalid function expression: %s\n", exp_buff);
                 return;
             }
-        } else {
+        }
+        else
+        {
             // Tokenize and check individual terms
             char exp_copy[100];
             strcpy(exp_copy, exp_buff);
             char *token = strtok(exp_copy, " +-*/(),");
 
-            while (token != NULL) {
-                if (strchr(token, ':')) {
+            while (token != NULL)
+            {
+                if (strchr(token, ':'))
+                {
                     // Validate range
-                    if (!is_range(token, ss->SS_ROWS, ss->SS_COLS, exit_code)) {
+                    if (!is_range(token, ss->SS_ROWS, ss->SS_COLS, exit_code))
+                    {
                         printf("Invalid range reference: %s\n", token);
                         return;
                     }
-                } else if (isalpha(token[0])) {
+                }
+                else if (isalpha(token[0]))
+                {
                     // Validate cell
                     int tcell_row, tcell_col;
-                    if (!is_valid_cell(token, ss->SS_ROWS, ss->SS_COLS, &tcell_row, &tcell_col, exit_code)) {
+                    if (!is_valid_cell(token, ss->SS_ROWS, ss->SS_COLS, &tcell_row, &tcell_col, exit_code))
+                    {
                         printf("Invalid cell reference: %s\n", token);
                         return;
                     }
@@ -461,7 +513,9 @@ void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[]
 
         printf("Valid formula: Target Cell = %s, Expression = %s\n", target_cell_buff, exp_buff);
         *exit_code = TCU_OK;
-    } else {
+    }
+    else
+    {
         *exit_code = INVALID_INPUT;
     }
 
@@ -475,9 +529,9 @@ void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[]
 #include <regex.h>
 // #include <math.h>
 #include <unistd.h>
-#include "scell.h"      // Contains the definition of SCell and related functions
-#include "cell.h"       // Contains Cell, Cell_Range, and Cell_Formula definitions
-#include "constants.h"  // Contains definitions for TCU_EXIT_CODE, SIM_BOOL, VALID_EXP, ARITHMETIC_OP, FUNCTION, etc.
+#include "scell.h"     // Contains the definition of SCell and related functions
+#include "cell.h"      // Contains Cell, Cell_Range, and Cell_Formula definitions
+#include "constants.h" // Contains definitions for TCU_EXIT_CODE, SIM_BOOL, VALID_EXP, ARITHMETIC_OP, FUNCTION, etc.
 
 /*
    NOTE:
@@ -486,20 +540,24 @@ void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[]
 */
 
 /* --- Helper: Convert a cell name (e.g. "C1") into row and column numbers --- */
-static void parse_cell_name(const char *cell_str, int *row, int *col) {
+static void parse_cell_name(const char *cell_str, int *row, int *col)
+{
     regex_t regex;
     regmatch_t matches[3]; // Group 1: letters, Group 2: digits
-    if (regcomp(&regex, "^([A-Z]+)([0-9]+)$", REG_EXTENDED) != 0) {
+    if (regcomp(&regex, "^([A-Z]+)([0-9]+)$", REG_EXTENDED) != 0)
+    {
         return;
     }
-    if (regexec(&regex, cell_str, 3, matches, 0) == 0) {
+    if (regexec(&regex, cell_str, 3, matches, 0) == 0)
+    {
         // Extract the column part (letters)
         int len = matches[1].rm_eo - matches[1].rm_so;
         char col_part[16] = {0};
         strncpy(col_part, cell_str + matches[1].rm_so, len);
         col_part[len] = '\0';
         int computed_col = 0;
-        for (int i = 0; col_part[i] != '\0'; i++) {
+        for (int i = 0; col_part[i] != '\0'; i++)
+        {
             computed_col = computed_col * 26 + (col_part[i] - 'A' + 1);
         }
         // For 0-based indexing, subtract 1 from the computed column.
@@ -516,9 +574,8 @@ static void parse_cell_name(const char *cell_str, int *row, int *col) {
     regfree(&regex);
 }
 
-
 /* --- Helper: Given an operand string, determine whether it is a constant (number)
-         or a cell reference.  
+         or a cell reference.
          Uses your in-place trim_whitespace() after duplicating the operand.
          If constant, stores its value in *value; if a cell reference, sets *cell accordingly.
 */
@@ -527,28 +584,44 @@ static void parse_operand(const char *operand,
                           int *value,
                           Cell **cell,
                           Spread_Sheet *ss,
-                          TCU_EXIT_CODE *exit_code) {
+                          TCU_EXIT_CODE *exit_code)
+{
     char *temp = strdup(operand);
-    if (!temp) {
+    int len = strlen(temp);
+    if (!temp)
+    {
         *exit_code = MALLOC_FAILED;
         return;
     }
-    trim_whitespace(temp);  // Your provided in-place trim_whitespace function
+    trim_whitespace(temp); // Your provided in-place trim_whitespace function
+    int i = 0;
+    if ((len >= 2) && (temp[0] == '+' || temp[0] == '-') && (isdigit((unsigned char)temp[1])))
+        i = 1;
 
     int allDigits = 1;
-    for (int i = 0; temp[i] != '\0'; i++) {
-        if (!isdigit((unsigned char)temp[i])) { allDigits = 0; break; }
+    for (; temp[i] != '\0'; i++)
+    {
+        if (!isdigit((unsigned char)temp[i]))
+        {
+            allDigits = 0;
+            break;
+        }
     }
-    if (allDigits) {
+    if (allDigits)
+    {
         *is_constant = TRUE;
         *value = atoi(temp);
         *cell = NULL;
-    } else {
+    }
+    else
+    {
         *is_constant = FALSE;
         int row, col;
         parse_cell_name(temp, &row, &col);
         SCell *s = get_scell_by_coordinates(ss, row, col);
-        if (!s) {
+        if (!s)
+        {
+            printf("Operand %s is not a valid cell reference\n", temp);
             printf("Invalid cell reference in formula\n");
             *exit_code = OUT_OF_RANGE;
         }
@@ -558,60 +631,162 @@ static void parse_operand(const char *operand,
 }
 
 /* --- Helper: Parse a simple value expression (constant or cell reference) --- */
-static void parse_value(const char *exp, Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
+static void parse_value(const char *exp, Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code)
+{
     formula->valid_exp_type = VALUE;
     parse_operand(exp, &formula->is_constant, &formula->value, &formula->cell, ss, exit_code);
 }
 
 /* --- Helper: Parse an arithmetic expression (e.g., "A1+23") --- */
-static void parse_arithmetic(const char *exp, Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
+static void parse_arithmetic(const char *exp,
+                             Cell_Formula *formula,
+                             Spread_Sheet *ss,
+                             TCU_EXIT_CODE *exit_code)
+{
     formula->valid_exp_type = VALUE_OP_VALUE;
-    const char *ops = "+-*/";
+
+    // Make a writable copy of the incoming expression
+    char *copy = strdup(exp);
+    if (!copy)
+    {
+        *exit_code = MALLOC_FAILED;
+        return;
+    }
+    trim_whitespace(copy);
+
+    // Remove all internal spaces so we don't accidentally treat them as part of integers
+    // (Optional, but helpful if user writes " -10 +  20 " etc.)
+    {
+        char *dst = copy;
+        char *src = copy;
+        while (*src)
+        {
+            if (!isspace((unsigned char)*src))
+            {
+                *dst++ = *src;
+            }
+            src++;
+        }
+        *dst = '\0';
+    }
+
+    // If the expression starts with '+' or '-' followed by a digit,
+    // that's a sign for the LEFT operand, not the arithmetic operator.
+    // So we skip ahead when searching for the real operator.
+    int start_index = 0;
+    if ((copy[0] == '+' || copy[0] == '-') && isdigit((unsigned char)copy[1]))
+    {
+        start_index = 1;
+        // We'll keep it in the left substring; just skip it when looking for the operator below.
+    }
+
+    // Find the first occurrence of +, -, * or / after we skip the sign of the left operand
     int op_index = -1;
     char op = '\0';
-    for (int i = 0; exp[i] != '\0'; i++) {
-        if (strchr(ops, exp[i]) != NULL) {
-            op = exp[i];
+    for (int i = start_index; copy[i] != '\0'; i++)
+    {
+        if (strchr("+-*/", copy[i]) != NULL)
+        {
+            op = copy[i];
             op_index = i;
             break;
         }
     }
-    if (op_index == -1)
-        return; // Should not occur if input is valid
 
-    char *left = strndup(exp, op_index);
-    char *right = strdup(exp + op_index + 1);
-    if (!left || !right) {
+    // If no operator found, this isn't a valid arithmetic expression
+    if (op_index == -1)
+    {
+        *exit_code = INVALID_INPUT;
+        free(copy);
+        return;
+    }
+
+    // The left operand is everything up to the operator index
+    // (including a possible leading sign if it was found)
+    char *left = strndup(copy, op_index);
+    // The right operand is everything after the operator
+    char *right = strdup(copy + op_index + 1);
+
+    if (!left || !right)
+    {
         *exit_code = MALLOC_FAILED;
         free(left);
         free(right);
+        free(copy);
         return;
     }
-    parse_operand(left, &formula->is_left_value_constant, &formula->left_value, &formula->left_cell, ss, exit_code);
-    parse_operand(right, &formula->is_right_value_constant, &formula->right_value, &formula->right_cell, ss, exit_code);
 
-    switch (op) {
-        case '+': formula->arithmetic_op = ADDITION; break;
-        case '-': formula->arithmetic_op = SUBTRACTION; break;
-        case '*': formula->arithmetic_op = MULTIPLICATION; break;
-        case '/': formula->arithmetic_op = DIVISION; break;
-        default: break;
+    // Parse each side using your updated parse_operand that handles signed integers
+    parse_operand(left,
+                  &formula->is_left_value_constant,
+                  &formula->left_value,
+                  &formula->left_cell,
+                  ss,
+                  exit_code);
+    if (*exit_code != TCU_OK)
+    {
+        free(left);
+        free(right);
+        free(copy);
+        return;
     }
+
+    parse_operand(right,
+                  &formula->is_right_value_constant,
+                  &formula->right_value,
+                  &formula->right_cell,
+                  ss,
+                  exit_code);
+    if (*exit_code != TCU_OK)
+    {
+        free(left);
+        free(right);
+        free(copy);
+        return;
+    }
+
+    // Determine which arithmetic operator we have
+    switch (op)
+    {
+    case '+':
+        formula->arithmetic_op = ADDITION;
+        break;
+    case '-':
+        formula->arithmetic_op = SUBTRACTION;
+        break;
+    case '*':
+        formula->arithmetic_op = MULTIPLICATION;
+        break;
+    case '/':
+        formula->arithmetic_op = DIVISION;
+        break;
+    default:
+        *exit_code = INVALID_INPUT;
+        free(left);
+        free(right);
+        free(copy);
+        return;
+    }
+
     free(left);
     free(right);
+    free(copy);
 }
 
 /* --- Helper: Parse a range string (e.g., "A1:A20" or "A1:D10")
          Returns an allocated Cell_Range structure.
 */
-static Cell_Range *parse_range(const char *range_str, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
+static Cell_Range *parse_range(const char *range_str, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code)
+{
     Cell_Range *range = malloc(sizeof(Cell_Range));
-    if (!range) {
+    if (!range)
+    {
         *exit_code = MALLOC_FAILED;
         return NULL;
     }
     char *colon = strchr(range_str, ':');
-    if (!colon) {
+    if (!colon)
+    {
         free(range);
         *exit_code = INVALID_INPUT;
         return NULL;
@@ -619,7 +794,8 @@ static Cell_Range *parse_range(const char *range_str, Spread_Sheet *ss, TCU_EXIT
     int len1 = colon - range_str;
     char *start_str = strndup(range_str, len1);
     char *end_str = strdup(colon + 1);
-    if (!start_str || !end_str) {
+    if (!start_str || !end_str)
+    {
         free(start_str);
         free(end_str);
         free(range);
@@ -629,21 +805,27 @@ static Cell_Range *parse_range(const char *range_str, Spread_Sheet *ss, TCU_EXIT
     int start_row, start_col, end_row, end_col;
     parse_cell_name(start_str, &start_row, &start_col);
     parse_cell_name(end_str, &end_row, &end_col);
-    if (start_row > end_row || start_col > end_col) {
-        free(start_str); free(end_str); free(range);
+    if (start_row > end_row || start_col > end_col)
+    {
+        free(start_str);
+        free(end_str);
+        free(range);
         *exit_code = INVALID_INPUT;
         return NULL;
     }
     SCell *start_scell = get_scell_by_coordinates(ss, start_row, start_col);
-    SCell *end_scell   = get_scell_by_coordinates(ss, end_row, end_col);
-    if (!start_scell || !end_scell) {
-        free(start_str); free(end_str); free(range);
+    SCell *end_scell = get_scell_by_coordinates(ss, end_row, end_col);
+    if (!start_scell || !end_scell)
+    {
+        free(start_str);
+        free(end_str);
+        free(range);
         printf("Invalid cell reference in range\n");
         *exit_code = OUT_OF_RANGE;
         return NULL;
     }
     range->start_cell = start_scell->cell;
-    range->end_cell   = end_scell->cell;
+    range->end_cell = end_scell->cell;
     range->cell_range_type = (start_row == end_row || start_col == end_col) ? ONE_D : TWO_D;
     free(start_str);
     free(end_str);
@@ -654,11 +836,13 @@ static Cell_Range *parse_range(const char *range_str, Spread_Sheet *ss, TCU_EXIT
          Supported functions: MIN, MAX, AVG, SUM, STDEV (which operate on a range)
          and SLEEP (which takes a value).
 */
-static void parse_function(const char *exp, Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
+static void parse_function(const char *exp, Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code)
+{
     formula->valid_exp_type = FUNCT_ON_RANGE;
     const char *open_paren = strchr(exp, '(');
     const char *close_paren = strrchr(exp, ')');
-    if (!open_paren || !close_paren) {
+    if (!open_paren || !close_paren)
+    {
         *exit_code = INVALID_INPUT;
         return;
     }
@@ -666,38 +850,46 @@ static void parse_function(const char *exp, Cell_Formula *formula, Spread_Sheet 
     char *func_name = strndup(exp, func_name_len);
     int param_len = close_paren - open_paren - 1;
     char *param = strndup(open_paren + 1, param_len);
-    if (!func_name || !param) {
+    if (!func_name || !param)
+    {
         free(func_name);
         free(param);
         *exit_code = MALLOC_FAILED;
         return;
     }
-    if (strcmp(func_name, "MIN") == 0) {
+    if (strcmp(func_name, "MIN") == 0)
+    {
         formula->function = MIN;
         formula->cell_range = parse_range(param, ss, exit_code);
     }
-    else if (strcmp(func_name, "MAX") == 0) {
+    else if (strcmp(func_name, "MAX") == 0)
+    {
         formula->function = MAX;
         formula->cell_range = parse_range(param, ss, exit_code);
     }
-    else if (strcmp(func_name, "AVG") == 0) {
+    else if (strcmp(func_name, "AVG") == 0)
+    {
         formula->function = AVG;
         formula->cell_range = parse_range(param, ss, exit_code);
     }
-    else if (strcmp(func_name, "SUM") == 0) {
+    else if (strcmp(func_name, "SUM") == 0)
+    {
         formula->function = SUM;
         formula->cell_range = parse_range(param, ss, exit_code);
     }
-    else if (strcmp(func_name, "STDEV") == 0) {
+    else if (strcmp(func_name, "STDEV") == 0)
+    {
         formula->function = STDEV;
         formula->cell_range = parse_range(param, ss, exit_code);
     }
-    else if (strcmp(func_name, "SLEEP") == 0) {
+    else if (strcmp(func_name, "SLEEP") == 0)
+    {
         formula->function = SLEEP;
         /* For SLEEP, the parameter is a value rather than a range.
            Create a dummy Cell_Range that holds a single cell. */
         Cell *dummy_cell = malloc(sizeof(Cell));
-        if (!dummy_cell) {
+        if (!dummy_cell)
+        {
             *exit_code = MALLOC_FAILED;
             free(func_name);
             free(param);
@@ -707,13 +899,17 @@ static void parse_function(const char *exp, Cell_Formula *formula, Spread_Sheet 
         int val;
         Cell *ref_cell;
         parse_operand(param, &is_const, &val, &ref_cell, ss, exit_code);
-        if (is_const == TRUE) {
+        if (is_const == TRUE)
+        {
             init_cell(dummy_cell, 0, 0, val);
-        } else {
+        }
+        else
+        {
             dummy_cell = ref_cell;
         }
         formula->cell_range = malloc(sizeof(Cell_Range));
-        if (!formula->cell_range) {
+        if (!formula->cell_range)
+        {
             *exit_code = MALLOC_FAILED;
             free(func_name);
             free(param);
@@ -723,7 +919,8 @@ static void parse_function(const char *exp, Cell_Formula *formula, Spread_Sheet 
         formula->cell_range->end_cell = dummy_cell;
         formula->cell_range->cell_range_type = ONE_D;
     }
-    else {
+    else
+    {
         *exit_code = INVALID_INPUT;
     }
     free(func_name);
@@ -731,111 +928,169 @@ static void parse_function(const char *exp, Cell_Formula *formula, Spread_Sheet 
 }
 
 /* Custom implementation of absolute value for doubles */
-static double my_fabs(double x) {
+static double my_fabs(double x)
+{
     return (x < 0.0) ? -x : x;
 }
 
-
 /* Custom implementation of sqrt using Newton–Raphson method */
-double sqrt(double x) {
+double sqrt(double x)
+{
     /* Return an error indicator for negative input.
        You may choose to handle this differently. */
-    if (x < 0.0) {
+    if (x < 0.0)
+    {
         return -1.0;
     }
-    
+
     /* Initial guess: use x if x > 1, otherwise 1 */
     double guess = (x > 1.0) ? x : 1.0;
     const double epsilon = 1e-10;
-    
+
     /* Iterate until the change is small enough */
-    while (my_fabs(guess * guess - x) > epsilon) {
+    while (my_fabs(guess * guess - x) > epsilon)
+    {
         guess = (guess + x / guess) / 2.0;
     }
-    
+
     return guess;
 }
 
 /* --- Helper: Evaluate a parsed formula and return an integer value.
          This function uses your cell functions (such as get_cell_value) and iterates
-         over a range when needed.  
+         over a range when needed.
 */
-static int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
-    if (formula->valid_exp_type == VALUE) {
+static int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code)
+{
+    if (formula->valid_exp_type == VALUE)
+    {
         if (formula->is_constant == TRUE)
             return formula->value;
         else
             return get_cell_value(formula->cell);
     }
-    else if (formula->valid_exp_type == VALUE_OP_VALUE) {
+    else if (formula->valid_exp_type == VALUE_OP_VALUE)
+    {
         int left = formula->is_left_value_constant == TRUE ? formula->left_value : get_cell_value(formula->left_cell);
         int right = formula->is_right_value_constant == TRUE ? formula->right_value : get_cell_value(formula->right_cell);
-        switch (formula->arithmetic_op) {
-            case ADDITION:       return left + right;
-            case SUBTRACTION:    return left - right;
-            case MULTIPLICATION: return left * right;
-            case DIVISION:
-                if (right == 0) { *exit_code = INVALID_INPUT; return 0; }
-                return left / right;
-            default: return 0;
+        switch (formula->arithmetic_op)
+        {
+        case ADDITION:
+            return left + right;
+        case SUBTRACTION:
+            return left - right;
+        case MULTIPLICATION:
+            return left * right;
+        case DIVISION:
+            if (right == 0)
+            {
+                *exit_code = INVALID_INPUT;
+                return 0;
+            }
+            return left / right;
+        default:
+            return 0;
         }
     }
-    else if (formula->valid_exp_type == FUNCT_ON_RANGE) {
-        if (formula->function == SLEEP) {
+    else if (formula->valid_exp_type == FUNCT_ON_RANGE)
+    {
+        if (formula->function == SLEEP)
+        {
             int sleep_val = get_cell_value(formula->cell_range->start_cell);
             sleep(sleep_val);
             return sleep_val;
         }
-        else {
+        else
+        {
             int start_row = get_cell_row(formula->cell_range->start_cell);
             int start_col = get_cell_col(formula->cell_range->start_cell);
-            int end_row   = get_cell_row(formula->cell_range->end_cell);
-            int end_col   = get_cell_col(formula->cell_range->end_cell);
+            int end_row = get_cell_row(formula->cell_range->end_cell);
+            int end_col = get_cell_col(formula->cell_range->end_cell);
             int count = 0, sum = 0, min = 0, max = 0;
             double mean, variance = 0, stdev;
             SCell *first = get_scell_by_coordinates(ss, start_row, start_col);
-            if (!first) { 
+            if (!first)
+            {
                 *exit_code = OUT_OF_RANGE;
                 return 0;
             }
             min = max = get_cell_value(first->cell);
-            for (int r = start_row; r <= end_row; r++) {
-                for (int c = start_col; c <= end_col; c++) {
+            for (int r = start_row; r <= end_row; r++)
+            {
+                for (int c = start_col; c <= end_col; c++)
+                {
                     SCell *curr = get_scell_by_coordinates(ss, r, c);
-                    if (curr) {
+                    if (curr)
+                    {
                         int val = get_cell_value(curr->cell);
                         sum += val;
-                        if (val < min) min = val;
-                        if (val > max) max = val;
+                        if (val < min)
+                            min = val;
+                        if (val > max)
+                            max = val;
                         count++;
                     }
                 }
             }
-            switch(formula->function) {
-                case MIN:   return min;
-                case MAX:   return max;
-                case SUM:   return sum;
-                case AVG:   return (count > 0) ? sum / count : 0;
-                case STDEV:
-                    mean = (count > 0) ? (double)sum / count : 0;
-                    for (int r = start_row; r <= end_row; r++) {
-                        for (int c = start_col; c <= end_col; c++) {
-                            SCell *curr = get_scell_by_coordinates(ss, r, c);
-                            if (curr) {
-                                int val = get_cell_value(curr->cell);
-                                variance += (val - mean) * (val - mean);
-                            }
+            switch (formula->function)
+            {
+            case MIN:
+                return min;
+            case MAX:
+                return max;
+            case SUM:
+                return sum;
+            case AVG:
+                return (count > 0) ? sum / count : 0;
+            case STDEV:
+                mean = (count > 0) ? (double)sum / count : 0;
+                for (int r = start_row; r <= end_row; r++)
+                {
+                    for (int c = start_col; c <= end_col; c++)
+                    {
+                        SCell *curr = get_scell_by_coordinates(ss, r, c);
+                        if (curr)
+                        {
+                            int val = get_cell_value(curr->cell);
+                            variance += (val - mean) * (val - mean);
                         }
                     }
-                    if (count > 0)
-                        variance /= count;
-                    stdev = sqrt(variance);
-                    return (int)stdev;
-                default: return 0;
+                }
+                if (count > 0)
+                    variance /= count;
+                stdev = sqrt(variance);
+                return (int)stdev;
+            default:
+                return 0;
             }
         }
     }
     return 0;
+}
+
+#include <ctype.h> // for isspace, isdigit
+
+static bool has_real_operator(const char *s)
+{
+    // 1. Skip leading whitespace
+    while (*s && isspace((unsigned char)*s))
+    {
+        s++;
+    }
+    // 2. If we see a + or - followed by a digit, treat it as a sign for the operand
+    if ((*s == '+' || *s == '-') && isdigit((unsigned char)*(s + 1)))
+    {
+        s++; // skip this sign
+    }
+    // 3. Now look for +, -, *, /
+    for (; *s; s++)
+    {
+        if (strchr("+-*/", *s))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 /* === Main Function: parse_expression ===
@@ -843,45 +1098,58 @@ static int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CO
    parses the expression in exp_buff (which can be a constant, cell reference, arithmetic expression,
    or a function call), and finally evaluates the formula and assigns the result to the target cell.
 */
-void parse_expression(char target_cell_buff[], char exp_buff[], Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
+void parse_expression(char target_cell_buff[],
+                      char exp_buff[],
+                      Spread_Sheet *ss,
+                      TCU_EXIT_CODE *exit_code)
+{
     int target_row, target_col;
     parse_cell_name(target_cell_buff, &target_row, &target_col);
     SCell *target_scell = get_scell_by_coordinates(ss, target_row, target_col);
-    if (!target_scell) {
+    if (!target_scell)
+    {
         *exit_code = OUT_OF_RANGE;
         return;
     }
 
     Cell_Formula *formula = malloc(sizeof(Cell_Formula));
-    if (!formula) {
+    if (!formula)
+    {
         *exit_code = MALLOC_FAILED;
         return;
     }
 
-    /* Decide the expression type based on exp_buff.
-       Function calls are tested first, then arithmetic expressions, then simple values.
-    */
-    if ((strncmp(exp_buff, "MIN(", 4) == 0) ||
-        (strncmp(exp_buff, "MAX(", 4) == 0) ||
-        (strncmp(exp_buff, "AVG(", 4) == 0) ||
-        (strncmp(exp_buff, "SUM(", 4) == 0) ||
-        (strncmp(exp_buff, "STDEV(", 6) == 0) ||
-        (strncmp(exp_buff, "SLEEP(", 6) == 0)) {
+    // Initialize formula memory if desired
+    memset(formula, 0, sizeof(*formula));
+
+    // 1) Check for function call (SUM, MIN, etc. or SLEEP)
+    if (strchr(exp_buff, '(') != NULL)
+    {
         parse_function(exp_buff, formula, ss, exit_code);
     }
-    else if (strchr(exp_buff, '+') || strchr(exp_buff, '-') ||
-             strchr(exp_buff, '*') || strchr(exp_buff, '/')) {
+    // 2) Else, if there is a "real operator" in the expression, parse arithmetic
+    else if (has_real_operator(exp_buff))
+    {
         parse_arithmetic(exp_buff, formula, ss, exit_code);
     }
-    else {
+    // 3) Otherwise parse as a single value or cell reference
+    else
+    {
         parse_value(exp_buff, formula, ss, exit_code);
     }
 
+    // If parsing failed for any reason, free formula and return
+    if (*exit_code != TCU_OK)
+    {
+        free(formula);
+        return;
+    }
+
+    // Assign formula to cell, evaluate, and store the result
     target_scell->cell_formula = formula;
     int result = evaluate_formula(formula, ss, exit_code);
     set_cell_value(target_scell->cell, result);
 }
-
 
 // ------------------------------------------------------------------------- //
 
@@ -959,7 +1227,7 @@ void render_ss(Spread_Sheet *ss, int row, int col)
         // printf("Hi printing row [%d]",i);
         for (int j = col; j < safe_render_dim(col, ss->SS_COLS); j++)
         {
-            sprintf(col_data_buff, "%d", ((ss->arr[i*(ss->SS_COLS)+j]).cell)->value);
+            sprintf(col_data_buff, "%d", ((ss->arr[i * (ss->SS_COLS) + j]).cell)->value);
             // printf("Value at [%d][%d] = %.2f\n",i,j,(((ss->arr[i][j]).cell).value));
             set_out_buff(obuff, col_data_buff);
             printf("%*s%s", MIN_COL_WIDTH, obuff, SPACER);
@@ -1003,103 +1271,129 @@ void set_error_message(TCU_EXIT_CODE exit_code, char error_buff[])
 
 // The terminal control unit for the Spread_Sheet
 // Takes in the Spread_Sheet and allows the user to interact with it
-
-
-
+#include <time.h>
+#include <stdint.h>  // For int64_t if needed
+#include <time.h>
 
 void terminal_control_unit(Spread_Sheet *ss)
 {
-    // ss->arr[i*ss->SS_COLS +j].cell_formula
-
     int row_render = 0, col_render = 0;
     TCU_EXIT_CODE exit_code = TCU_OK;
     SIM_BOOL en_ss_render = TRUE;
     int tcell_row, tcell_col;
 
+    // We'll display how long the last command took, excluding user typing time
+    double command_time = 0.0;
+
+    // For wall-clock timing
+    struct timespec start_ts, end_ts;
+
     char command_buff[100], target_cell_buff[10], exp_buff[100], exit_message_buff[100];
-    
     set_error_message(exit_code, exit_message_buff);
 
     while (1)
     {
-        if (en_ss_render)
-        {
+        // Render as before
+        if (en_ss_render) {
             render_ss(ss, row_render, col_render);
         }
 
-        printf("[0.0] (%s) > ", exit_message_buff);
+        // Print the prompt with last command’s time
+        printf("[%.1f] (%s) > ", command_time, exit_message_buff);
 
-
+        // Read user command (no timing yet—this is user “think/typing” time)
         if (fgets(command_buff, sizeof(command_buff), stdin) != NULL)
         {
-                // Strip trailing newline if present
-            command_buff[strcspn(command_buff, "\n")] = '\0';
+            // Once user has pressed Enter, start timing
+            clock_gettime(CLOCK_MONOTONIC, &start_ts);
+
             if (strcmp(command_buff, "q\n") == 0)
             {
                 printf("Quitting the Spreadsheet Program\n");
                 exit_code = TCU_OK;
+                // End timing for 'q' (optional)
+                clock_gettime(CLOCK_MONOTONIC, &end_ts);
+                command_time = (end_ts.tv_sec - start_ts.tv_sec)
+                             + (end_ts.tv_nsec - start_ts.tv_nsec) / 1e9;
                 break;
             }
             else if (strcmp(command_buff, "w\n") == 0)
             {
                 row_render = next_render_dim(row_render, ss->SS_ROWS, -MAX_RENDER_DIM, &exit_code);
-                
             }
             else if (strcmp(command_buff, "s\n") == 0)
             {
                 row_render = next_render_dim(row_render, ss->SS_ROWS, MAX_RENDER_DIM, &exit_code);
-                
             }
             else if (strcmp(command_buff, "a\n") == 0)
             {
                 col_render = next_render_dim(col_render, ss->SS_COLS, -MAX_RENDER_DIM, &exit_code);
-                
             }
             else if (strcmp(command_buff, "d\n") == 0)
             {
                 col_render = next_render_dim(col_render, ss->SS_COLS, MAX_RENDER_DIM, &exit_code);
             }
-            else if(strcmp(command_buff, "disable_output\n") == 0)
+            else if (strcmp(command_buff, "disable_output\n") == 0)
             {
-                if(en_ss_render)
-                {
+                if (en_ss_render) {
                     en_ss_render = FALSE;
                 }
                 exit_code = TCU_OK;
             }
-            else if(strcmp(command_buff, "enable_output\n") == 0)
+            else if (strcmp(command_buff, "enable_output\n") == 0)
             {
-                if(!en_ss_render)
-                {
+                if (!en_ss_render) {
                     en_ss_render = TRUE;
                 }
                 exit_code = TCU_OK;
             }
-            else if(strncmp(command_buff, "scroll_to ",10) == 0)
+            else if (strncmp(command_buff, "scroll_to ", 10) == 0)
             {
+                sscanf(command_buff, "scroll_to %6s", target_cell_buff);
+                is_valid_cell(target_cell_buff, ss->SS_ROWS, ss->SS_COLS,
+                              &tcell_row, &tcell_col, &exit_code);
 
-                sscanf(command_buff, "scroll_to %6s", &target_cell_buff);
-
-                is_valid_cell(target_cell_buff, ss->SS_ROWS, ss->SS_COLS, &tcell_row, &tcell_col, &exit_code);
-
-                if(exit_code == TCU_OK)
+                if (exit_code == TCU_OK)
                 {
                     row_render = tcell_row;
                     col_render = tcell_col;
                 }
             }
+            else if(strncmp(command_buff, "dbg ", 4) == 0)
+            {
+                // Strip trailing newline
+                command_buff[strcspn(command_buff, "\n")] = '\0';
+                // Debugging command
+                int rows = 0, cols = 0;
+                parse_cell_name(command_buff+4, &rows, &cols);
+                printf("ROW: %d, COL: %d\n", rows, cols);
+                
+                SCell *sc = get_scell_by_coordinates(ss, rows, cols);
+                printf("Value : %d\n",sc->cell->value);
+                debug_print_scell(sc);
+
+            }
             else
             {
-                printf("You entered %s", command_buff);
+                // Strip trailing newline
+                command_buff[strcspn(command_buff, "\n")] = '\0';
+                printf("You entered %s\n", command_buff);
+
                 parse_command(command_buff, target_cell_buff, exp_buff, ss, &exit_code);
-                if(exit_code == TCU_OK)
-                    {
-                        printf("Target Cell: %s, Eval Expression: %s\n", target_cell_buff, exp_buff);
-                        parse_expression(target_cell_buff, exp_buff, ss, &exit_code);
-                    }
-                
-                
+                if (exit_code == TCU_OK)
+                {
+                    printf("Target Cell: %s, Eval Expression: %s\n",
+                           target_cell_buff, exp_buff);
+                    parse_expression(target_cell_buff, exp_buff, ss, &exit_code);
+                }
             }
+
+            // Stop timing right after processing finishes
+            clock_gettime(CLOCK_MONOTONIC, &end_ts);
+
+            // Convert to seconds
+            command_time = (end_ts.tv_sec - start_ts.tv_sec)
+                         + (end_ts.tv_nsec - start_ts.tv_nsec) / 1e9;
         }
         else
         {
@@ -1108,7 +1402,7 @@ void terminal_control_unit(Spread_Sheet *ss)
 
         set_error_message(exit_code, exit_message_buff);
     }
-
-    return;
 }
+
+
 // ------------------------------------------------------------------------- //
