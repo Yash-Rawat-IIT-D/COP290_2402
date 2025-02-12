@@ -83,6 +83,11 @@ void debug_print_scell(SCell *scell)
     {
         printf("Dependent Cell %d: Row: %d, Col: %d, Value: %d\n", i, get_cell_row(scell->dependent_scells->scell_ptrs[i]->cell), get_cell_col(scell->dependent_scells->scell_ptrs[i]->cell), get_cell_value(scell->dependent_scells->scell_ptrs[i]->cell));
     }
+    for (int i = 0; i < scell->precedent_scells->size; i++)
+    {
+        printf("Precedent Cell %d: Row: %d, Col: %d, Value: %d\n", i, get_cell_row(scell->precedent_scells->scell_ptrs[i]->cell), get_cell_col(scell->precedent_scells->scell_ptrs[i]->cell), get_cell_value(scell->precedent_scells->scell_ptrs[i]->cell));
+    }
+    printf("// ------------------------------------------------------------------------- //\n");
     return;
 }
 

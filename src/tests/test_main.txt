@@ -1,0 +1,490 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "../header/cell.h"
+#include "../header/spreadsheet.h"
+#include "../header/parser_ss.h"
+
+// ------------------------------------------------------------------------- //
+
+int main(int argc, char *argv[])
+{
+    // Later we will take the input from the user
+
+    int rows = 100;
+    int cols = 100;
+    SS_ERROR_CODE exit_code_ss_init;
+
+    // Setting the const values of the struct
+    // Expected First Step of Spread Sheet Creation
+
+    if(rows <= 0 || cols <= 0 || rows > MAX_SS_ROWS || cols > MAX_SS_COLS)
+    {
+        if(rows <= 0)
+        {
+            printf("Error in Rows - Number of Rows must be positive\n");
+        }
+        else if(cols <= 0)
+        {
+            printf("Error in Columns - Number of Columns must be positive\n");
+        }
+        else if(rows > MAX_SS_ROWS)
+        {
+            printf("Error in Rows - Number of Rows must be less than %d\n",MAX_SS_ROWS);
+        }
+        else if(cols > MAX_SS_COLS)
+        {
+            printf("Error in Columns - Number of Columns must be less than %d\n",MAX_SS_COLS);
+        }
+
+        return 1;
+    }
+
+
+    Spread_Sheet ss_my = {.SS_ROWS = rows, .SS_COLS = cols};
+    init_spread_sheet(&ss_my,&exit_code_ss_init);
+
+    if(exit_code_ss_init != SS_OK)
+    {
+        printf("Error in Spread Sheet Initialization\n");
+        return 1;
+    }
+
+    // printf("Rows: %d, Cols: %d\n", ss_my.SS_ROWS ,ss_my.SS_COLS);
+    // terminal_control_unit(&ss_my);
+
+    return 0;
+}
+
+
+int main(int argc, char *argv[])
+{
+    // Later we will take the input from the user
+
+    int rows = 100;
+    int cols = 100;
+    SS_ERROR_CODE exit_code_ss_init;
+
+    // Setting the const values of the struct
+    // Expected First Step of Spread Sheet Creation
+
+    if(rows <= 0 || cols <= 0 || rows > MAX_SS_ROWS || cols > MAX_SS_COLS)
+    {
+        if(rows <= 0)
+        {
+            printf("Error in Rows - Number of Rows must be positive\n");
+        }
+        else if(cols <= 0)
+        {
+            printf("Error in Columns - Number of Columns must be positive\n");
+        }
+        else if(rows > MAX_SS_ROWS)
+        {
+            printf("Error in Rows - Number of Rows must be less than %d\n",MAX_SS_ROWS);
+        }
+        else if(cols > MAX_SS_COLS)
+        {
+            printf("Error in Columns - Number of Columns must be less than %d\n",MAX_SS_COLS);
+        }
+
+        return 1;
+    }
+
+
+    Spread_Sheet ss_my = {.SS_ROWS = rows, .SS_COLS = cols};
+    init_spread_sheet(&ss_my,&exit_code_ss_init);
+
+    if(exit_code_ss_init != SS_OK)
+    {
+        printf("Error in Spread Sheet Initialization\n");
+        return 1;
+    }
+
+    // printf("Rows: %d, Cols: %d\n", ss_my.SS_ROWS ,ss_my.SS_COLS);
+    // terminal_control_unit(&ss_my);
+
+    return 0;
+}
+
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "../header/cell.h"
+#include "../header/spreadsheet.h"
+#include "../header/parser_ss.h"
+
+// ------------------------------------------------------------------------- //
+
+int main(int argc, char *argv[])
+{
+    // Later we will take the input from the user
+
+    if(argc != 3)
+    {
+        printf("Error - Usage of form : %s <rows> <cols>\n",argv[0]);
+        return 1;
+    }
+
+    int rows = (int) strtol(argv[1], NULL, 10);
+    int cols = (int) strtol(argv[2], NULL, 10);
+    SS_EXIT_CODE exit_code_ss_init;
+
+    // Setting the const values of the struct
+    // Expected First Step of Spread Sheet Creation
+
+    if(rows <= 0 || cols <= 0 || rows > MAX_SS_ROWS || cols > MAX_SS_COLS)
+    {
+        if(rows <= 0)
+        {
+            printf("Error in Rows - Number of Rows must be positive\n");
+        }
+        else if(cols <= 0)
+        {
+            printf("Error in Columns - Number of Columns must be positive\n");
+        }
+        else if(rows > MAX_SS_ROWS)
+        {
+            printf("Error in Rows - Number of Rows must be less than %d\n",MAX_SS_ROWS);
+        }
+        else if(cols > MAX_SS_COLS)
+        {
+            printf("Error in Columns - Number of Columns must be less than %d\n",MAX_SS_COLS);
+        }
+
+        return 1;
+    }
+
+
+    Spread_Sheet ss_my = {.SS_ROWS = rows, .SS_COLS = cols};
+    init_spread_sheet(&ss_my,&exit_code_ss_init);
+
+    if(exit_code_ss_init != SS_OK)
+    {
+        printf("Error in Spread Sheet Initialization\n");
+        return 1;
+    }
+
+    // printf("Rows: %d, Cols: %d\n", ss_my.SS_ROWS ,ss_my.SS_COLS);
+    // terminal_control_unit(&ss_my);
+    // return 0;
+
+    printf("Value of Cell at 0,0 : %d\n", (ss_my.arr[0*ss_my.SS_COLS+0].cell)->value);
+
+    ss_my.arr[0*ss_my.SS_COLS+0].dependent_scells->scell_ptrs[0] = &(ss_my.arr[1*ss_my.SS_COLS+0]);
+    ss_my.arr[0*ss_my.SS_COLS+0].dependent_scells->scell_ptrs[1] = &(ss_my.arr[1*ss_my.SS_COLS+1]);
+    ss_my.arr[0*ss_my.SS_COLS+0].dependent_scells->scell_ptrs[2] = &(ss_my.arr[1*ss_my.SS_COLS+2]);
+    ss_my.arr[0*ss_my.SS_COLS+0].dependent_scells->scell_ptrs[3] = &(ss_my.arr[2*ss_my.SS_COLS+1]);
+    ss_my.arr[0*ss_my.SS_COLS+0].dependent_scells->scell_ptrs[3] = &(ss_my.arr[2*ss_my.SS_COLS+1]);
+    ss_my.arr[0*ss_my.SS_COLS+0].dependent_scells->scell_ptrs[3] = &(ss_my.arr[2*ss_my.SS_COLS+1]);
+    ss_my.arr[0*ss_my.SS_COLS+0].dependent_scells->scell_ptrs[3] = &(ss_my.arr[2*ss_my.SS_COLS+1]);
+
+
+    for(int i = 1; i < 5; i++)
+    {
+        for(int j = 1; j < 5; j++)
+        {
+            push_back_scell_ptrs(ss_my.arr[0*ss_my.SS_COLS+0].dependent_scells, &(ss_my.arr[i*ss_my.SS_COLS+j]));
+
+        }
+    }
+    // ss_my.arr[0*ss_my.SS_COLS+0].dependent_scells->size = 4;
+
+    // debug_print_scell();
+
+    SIM_BOOL cycle_exists = FALSE;
+    Stack_SCell visitedStack;
+    init_stack(&visitedStack, 10);
+
+    dfs_cycle_check(&ss_my.arr[0*ss_my.SS_COLS+0],&ss_my.arr[6*ss_my.SS_COLS+4],&ss_my.arr[6*ss_my.SS_COLS+40],&visitedStack,&cycle_exists);
+    // (ss_my.arr[0*ss_my.SS_COLS+0].cell)->value ;
+    printf("\n");
+    if(cycle_exists == TRUE)
+    {
+        printf("Cycle Exists\n");
+    }
+    else
+    {
+        printf("Cycle Does Not Exist\n");
+    }
+    pop_and_unmark(&visitedStack);
+
+    return 0;
+}
+
+// ------------------------------------------------------------------------- //
+
+
+int main(int argc, char *argv[])
+{
+    // Later we will take the input from the user
+
+    if(argc != 3)
+    {
+        printf("Error - Usage of form : %s <rows> <cols>\n",argv[0]);
+        return 1;
+    }
+
+    int rows = (int) strtol(argv[1], NULL, 10);
+    int cols = (int) strtol(argv[2], NULL, 10);
+    SS_EXIT_CODE exit_code_ss_init;
+
+    // Setting the const values of the struct
+    // Expected First Step of Spread Sheet Creation
+
+    if(rows <= 0 || cols <= 0 || rows > MAX_SS_ROWS || cols > MAX_SS_COLS)
+    {
+        if(rows <= 0)
+        {
+            printf("Error in Rows - Number of Rows must be positive\n");
+        }
+        else if(cols <= 0)
+        {
+            printf("Error in Columns - Number of Columns must be positive\n");
+        }
+        else if(rows > MAX_SS_ROWS)
+        {
+            printf("Error in Rows - Number of Rows must be less than %d\n",MAX_SS_ROWS);
+        }
+        else if(cols > MAX_SS_COLS)
+        {
+            printf("Error in Columns - Number of Columns must be less than %d\n",MAX_SS_COLS);
+        }
+
+        return 1;
+    }
+
+
+    Spread_Sheet ss_my = {.SS_ROWS = rows, .SS_COLS = cols};
+    init_spread_sheet(&ss_my,&exit_code_ss_init);
+
+    if(exit_code_ss_init != SS_OK)
+    {
+        printf("Error in Spread Sheet Initialization\n");
+        return 1;
+    }
+
+    // printf("Rows: %d, Cols: %d\n", ss_my.SS_ROWS ,ss_my.SS_COLS);
+    // terminal_control_unit(&ss_my);
+    // return 0;
+
+    printf("Value of Cell at 0,0 : %d\n", (ss_my.arr[0*ss_my.SS_COLS+0].cell)->value);
+
+    SCell *scell_0_0 = get_scell_by_coordinates(&ss_my, 0, 0);
+    SCell *scell_0_1 = get_scell_by_coordinates(&ss_my, 0, 1);
+    
+    SCell *scell_1_0 = get_scell_by_coordinates(&ss_my, 1, 0);
+    SCell *scell_1_1 = get_scell_by_coordinates(&ss_my, 1, 1);
+    SCell *scell_1_2 = get_scell_by_coordinates(&ss_my, 1, 2);
+    SCell *scell_1_3 = get_scell_by_coordinates(&ss_my, 1, 3);
+
+    SCell *scell_2_0 = get_scell_by_coordinates(&ss_my, 2, 0);
+    SCell *scell_2_1 = get_scell_by_coordinates(&ss_my, 2, 1);
+
+    SCell *scell_3_0 = get_scell_by_coordinates(&ss_my, 3, 0);
+
+
+    // TBD Automatically when parsing any given type of formula from the user
+    // For now, we are manually setting the values
+
+    TCU_EXIT_CODE common_ec;
+
+    scell_0_0->cell_formula->valid_exp_type = VALUE;
+    scell_0_0->cell_formula->is_constant = TRUE;
+    scell_0_0->cell_formula->value = 100;
+
+    scell_0_0->cell->value = evaluate_formula(scell_0_0->cell_formula,&ss_my,&common_ec);
+   
+    
+
+
+    scell_0_1->cell_formula->valid_exp_type = VALUE;
+    scell_0_1->cell_formula->is_constant = TRUE;
+    scell_0_1->cell_formula->value = 5;
+    
+    scell_0_1->cell->value = evaluate_formula(scell_0_1->cell_formula,&ss_my,&common_ec);
+   
+    
+
+    scell_1_0->cell_formula->valid_exp_type = VALUE_OP_VALUE;
+    scell_1_0->cell_formula->arithmetic_op = MULTIPLICATION;
+    scell_1_0->cell_formula->is_left_value_constant = FALSE;
+    scell_1_0->cell_formula->left_cell = scell_0_0->cell;
+    scell_1_0->cell_formula->is_right_value_constant = FALSE;
+    scell_1_0->cell_formula->right_cell = scell_0_1->cell;
+
+    scell_1_0->cell->value = evaluate_formula(scell_1_0->cell_formula,&ss_my,&common_ec);
+    push_back_scell_ptrs((scell_0_0->dependent_scells),scell_1_0);
+    push_back_scell_ptrs((scell_0_1->dependent_scells),scell_1_0);
+    push_back_scell_ptrs((scell_1_0->precedent_scells),scell_0_0);
+    push_back_scell_ptrs((scell_1_0->precedent_scells),scell_0_1);
+
+   
+    
+
+
+    scell_1_1->cell_formula->valid_exp_type = VALUE_OP_VALUE;
+    scell_1_1->cell_formula->arithmetic_op = ADDITION;
+    scell_1_1->cell_formula->is_left_value_constant = FALSE;
+    scell_1_1->cell_formula->left_cell = scell_0_0->cell;
+    scell_1_1->cell_formula->is_right_value_constant = FALSE;
+    scell_1_1->cell_formula->right_cell = scell_0_1->cell;
+
+    scell_1_1->cell->value = evaluate_formula(scell_1_1->cell_formula,&ss_my,&common_ec);
+    push_back_scell_ptrs((scell_0_0->dependent_scells),scell_1_1);
+    push_back_scell_ptrs((scell_0_1->dependent_scells),scell_1_1);
+    push_back_scell_ptrs((scell_1_1->precedent_scells),scell_0_0);
+    push_back_scell_ptrs((scell_1_1->precedent_scells),scell_0_1);
+
+    
+    
+
+    scell_1_2->cell_formula->valid_exp_type = VALUE_OP_VALUE;
+    scell_1_2->cell_formula->arithmetic_op = DIVISION;
+    scell_1_2->cell_formula->is_left_value_constant = FALSE;
+    scell_1_2->cell_formula->left_cell = scell_0_0->cell;
+    scell_1_2->cell_formula->is_right_value_constant = FALSE;
+    scell_1_2->cell_formula->right_cell = scell_0_1->cell;
+
+    scell_1_2->cell->value = evaluate_formula(scell_1_2->cell_formula,&ss_my,&common_ec);
+    push_back_scell_ptrs((scell_0_0->dependent_scells),scell_1_2);
+    push_back_scell_ptrs((scell_0_1->dependent_scells),scell_1_2);
+    push_back_scell_ptrs((scell_1_2->precedent_scells),scell_0_0);
+    push_back_scell_ptrs((scell_1_2->precedent_scells),scell_0_1);
+
+   
+    
+
+
+    scell_1_3->cell_formula->valid_exp_type = VALUE_OP_VALUE;
+    scell_1_3->cell_formula->arithmetic_op = SUBTRACTION;
+    scell_1_3->cell_formula->is_left_value_constant = FALSE;
+    scell_1_3->cell_formula->left_cell = scell_0_0->cell;
+    scell_1_3->cell_formula->is_right_value_constant = FALSE;
+    scell_1_3->cell_formula->right_cell = scell_0_1->cell;
+    
+    scell_1_3->cell->value = evaluate_formula(scell_1_3->cell_formula,&ss_my,&common_ec);
+    push_back_scell_ptrs((scell_0_0->dependent_scells),scell_1_3);
+    push_back_scell_ptrs((scell_0_1->dependent_scells),scell_1_3);
+    push_back_scell_ptrs((scell_1_3->precedent_scells),scell_0_0);
+    push_back_scell_ptrs((scell_1_3->precedent_scells),scell_0_1);
+
+
+
+    
+    
+
+    scell_2_0->cell_formula->valid_exp_type = VALUE_OP_VALUE;
+    scell_2_0->cell_formula->arithmetic_op = MULTIPLICATION;
+    scell_2_0->cell_formula->is_left_value_constant = TRUE;
+    scell_2_0->cell_formula->left_value = 2;
+    scell_2_0->cell_formula->is_right_value_constant = FALSE;
+    scell_2_0->cell_formula->right_cell = scell_1_2->cell;
+
+    scell_2_0->cell->value = evaluate_formula(scell_2_0->cell_formula,&ss_my,&common_ec);
+    push_back_scell_ptrs((scell_1_2->dependent_scells),scell_2_0);
+    push_back_scell_ptrs((scell_2_0->precedent_scells),scell_1_2);
+
+   
+    
+
+    scell_2_1->cell_formula->valid_exp_type = VALUE_OP_VALUE;
+    scell_2_1->cell_formula->arithmetic_op = MULTIPLICATION;
+    scell_2_1->cell_formula->is_left_value_constant = TRUE;
+    scell_2_1->cell_formula->left_value = 3;
+    scell_2_1->cell_formula->is_right_value_constant = FALSE;
+    scell_2_1->cell_formula->right_cell = scell_1_3->cell;
+
+
+    scell_2_1->cell->value = evaluate_formula(scell_2_1->cell_formula,&ss_my,&common_ec);
+    push_back_scell_ptrs((scell_1_3->dependent_scells),scell_2_1);
+    push_back_scell_ptrs((scell_2_1->precedent_scells),scell_1_3);
+
+
+    
+   
+    
+    
+    scell_3_0->cell_formula->valid_exp_type = VALUE_OP_VALUE;
+    scell_3_0->cell_formula->arithmetic_op = ADDITION;
+    scell_3_0->cell_formula->is_left_value_constant = FALSE;
+    scell_3_0->cell_formula->left_cell = scell_2_0->cell;
+    scell_3_0->cell_formula->is_right_value_constant = FALSE;
+    scell_3_0->cell_formula->right_cell = scell_2_1->cell;
+
+    scell_3_0->cell->value = evaluate_formula(scell_3_0->cell_formula,&ss_my,&common_ec);
+    push_back_scell_ptrs((scell_2_0->dependent_scells),scell_3_0);
+    push_back_scell_ptrs((scell_2_1->dependent_scells),scell_3_0);
+    push_back_scell_ptrs((scell_3_0->precedent_scells),scell_2_0);
+    push_back_scell_ptrs((scell_3_0->precedent_scells),scell_2_1);
+
+    
+    debug_print_scell(scell_0_0);
+    debug_print_scell(scell_0_1);
+    debug_print_scell(scell_1_0);
+    debug_print_scell(scell_1_1);
+    debug_print_scell(scell_1_2);
+    debug_print_scell(scell_1_3);
+    debug_print_scell(scell_2_0);
+    debug_print_scell(scell_2_1);
+    debug_print_scell(scell_3_0);
+    
+    printf("\n");
+
+    printf("\nSimulating update to cell (0,0)...\n");
+
+    /* Backup the original formula value */
+    int original_value = scell_0_0->cell_formula->value;
+
+    /* Change the formula to a new constant value, e.g., 200 */
+    scell_0_0->cell_formula->value = 200;
+    scell_0_0->cell_formula->valid_exp_type = VALUE;
+    scell_0_0->cell_formula->is_constant = TRUE;
+    scell_0_0->cell->value = evaluate_formula(scell_0_0->cell_formula, &ss_my, &common_ec);
+    printf("Cell (0,0) updated value: %d\n", scell_0_0->cell->value);
+
+    /* Perform a cyclic dependency check. Assume check_cycle returns non-zero if a cycle is found */
+    // if(check_cycle(&ss_my, scell_0_0))
+    // {
+    //     printf("Cycle detected when updating cell (0,0). Reverting the change.\n");
+    //     /* Restore original formula and value */
+    //     scell_0_0->cell_formula->value = original_value;
+    //     scell_0_0->cell->value = evaluate_formula(scell_0_0->cell_formula, &ss_my, &common_ec);
+    // }
+    // else
+    // {
+    //     printf("No cycle detected. Propagating changes...\n");
+    //     /* Propagate the new value to all dependent cells.
+    //        Assume propagate_update traverses dependent cells and re-evaluates them */
+    //     propagate_update(&ss_my, scell_0_0);
+    // }
+
+    Stack_SCell visitedStack;
+    init_stack(&visitedStack, 10);
+
+    remove_old_dependencies(scell_0_0);
+
+// ------------------------------------------------------------------------- //
+
+    dfs_topological(scell_0_0, &visitedStack);
+    
+    pop_and_update(&visitedStack, &ss_my, &common_ec);
+
+    /* Print out the updated state of all involved cells */
+    debug_print_scell(scell_0_0);
+    debug_print_scell(scell_1_0);
+    debug_print_scell(scell_1_1);
+    debug_print_scell(scell_1_2);
+    debug_print_scell(scell_1_3);
+    debug_print_scell(scell_2_0);
+    debug_print_scell(scell_2_1);
+    debug_print_scell(scell_3_0);
+
+
+    return 0;
+}
+
+
+// ------------------------------------------------------------------------- //

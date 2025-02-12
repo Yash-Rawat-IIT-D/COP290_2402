@@ -468,25 +468,8 @@ void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[]
     regfree(&regex);
 }
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <regex.h>
-// #include <math.h>
-#include <unistd.h>
-#include "scell.h"      // Contains the definition of SCell and related functions
-#include "cell.h"       // Contains Cell, Cell_Range, and Cell_Formula definitions
-#include "constants.h"  // Contains definitions for TCU_EXIT_CODE, SIM_BOOL, VALID_EXP, ARITHMETIC_OP, FUNCTION, etc.
-
-/*
-   NOTE:
-   - The function get_scell_by_coordinates() must be implemented in your project.
-   - Your in-place trim_whitespace(char *str) function is assumed to be available.
-*/
-
 /* --- Helper: Convert a cell name (e.g. "C1") into row and column numbers --- */
-static void parse_cell_name(const char *cell_str, int *row, int *col) {
+void parse_cell_name(const char *cell_str, int *row, int *col) {
     regex_t regex;
     regmatch_t matches[3]; // Group 1: letters, Group 2: digits
     if (regcomp(&regex, "^([A-Z]+)([0-9]+)$", REG_EXTENDED) != 0) {
@@ -522,7 +505,7 @@ static void parse_cell_name(const char *cell_str, int *row, int *col) {
          Uses your in-place trim_whitespace() after duplicating the operand.
          If constant, stores its value in *value; if a cell reference, sets *cell accordingly.
 */
-static void parse_operand(const char *operand,
+void parse_operand(const char *operand,
                           SIM_BOOL *is_constant,
                           int *value,
                           Cell **cell,
@@ -558,13 +541,13 @@ static void parse_operand(const char *operand,
 }
 
 /* --- Helper: Parse a simple value expression (constant or cell reference) --- */
-static void parse_value(const char *exp, Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
+void parse_value(const char *exp, Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
     formula->valid_exp_type = VALUE;
     parse_operand(exp, &formula->is_constant, &formula->value, &formula->cell, ss, exit_code);
 }
 
 /* --- Helper: Parse an arithmetic expression (e.g., "A1+23") --- */
-static void parse_arithmetic(const char *exp, Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
+void parse_arithmetic(const char *exp, Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
     formula->valid_exp_type = VALUE_OP_VALUE;
     const char *ops = "+-*/";
     int op_index = -1;
@@ -604,7 +587,7 @@ static void parse_arithmetic(const char *exp, Cell_Formula *formula, Spread_Shee
 /* --- Helper: Parse a range string (e.g., "A1:A20" or "A1:D10")
          Returns an allocated Cell_Range structure.
 */
-static Cell_Range *parse_range(const char *range_str, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
+Cell_Range *parse_range(const char *range_str, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
     Cell_Range *range = malloc(sizeof(Cell_Range));
     if (!range) {
         *exit_code = MALLOC_FAILED;
@@ -654,7 +637,7 @@ static Cell_Range *parse_range(const char *range_str, Spread_Sheet *ss, TCU_EXIT
          Supported functions: MIN, MAX, AVG, SUM, STDEV (which operate on a range)
          and SLEEP (which takes a value).
 */
-static void parse_function(const char *exp, Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
+void parse_function(const char *exp, Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
     formula->valid_exp_type = FUNCT_ON_RANGE;
     const char *open_paren = strchr(exp, '(');
     const char *close_paren = strrchr(exp, ')');
@@ -731,7 +714,7 @@ static void parse_function(const char *exp, Cell_Formula *formula, Spread_Sheet 
 }
 
 /* Custom implementation of absolute value for doubles */
-static double my_fabs(double x) {
+double my_fabs(double x) {
     return (x < 0.0) ? -x : x;
 }
 
@@ -761,7 +744,7 @@ double sqrt(double x) {
          over a range when needed.  
 */
 
-static int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
+int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
     if (formula->valid_exp_type == VALUE) {
         if (formula->is_constant == TRUE)
             return formula->value;
@@ -769,8 +752,12 @@ static int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CO
             return get_cell_value(formula->cell);
     }
     else if (formula->valid_exp_type == VALUE_OP_VALUE) {
+        
+        // printf("Hi\n");
         int left = formula->is_left_value_constant == TRUE ? formula->left_value : get_cell_value(formula->left_cell);
         int right = formula->is_right_value_constant == TRUE ? formula->right_value : get_cell_value(formula->right_cell);
+        // printf("Hi_2\n");
+
         switch (formula->arithmetic_op) {
             case ADDITION:       return left + right;
             case SUBTRACTION:    return left - right;
@@ -840,6 +827,19 @@ static int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CO
 }
 
 
+void pop_and_update(Stack_SCell * topo_sort_st, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code)
+{
+    while(topo_sort_st->top >= 0)
+    {
+        SCell *node = pop_stack(topo_sort_st);
+        node->visited = FALSE;
+        node->cell->value = evaluate_formula(node->cell_formula, ss, exit_code);
+        // debug_print_scell(node);
+    }
+    return;
+
+}
+
 /* === Main Function: parse_expression ===
    This function extracts the target cell (using the cell name from target_cell_buff),
    parses the expression in exp_buff (which can be a constant, cell reference, arithmetic expression,
@@ -892,44 +892,6 @@ void parse_expression(char target_cell_buff[], char exp_buff[], Spread_Sheet *ss
     int result = evaluate_formula(formula, ss, exit_code);
     set_cell_value(target_scell->cell, result);
 }
-
-
-// Helper: Recalculate the cell's value based on its formula.
-// You might already have an evaluate_formula() function; here we wrap it in recalc_cell.
-static void recalc_cell(SCell *node, Spread_Sheet *ss) {
-    if (node->cell_formula == NULL)
-         return;
-    TCU_EXIT_CODE exit_code = TCU_OK;
-    int new_value = evaluate_formula(node->cell_formula, ss, &exit_code);
-    if (exit_code == TCU_OK) {
-         set_cell_value(node->cell, new_value);
-    } else {
-         printf("Error recalculating cell at row %d, col %d\n",
-                get_cell_row(node->cell), get_cell_col(node->cell));
-    }
-}
-
-// (3) Update Propagation  
-// Perform a DFS-based topological sort starting at the target cell and then update cell values in order.
-void update_propagation(SCell *target, Spread_Sheet *ss) {
-    Stack_SCell stack;
-    if (init_stack(&stack, 10) != Q_OK) {
-         fprintf(stderr, "Error: Could not initialize update stack.\n");
-         return;
-    }
-    
-    // Build topological order starting from the target cell.
-    dfs_topological(target, &stack);
-    
-    // Pop nodes from the stack in topological order and recalc cell values.
-    while (stack.top >= 0) {
-         SCell *node = pop_stack(&stack);
-         node->visited = FALSE;  // Reset the visited flag.
-         recalc_cell(node, ss);
-    }
-    free_stack(&stack);
-}
-
 
 // ------------------------------------------------------------------------- //
 

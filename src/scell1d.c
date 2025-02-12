@@ -446,13 +446,16 @@ void add_new_dependencies(SCell *target, SCell1D *new_precedents) {
 // Helper: DFS-based topological sort.
 // Recursively visits dependent cells and pushes nodes (after processing) onto the stack.
 void dfs_topological(SCell *node, Stack_SCell *stack) {
-    if (node->visited)
+    if (node->visited == TRUE)
          return;
+
     node->visited = TRUE;
+    
     for (int i = 0; i < node->dependent_scells->size; i++) {
          SCell *dep = node->dependent_scells->scell_ptrs[i];
          dfs_topological(dep, stack);
     }
+    
     push_stack(stack, node);
 }
 
