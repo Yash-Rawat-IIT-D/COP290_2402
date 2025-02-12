@@ -9,7 +9,7 @@
 void init_scell_ptrs(SCell1D *arr, int init_capacity, int init_size, SS_EXIT_CODE *exit_code)
 {
     arr->size = init_size;
-    arr->capacity = init_capacity; 
+    arr->capacity = init_capacity;
 
     arr->scell_ptrs = (SCell **)malloc(arr->capacity * sizeof(SCell *));
 
@@ -21,7 +21,7 @@ void init_scell_ptrs(SCell1D *arr, int init_capacity, int init_size, SS_EXIT_COD
         return;
     }
 
-    *(exit_code) = SS_OK; 
+    *(exit_code) = SS_OK;
     return;
 }
 
@@ -29,23 +29,24 @@ void init_scell_ptrs(SCell1D *arr, int init_capacity, int init_size, SS_EXIT_COD
 
 void resize_scell_ptrs(SCell1D *arr, int new_capacity)
 {
-    arr->scell_ptrs = (SCell **)realloc(arr->scell_ptrs, arr->capacity * sizeof(SCell *));
+    
+    SCell **new_scell_ptrs = (SCell **)realloc(arr->scell_ptrs, new_capacity * sizeof(SCell *));
+    
 
-    if (arr->scell_ptrs == NULL)
+    if (new_scell_ptrs == NULL)
     {
         printf("Memory reallocation failed - Reallocating Node1D Memory\n");
         exit(1);
     }
-
+    arr->scell_ptrs = new_scell_ptrs;
     arr->capacity = new_capacity;
-    
 }
 
 // ------------------------------------------------------------------------- //
 
 void push_back_scell_ptrs(SCell1D *arr, SCell *scell_ptr)
 {
-    if(scell_ptr == NULL)
+    if (scell_ptr == NULL)
     {
         printf("Invalid : Cell Pointer is NULL\n");
         return;
@@ -67,21 +68,23 @@ void pop_back_scell_ptrs(SCell1D *arr)
     if (arr->size > 0)
     {
         arr->size--;
-        if (arr->size > 0 && arr->size <= arr->capacity / 2 && arr->capacity > LO_RESIZE_THRESHOLD )
+        if (arr->size > 0 && arr->size <= arr->capacity / 4 && arr->capacity > LO_RESIZE_THRESHOLD)
         {
             // Resize if the array is less than half full, but not if the capacity is less than the threshold
-            resize_scell_ptrs(arr, (arr->capacity) / 2); 
+            resize_scell_ptrs(arr, (arr->capacity) / 2);
         }
     }
     else
     {
-        printf("Array is empty, cannot pop\n");
+        fprintf(stderr,"Array is empty, cannot pop\n");
     }
+
+
 }
 
 // ------------------------------------------------------------------------- //
 
-SCell * at_scell_ptrs(SCell1D *arr, int index)
+SCell *at_scell_ptrs(SCell1D *arr, int index)
 {
     if (index < 0 || index >= arr->size)
     {
@@ -97,7 +100,7 @@ SCell * at_scell_ptrs(SCell1D *arr, int index)
 void free_scell_ptrs(SCell1D *arr)
 {
     // Freeing the memory allocated to the array, if it is not NULL
-    if(arr->scell_ptrs != NULL)
+    if (arr->scell_ptrs != NULL)
     {
         free(arr->scell_ptrs);
         arr->scell_ptrs = NULL;
@@ -105,12 +108,12 @@ void free_scell_ptrs(SCell1D *arr)
 
     // Reseting the size and capacity of the array
     arr->size = 0;
-    arr->capacity = 0;  
+    arr->capacity = 0;
 }
 
 // ------------------------------------------------------------------------- //
 
-Queue_SCell * create_queue(int intial_capacity, Q_EXIT_CODE *exit_code)
+Queue_SCell *create_queue(int intial_capacity, Q_EXIT_CODE *exit_code)
 {
     Queue_SCell *q = (Queue_SCell *)malloc(sizeof(Queue_SCell));
 
@@ -120,13 +123,13 @@ Queue_SCell * create_queue(int intial_capacity, Q_EXIT_CODE *exit_code)
         // exit(1);
         *(exit_code) = MALLOC_QUEUE;
         return NULL;
-    }   
-    
+    }
+
     q->size = 0;
     q->front = 0;
     q->rear = -1;
     q->capacity = intial_capacity;
-    
+
     q->queue = (SCell **)malloc(q->capacity * sizeof(SCell *));
 
     if (q->queue == NULL)
@@ -145,8 +148,9 @@ void enqueue(Queue_SCell *q, SCell *scell_ptr, Q_EXIT_CODE *exit_code)
 {
     if (q->size == q->capacity)
     {
-        printf("Queue is full, cannot enqueue\n");
-        *(exit_code) = FULL_QUEUE;
+        // printf("Queue is full, cannot enqueue\n");
+        // *(exit_code) = FULL_QUEUE;
+        resize_q(q, q->capacity * 2, exit_code);
         return;
     }
 
@@ -158,7 +162,7 @@ void enqueue(Queue_SCell *q, SCell *scell_ptr, Q_EXIT_CODE *exit_code)
     return;
 }
 
-SCell * dequeue(Queue_SCell *q, Q_EXIT_CODE *exit_code)
+SCell *dequeue(Queue_SCell *q, Q_EXIT_CODE *exit_code)
 {
     if (q->size == 0)
     {
@@ -173,10 +177,9 @@ SCell * dequeue(Queue_SCell *q, Q_EXIT_CODE *exit_code)
 
     *(exit_code) = Q_OK;
     return scell_ptr;
-   
 }
 
-SCell * front(Queue_SCell *q, Q_EXIT_CODE *exit_code)
+SCell *front(Queue_SCell *q, Q_EXIT_CODE *exit_code)
 {
     if (q->size == 0)
     {
@@ -187,10 +190,9 @@ SCell * front(Queue_SCell *q, Q_EXIT_CODE *exit_code)
 
     *(exit_code) = Q_OK;
     return q->queue[q->front];
-   
 }
 
-SCell * rear(Queue_SCell *q, Q_EXIT_CODE *exit_code)
+SCell *rear(Queue_SCell *q, Q_EXIT_CODE *exit_code)
 {
     if (q->size == 0)
     {
@@ -201,7 +203,6 @@ SCell * rear(Queue_SCell *q, Q_EXIT_CODE *exit_code)
 
     *(exit_code) = Q_OK;
     return q->queue[q->rear];
-
 }
 
 void resize_q(Queue_SCell *q, int new_capacity, Q_EXIT_CODE *exit_code)
@@ -217,10 +218,10 @@ void resize_q(Queue_SCell *q, int new_capacity, Q_EXIT_CODE *exit_code)
     int qu_old_size = q->size;
 
     SCell **new_queue = (SCell **)malloc(new_capacity * sizeof(SCell *));
-    
+
     if (new_queue == NULL)
     {
-        
+
         // printf("Memory allocation failed - Allocating New Queue Memory\n");
         // exit(1);
         *(exit_code) = MALLOC_QUEUE;
@@ -238,7 +239,7 @@ void resize_q(Queue_SCell *q, int new_capacity, Q_EXIT_CODE *exit_code)
     q->front = 0;
     q->rear = qu_old_size - 1;
     q->capacity = new_capacity;
-    
+    return;
 }
 
 void free_queue(Queue_SCell *q, Q_EXIT_CODE *exit_code)
@@ -257,3 +258,209 @@ void free_queue(Queue_SCell *q, Q_EXIT_CODE *exit_code)
 }
 
 // ------------------------------------------------------------------------- //
+
+int init_stack(Stack_SCell *stack, int capacity)
+{
+    if (capacity <= 0)
+    {
+        fprintf(stderr, "Error: Invalid stack capacity.\n");
+        return MALLOC_QUEUE; // or another error code defined in constants.h
+    }
+    stack->items = (SCell**)malloc(capacity * sizeof(SCell *));
+    if (stack->items == NULL)
+    {
+        fprintf(stderr, "Error: Memory allocation failed for stack.\n");
+        return MALLOC_QUEUE;
+    }
+    stack->top = -1;
+    stack->capacity = capacity;
+    return Q_OK;
+}
+
+int push_stack(Stack_SCell *stack, SCell *item)
+{
+    if (stack->top >= stack->capacity - 1)
+    {
+        // Resize the stack if needed
+        int new_capacity = stack->capacity * 2;
+        SCell **new_items = (SCell **)realloc(stack->items, new_capacity * sizeof(SCell *));
+        if (new_items == NULL)
+        {
+            fprintf(stderr, "Error: Failed to resize stack.\n");
+            return MALLOC_QUEUE;
+        }
+        stack->items = new_items;
+        stack->capacity = new_capacity;
+    }
+    stack->items[++stack->top] = item;
+    return Q_OK;
+}
+
+SCell *pop_stack(Stack_SCell *stack)
+{
+    if (stack->top < 0)
+    {
+        fprintf(stderr, "Error: Attempted to pop from an empty stack.\n");
+        return NULL;
+    }
+    return stack->items[stack->top--];
+}
+
+void free_stack(Stack_SCell *stack)
+{
+    if (stack->items != NULL)
+    {
+        free(stack->items);
+        stack->items = NULL;
+    }
+    stack->top = -1;
+    stack->capacity = 0;
+}
+
+// ------------------------------------------------------------------------- //
+
+
+
+// ------------------------------------------------------------------------- //
+
+SIM_BOOL is_node_in_target(SCell *node, SCell *target_node_tl, SCell *target_node_br)
+{
+    Cell * node_cell = node->cell;
+    Cell * tnode_tl_cell = target_node_tl->cell;
+    Cell * tnode_br_cell = target_node_br->cell;
+    
+    if((node_cell->row >= tnode_tl_cell->row) && (node_cell->row <= tnode_br_cell->row))
+    {
+        if((node_cell->col >= tnode_tl_cell->col) && (node_cell->col <= tnode_br_cell->col))
+        {
+            return TRUE;
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
+    else
+    {
+        return FALSE;
+    }
+}
+
+void dfs_cycle_check(SCell *node, SCell *target_node_tl, SCell *target_node_br, Stack_SCell *visitedStack, SIM_BOOL *cycle_exists)
+{
+    if(node->visited == TRUE)
+    {
+        return;
+    }
+
+    node->visited = TRUE;
+
+    printf("Visiting Node: ");
+    debug_print_scell(node);
+
+    if(is_node_in_target(node, target_node_tl, target_node_br) == TRUE)
+    {
+        push_stack(visitedStack, node);
+        *cycle_exists = TRUE;
+        return;
+    }
+    else if(node->dependent_scells->size == 0)
+    {
+        push_stack(visitedStack, node);
+        return;
+    }
+
+
+    for(int i = 0; i < node->dependent_scells->size; i++)
+    {
+        dfs_cycle_check(node->dependent_scells->scell_ptrs[i], target_node_tl, target_node_br, visitedStack, cycle_exists);
+
+        if(*cycle_exists == TRUE)
+        {
+            push_stack(visitedStack, node);
+            return;
+        }
+    }
+
+
+    push_stack(visitedStack, node);
+
+    return;
+}
+
+void pop_and_unmark(Stack_SCell *visitedStack)
+{
+    while(visitedStack->top >= 0)
+    {
+        SCell *node = pop_stack(visitedStack);
+        node->visited = FALSE;
+        debug_print_scell(node);
+    }
+    return;
+}
+
+
+//sharma bhai start
+
+// Helper: Remove a specific SCell pointer from a dynamic array (SCell1D) by swapping with the last element.
+void remove_scell_ptr(SCell1D *arr, SCell *target) {
+    if (arr == NULL) return;
+    int index = -1;
+    for (int i = 0; i < arr->size; i++) {
+        if (arr->scell_ptrs[i] == target) {
+            index = i;
+            break;
+        }
+    }
+    if (index == -1) return;
+    // Swap with the last element and decrement size.
+    arr->scell_ptrs[index] = arr->scell_ptrs[arr->size - 1];
+    arr->size--;
+}
+
+// (1) Remove Old Dependencies  
+// For each cell in target->precedent_scells, remove target from that cell's dependent list.
+void remove_old_dependencies(SCell *target) {
+    if (target == NULL || target->precedent_scells == NULL) return;
+    for (int i = 0; i < target->precedent_scells->size; i++) {
+         SCell *prec = target->precedent_scells->scell_ptrs[i];
+         remove_scell_ptr(prec->dependent_scells, target);
+    }
+    // Clear target's precedent list.
+    target->precedent_scells->size = 0;
+}
+
+// (2) Add New Dependencies  
+// For each new precedent cell, add target to its dependent list and add that precedent cell to target->precedent_scells.
+void add_new_dependencies(SCell *target, SCell1D *new_precedents) {
+    if (target == NULL || new_precedents == NULL) return;
+    for (int i = 0; i < new_precedents->size; i++) {
+         SCell *prec = new_precedents->scell_ptrs[i];
+         // Add target to the precedent's dependent list.
+         push_back_scell_ptrs(prec->dependent_scells, target);
+         // Also add the precedent to target's precedent list.
+         push_back_scell_ptrs(target->precedent_scells, prec);
+    }
+}
+
+// Helper: DFS-based topological sort.
+// Recursively visits dependent cells and pushes nodes (after processing) onto the stack.
+void dfs_topological(SCell *node, Stack_SCell *stack) {
+    if (node->visited == TRUE)
+         return;
+
+    node->visited = TRUE;
+    
+    for (int i = 0; i < node->dependent_scells->size; i++) {
+         SCell *dep = node->dependent_scells->scell_ptrs[i];
+         dfs_topological(dep, stack);
+    }
+    
+    push_stack(stack, node);
+}
+
+
+
+
+
+// ------------------------------------------------------------------------------------------- //

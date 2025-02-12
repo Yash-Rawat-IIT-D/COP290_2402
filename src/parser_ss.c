@@ -522,26 +522,8 @@ void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[]
     regfree(&regex);
 }
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <regex.h>
-// #include <math.h>
-#include <unistd.h>
-#include "scell.h"     // Contains the definition of SCell and related functions
-#include "cell.h"      // Contains Cell, Cell_Range, and Cell_Formula definitions
-#include "constants.h" // Contains definitions for TCU_EXIT_CODE, SIM_BOOL, VALID_EXP, ARITHMETIC_OP, FUNCTION, etc.
-
-/*
-   NOTE:
-   - The function get_scell_by_coordinates() must be implemented in your project.
-   - Your in-place trim_whitespace(char *str) function is assumed to be available.
-*/
-
 /* --- Helper: Convert a cell name (e.g. "C1") into row and column numbers --- */
-static void parse_cell_name(const char *cell_str, int *row, int *col)
-{
+void parse_cell_name(const char *cell_str, int *row, int *col) {
     regex_t regex;
     regmatch_t matches[3]; // Group 1: letters, Group 2: digits
     if (regcomp(&regex, "^([A-Z]+)([0-9]+)$", REG_EXTENDED) != 0)
@@ -579,7 +561,7 @@ static void parse_cell_name(const char *cell_str, int *row, int *col)
          Uses your in-place trim_whitespace() after duplicating the operand.
          If constant, stores its value in *value; if a cell reference, sets *cell accordingly.
 */
-static void parse_operand(const char *operand,
+void parse_operand(const char *operand,
                           SIM_BOOL *is_constant,
                           int *value,
                           Cell **cell,
@@ -631,18 +613,13 @@ static void parse_operand(const char *operand,
 }
 
 /* --- Helper: Parse a simple value expression (constant or cell reference) --- */
-static void parse_value(const char *exp, Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code)
-{
+void parse_value(const char *exp, Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
     formula->valid_exp_type = VALUE;
     parse_operand(exp, &formula->is_constant, &formula->value, &formula->cell, ss, exit_code);
 }
 
 /* --- Helper: Parse an arithmetic expression (e.g., "A1+23") --- */
-static void parse_arithmetic(const char *exp,
-                             Cell_Formula *formula,
-                             Spread_Sheet *ss,
-                             TCU_EXIT_CODE *exit_code)
-{
+void parse_arithmetic(const char *exp, Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
     formula->valid_exp_type = VALUE_OP_VALUE;
 
     // Make a writable copy of the incoming expression
@@ -776,8 +753,7 @@ static void parse_arithmetic(const char *exp,
 /* --- Helper: Parse a range string (e.g., "A1:A20" or "A1:D10")
          Returns an allocated Cell_Range structure.
 */
-static Cell_Range *parse_range(const char *range_str, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code)
-{
+Cell_Range *parse_range(const char *range_str, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
     Cell_Range *range = malloc(sizeof(Cell_Range));
     if (!range)
     {
@@ -836,8 +812,7 @@ static Cell_Range *parse_range(const char *range_str, Spread_Sheet *ss, TCU_EXIT
          Supported functions: MIN, MAX, AVG, SUM, STDEV (which operate on a range)
          and SLEEP (which takes a value).
 */
-static void parse_function(const char *exp, Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code)
-{
+void parse_function(const char *exp, Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
     formula->valid_exp_type = FUNCT_ON_RANGE;
     const char *open_paren = strchr(exp, '(');
     const char *close_paren = strrchr(exp, ')');
@@ -928,8 +903,7 @@ static void parse_function(const char *exp, Cell_Formula *formula, Spread_Sheet 
 }
 
 /* Custom implementation of absolute value for doubles */
-static double my_fabs(double x)
-{
+double my_fabs(double x) {
     return (x < 0.0) ? -x : x;
 }
 
@@ -960,36 +934,29 @@ double sqrt(double x)
          This function uses your cell functions (such as get_cell_value) and iterates
          over a range when needed.
 */
-static int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code)
-{
-    if (formula->valid_exp_type == VALUE)
-    {
+
+int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
+    if (formula->valid_exp_type == VALUE) {
         if (formula->is_constant == TRUE)
             return formula->value;
         else
             return get_cell_value(formula->cell);
     }
-    else if (formula->valid_exp_type == VALUE_OP_VALUE)
-    {
+    else if (formula->valid_exp_type == VALUE_OP_VALUE) {
+        
+        // printf("Hi\n");
         int left = formula->is_left_value_constant == TRUE ? formula->left_value : get_cell_value(formula->left_cell);
         int right = formula->is_right_value_constant == TRUE ? formula->right_value : get_cell_value(formula->right_cell);
-        switch (formula->arithmetic_op)
-        {
-        case ADDITION:
-            return left + right;
-        case SUBTRACTION:
-            return left - right;
-        case MULTIPLICATION:
-            return left * right;
-        case DIVISION:
-            if (right == 0)
-            {
-                *exit_code = INVALID_INPUT;
-                return 0;
-            }
-            return left / right;
-        default:
-            return 0;
+        // printf("Hi_2\n");
+
+        switch (formula->arithmetic_op) {
+            case ADDITION:       return left + right;
+            case SUBTRACTION:    return left - right;
+            case MULTIPLICATION: return left * right;
+            case DIVISION:
+                if (right == 0) { *exit_code = INVALID_INPUT; return 0; }
+                return left / right;
+            default: return 0;
         }
     }
     else if (formula->valid_exp_type == FUNCT_ON_RANGE)
@@ -1068,29 +1035,18 @@ static int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, TCU_EXIT_CO
     return 0;
 }
 
-#include <ctype.h> // for isspace, isdigit
 
-static bool has_real_operator(const char *s)
+void pop_and_update(Stack_SCell * topo_sort_st, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code)
 {
-    // 1. Skip leading whitespace
-    while (*s && isspace((unsigned char)*s))
+    while(topo_sort_st->top >= 0)
     {
-        s++;
+        SCell *node = pop_stack(topo_sort_st);
+        node->visited = FALSE;
+        node->cell->value = evaluate_formula(node->cell_formula, ss, exit_code);
+        // debug_print_scell(node);
     }
-    // 2. If we see a + or - followed by a digit, treat it as a sign for the operand
-    if ((*s == '+' || *s == '-') && isdigit((unsigned char)*(s + 1)))
-    {
-        s++; // skip this sign
-    }
-    // 3. Now look for +, -, *, /
-    for (; *s; s++)
-    {
-        if (strchr("+-*/", *s))
-        {
-            return true;
-        }
-    }
-    return false;
+    return;
+
 }
 
 /* === Main Function: parse_expression ===
@@ -1098,11 +1054,8 @@ static bool has_real_operator(const char *s)
    parses the expression in exp_buff (which can be a constant, cell reference, arithmetic expression,
    or a function call), and finally evaluates the formula and assigns the result to the target cell.
 */
-void parse_expression(char target_cell_buff[],
-                      char exp_buff[],
-                      Spread_Sheet *ss,
-                      TCU_EXIT_CODE *exit_code)
-{
+void parse_expression(char target_cell_buff[], char exp_buff[], Spread_Sheet *ss, TCU_EXIT_CODE *exit_code) {
+    
     int target_row, target_col;
     parse_cell_name(target_cell_buff, &target_row, &target_col);
     SCell *target_scell = get_scell_by_coordinates(ss, target_row, target_col);
@@ -1113,22 +1066,31 @@ void parse_expression(char target_cell_buff[],
     }
 
     Cell_Formula *formula = malloc(sizeof(Cell_Formula));
-    if (!formula)
-    {
+
+    if (!formula) {
         *exit_code = MALLOC_FAILED;
         return;
     }
 
-    // Initialize formula memory if desired
-    memset(formula, 0, sizeof(*formula));
-
-    // 1) Check for function call (SUM, MIN, etc. or SLEEP)
-    if (strchr(exp_buff, '(') != NULL)
+    /* 
+        Decide the expression type based on exp_buff.
+        Function calls are tested first, then arithmetic expressions, then simple values.
+    */
+    if ((strncmp(exp_buff, "MIN(", 4) == 0) ||
+        (strncmp(exp_buff, "MAX(", 4) == 0) ||
+        (strncmp(exp_buff, "AVG(", 4) == 0) ||
+        (strncmp(exp_buff, "SUM(", 4) == 0) ||
+        (strncmp(exp_buff, "STDEV(", 6) == 0) ||
+        (strncmp(exp_buff, "SLEEP(", 6) == 0)) 
     {
         parse_function(exp_buff, formula, ss, exit_code);
     }
-    // 2) Else, if there is a "real operator" in the expression, parse arithmetic
-    else if (has_real_operator(exp_buff))
+
+    /* 
+        Checking for Value_OP_Value
+    */
+
+    else if (strchr(exp_buff, '+') || strchr(exp_buff, '-') ||  strchr(exp_buff, '*') || strchr(exp_buff, '/')) 
     {
         parse_arithmetic(exp_buff, formula, ss, exit_code);
     }
@@ -1271,9 +1233,7 @@ void set_error_message(TCU_EXIT_CODE exit_code, char error_buff[])
 
 // The terminal control unit for the Spread_Sheet
 // Takes in the Spread_Sheet and allows the user to interact with it
-#include <time.h>
-#include <stdint.h>  // For int64_t if needed
-#include <time.h>
+
 
 void terminal_control_unit(Spread_Sheet *ss)
 {
@@ -1304,10 +1264,10 @@ void terminal_control_unit(Spread_Sheet *ss)
         // Read user command (no timing yet—this is user “think/typing” time)
         if (fgets(command_buff, sizeof(command_buff), stdin) != NULL)
         {
-            // Once user has pressed Enter, start timing
-            clock_gettime(CLOCK_MONOTONIC, &start_ts);
+                // Strip trailing newline if present
+            command_buff[strcspn(command_buff, "\n")] = '\0';
 
-            if (strcmp(command_buff, "q\n") == 0)
+            if (strcmp(command_buff, "q") == 0)
             {
                 printf("Quitting the Spreadsheet Program\n");
                 exit_code = TCU_OK;
@@ -1317,30 +1277,30 @@ void terminal_control_unit(Spread_Sheet *ss)
                              + (end_ts.tv_nsec - start_ts.tv_nsec) / 1e9;
                 break;
             }
-            else if (strcmp(command_buff, "w\n") == 0)
+            else if (strcmp(command_buff, "w") == 0)
             {
                 row_render = next_render_dim(row_render, ss->SS_ROWS, -MAX_RENDER_DIM, &exit_code);
             }
-            else if (strcmp(command_buff, "s\n") == 0)
+            else if (strcmp(command_buff, "s") == 0)
             {
                 row_render = next_render_dim(row_render, ss->SS_ROWS, MAX_RENDER_DIM, &exit_code);
             }
-            else if (strcmp(command_buff, "a\n") == 0)
+            else if (strcmp(command_buff, "a") == 0)
             {
                 col_render = next_render_dim(col_render, ss->SS_COLS, -MAX_RENDER_DIM, &exit_code);
             }
-            else if (strcmp(command_buff, "d\n") == 0)
+            else if (strcmp(command_buff, "d") == 0)
             {
                 col_render = next_render_dim(col_render, ss->SS_COLS, MAX_RENDER_DIM, &exit_code);
             }
-            else if (strcmp(command_buff, "disable_output\n") == 0)
+            else if(strcmp(command_buff, "disable_output") == 0)
             {
                 if (en_ss_render) {
                     en_ss_render = FALSE;
                 }
                 exit_code = TCU_OK;
             }
-            else if (strcmp(command_buff, "enable_output\n") == 0)
+            else if(strcmp(command_buff, "enable_output") == 0)
             {
                 if (!en_ss_render) {
                     en_ss_render = TRUE;
@@ -1375,10 +1335,7 @@ void terminal_control_unit(Spread_Sheet *ss)
             }
             else
             {
-                // Strip trailing newline
-                command_buff[strcspn(command_buff, "\n")] = '\0';
                 printf("You entered %s\n", command_buff);
-
                 parse_command(command_buff, target_cell_buff, exp_buff, ss, &exit_code);
                 if (exit_code == TCU_OK)
                 {

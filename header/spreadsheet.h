@@ -6,6 +6,7 @@
 #include "scell1d.h"
 #include "scell.h"
 #include "constants.h"
+#include <stdbool.h>
 // ------------------------------------------------------------------------- //
 
 typedef struct Spread_Sheet

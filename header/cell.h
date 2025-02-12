@@ -5,7 +5,7 @@
 #ifndef CELL_H
 #define CELL_H
 #include "constants.h"
-
+#include <stdbool.h>
 // ------------------------------------------------------------------------- //
 
 typedef struct Cell
@@ -54,13 +54,12 @@ typedef struct Cell_Formula
 // Function Prototypes of Cell Struct and Cell Range Struct
 
 void init_cell(Cell *cell, int row, int col, int value);
-void set_cell_value(Cell *cell, double value);
+void set_cell_value(Cell *cell, int value);
 int get_cell_value(Cell *cell);
 int get_cell_row(Cell *cell);
 int get_cell_col(Cell *cell);
 SIM_BOOL is_valid_cell_range(Cell_Range *cell_range);
 void debug_print_cell(Cell *cell);
-
 // ------------------------------------------------------------------------- //
 
 #endif 

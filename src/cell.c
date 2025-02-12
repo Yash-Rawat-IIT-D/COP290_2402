@@ -12,7 +12,7 @@ void init_cell(Cell *cell, int row, int col, int value)
     return;
 }
 
-void set_cell_value(Cell *cell, double value)
+void set_cell_value(Cell *cell, int value)
 {
     cell->value = value;
 }
