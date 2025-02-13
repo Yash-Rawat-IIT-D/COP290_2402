@@ -57,9 +57,9 @@ int main(int argc, char *argv[])
     }
 
     // printf("Rows: %d, Cols: %d\n", ss_my.SS_ROWS ,ss_my.SS_COLS);
-    // terminal_control_unit(&ss_my);
-    // return 0;
+    terminal_control_unit(&ss_my);
     return 0;
+    // return 0;
 }
 
 // ------------------------------------------------------------------------- //

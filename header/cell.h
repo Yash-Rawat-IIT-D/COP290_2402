@@ -60,6 +60,7 @@ int get_cell_row(Cell *cell);
 int get_cell_col(Cell *cell);
 SIM_BOOL is_valid_cell_range(Cell_Range *cell_range);
 void debug_print_cell(Cell *cell);
+void debug_print_formula(Cell_Formula* formula);
 // ------------------------------------------------------------------------- //
 
 #endif 

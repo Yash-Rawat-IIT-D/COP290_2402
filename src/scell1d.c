@@ -355,8 +355,8 @@ void dfs_cycle_check(SCell *node, SCell *target_node_tl, SCell *target_node_br, 
 
     node->visited = TRUE;
 
-    printf("Visiting Node: ");
-    debug_print_scell(node);
+    // printf("Visiting Node: ");
+    // debug_print_scell(node);
 
     if(is_node_in_target(node, target_node_tl, target_node_br) == TRUE)
     {
@@ -418,37 +418,15 @@ void remove_scell_ptr(SCell1D *arr, SCell *target) {
     arr->size--;
 }
 
-// (1) Remove Old Dependencies  
-// For each cell in target->precedent_scells, remove target from that cell's dependent list.
-void remove_old_dependencies(SCell *target) {
-    if (target == NULL || target->precedent_scells == NULL) return;
-    for (int i = 0; i < target->precedent_scells->size; i++) {
-         SCell *prec = target->precedent_scells->scell_ptrs[i];
-         remove_scell_ptr(prec->dependent_scells, target);
-    }
-    // Clear target's precedent list.
-    target->precedent_scells->size = 0;
-}
-
-// (2) Add New Dependencies  
-// For each new precedent cell, add target to its dependent list and add that precedent cell to target->precedent_scells.
-void add_new_dependencies(SCell *target, SCell1D *new_precedents) {
-    if (target == NULL || new_precedents == NULL) return;
-    for (int i = 0; i < new_precedents->size; i++) {
-         SCell *prec = new_precedents->scell_ptrs[i];
-         // Add target to the precedent's dependent list.
-         push_back_scell_ptrs(prec->dependent_scells, target);
-         // Also add the precedent to target's precedent list.
-         push_back_scell_ptrs(target->precedent_scells, prec);
-    }
-}
-
 // Helper: DFS-based topological sort.
 // Recursively visits dependent cells and pushes nodes (after processing) onto the stack.
 void dfs_topological(SCell *node, Stack_SCell *stack) {
     if (node->visited == TRUE)
          return;
 
+    debug_print_scell(node);
+    printf("Inside DFS:\n");
+    debug_print_formula(node->cell_formula);
     node->visited = TRUE;
     
     for (int i = 0; i < node->dependent_scells->size; i++) {

@@ -114,8 +114,8 @@ typedef enum
     INVALID_INPUT = 1,
     OUT_OF_RANGE = 2,
     MALLOC_FAILED = 3,
-    UNKNOWN_ERROR = 4
-
+    UNKNOWN_ERROR = 4,
+    CYCLE_FOUND = 5
 } TCU_EXIT_CODE;
 
 typedef enum

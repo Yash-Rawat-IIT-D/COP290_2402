@@ -63,4 +63,15 @@ void debug_print_cell(Cell *cell)
     return;
 }
 
+void debug_print_formula(Cell_Formula* formula)
+{
+    if (formula == NULL) {
+        printf("Formula is NULL\n");
+        return;
+    }
+    printf("Formula : ");
+    printf("EXP_TYPE : %d\n", formula->valid_exp_type);
+    return;
+}
+
 // ------------------------------------------------------------------------- //
