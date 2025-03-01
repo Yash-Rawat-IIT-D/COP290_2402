@@ -24,11 +24,47 @@ typedef struct Cell_Range
 
 } Cell_Range;
 
+typedef struct F_VALUE_CONS
+{
+    int value;
+} F_VALUE_CONS;
+
+typedef struct F_VALUE_CELL
+{
+    Cell *cell;
+} F_VALUE_CELL;
+
+typedef struct F_ARITHMETIC
+{
+    ARITHMETIC_OP arithmetic_op;
+
+    SIM_BOOL is_left_value_constant, is_right_value_constant;
+    
+    int left_value, right_value;
+
+    Cell *left_cell, *right_cell;
+
+} F_ARITHMETIC;
+
+typedef struct F_FUNCTION
+{
+    FUNCTION function;
+    Cell_Range *cell_range;
+} F_FUNCTION;
+
 
 typedef struct Cell_Formula
 {
     VALID_EXP valid_exp_type;
     
+
+    union
+    {
+        F_VALUE_CONS fvcons;
+        F_VALUE_CELL fvcell;
+        F_ARITHMETIC farith;
+        F_FUNCTION  ffunc;
+    }
 
     // valid_exp_type = VALUE
     SIM_BOOL is_constant;
