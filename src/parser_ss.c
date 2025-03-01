@@ -863,23 +863,21 @@ void parse_function(const char *exp, Cell_Formula *formula, Spread_Sheet *ss, TC
     {
         formula->function = SLEEP;
         /* For SLEEP, the parameter is a value rather than a range.
-           We will use the parameter's cell value as the sleep argument.
-           Only allocate a new dummy cell if the parameter is a constant. */
+           Create a dummy Cell_Range that holds a single cell. */
+        Cell *dummy_cell = malloc(sizeof(Cell));
+        if (!dummy_cell)
+        {
+            *exit_code = MALLOC_FAILED;
+            free(func_name);
+            free(param);
+            return;
+        }
         SIM_BOOL is_const;
         int val;
         Cell *ref_cell;
         parse_operand(param, &is_const, &val, &ref_cell, ss, exit_code);
-        Cell *dummy_cell = NULL;
         if (is_const == TRUE)
         {
-            dummy_cell = malloc(sizeof(Cell));
-            if (!dummy_cell)
-            {
-                *exit_code = MALLOC_FAILED;
-                free(func_name);
-                free(param);
-                return;
-            }
             init_cell(dummy_cell, 0, 0, val);
         }
         else
@@ -892,8 +890,6 @@ void parse_function(const char *exp, Cell_Formula *formula, Spread_Sheet *ss, TC
             *exit_code = MALLOC_FAILED;
             free(func_name);
             free(param);
-            if (is_const == TRUE)
-                free(dummy_cell);
             return;
         }
         formula->cell_range->start_cell = dummy_cell;
