@@ -1112,6 +1112,11 @@ void parse_expression(char target_cell_buff[], char exp_buff[], Spread_Sheet *ss
     TCU_EXIT_CODE update_exit_code;
 
     update_logic_unit(ss, target_scell, formula, &update_exit_code);
+
+    if (update_exit_code != TCU_OK)
+    {
+        *exit_code = update_exit_code;
+    }
     // target_scell->cell_formula = formula;
     // int result = evaluate_formula(formula, ss, exit_code);
     // set_cell_value(target_scell->cell, result);
@@ -1289,7 +1294,7 @@ void update_logic_unit(Spread_Sheet *ss, SCell *node, Cell_Formula *cformula, TC
     // printf("Begin\n");
     // printf("%d\n", cformula->valid_exp_type);
 
-    remove_old_dependencies(ss, node);
+    // remove_old_dependencies(ss, node);
 
     if (cformula->valid_exp_type == VALUE)
     {
@@ -1302,61 +1307,102 @@ void update_logic_unit(Spread_Sheet *ss, SCell *node, Cell_Formula *cformula, TC
             pop_and_unmark(ss, vis_stack);
             if (cycle_check == TRUE)
             {
+                printf("Cycle Found\n");
                 *exit_code = CYCLE_FOUND;
                 free(vis_stack);
                 return;
             }
-
             // printf("HI\n");
-            // remove_old_dependencies(node);
+            remove_old_dependencies(ss, node);
             add_new_dependencies(node, tnode_l, tnode_l, ss);
+        }
+        else
+        {
+            remove_old_dependencies(ss, node);
+            add_new_dependencies(node, NULL, NULL, ss);
         }
         // printf("YO\n");
     }
     else if (cformula->valid_exp_type == VALUE_OP_VALUE)
     {
 
+        init_stack(vis_stack, 10);
+        SIM_BOOL left_cycle_check = FALSE;
+        SIM_BOOL right_cycle_check = FALSE;
+
+        if(cformula->is_left_value_constant == FALSE)
+        {
+            tnode_l = &(ss->arr[(cformula->left_cell->row) * (ss->SS_COLS) + cformula->left_cell->col]);
+            dfs_cycle_check(node, tnode_l, tnode_l, vis_stack, &left_cycle_check);
+            pop_and_unmark(ss, vis_stack);
+        }
+
+        if(cformula->is_right_value_constant == FALSE)
+        {
+            tnode_r = &(ss->arr[(cformula->right_cell->row) * (ss->SS_COLS) + cformula->right_cell->col]);
+            dfs_cycle_check(node, tnode_r, tnode_r, vis_stack, &right_cycle_check);
+            pop_and_unmark(ss, vis_stack);
+        }
+
+        if (left_cycle_check == TRUE || right_cycle_check == TRUE)
+        {
+            printf("Cycle Found\n");
+            *exit_code = CYCLE_FOUND;
+            free(vis_stack);
+            return;
+        }
+
+        remove_old_dependencies(ss, node);
         if (cformula->is_left_value_constant == FALSE)
         {
-            init_stack(vis_stack, 10);
-            tnode_l = &(ss->arr[(cformula->left_cell->row) * (ss->SS_COLS) + cformula->left_cell->col]);
-            SIM_BOOL cycle_check = FALSE;
-            dfs_cycle_check(node, tnode_l, tnode_l, vis_stack, &cycle_check);
-            pop_and_unmark(ss, vis_stack);
-            if (cycle_check == TRUE)
-            {
-                *exit_code = CYCLE_FOUND;
-                free(vis_stack);
-                return;
-            }
-
-            // printf("Hi\n");
-            // debug_print_scell(ss, tnode_l);
-
-            // remove_old_dependencies(node);
             add_new_dependencies(node, tnode_l, tnode_l, ss);
         }
-
         if (cformula->is_right_value_constant == FALSE && (cformula->left_cell != cformula->right_cell))
         {
-            init_stack(vis_stack, 10);
-            tnode_r = &(ss->arr[(cformula->right_cell->row) * (ss->SS_COLS) + cformula->right_cell->col]);
-            SIM_BOOL cycle_check = FALSE;
-            dfs_cycle_check(node, tnode_r, tnode_r, vis_stack, &cycle_check);
-            pop_and_unmark(ss, vis_stack);
-            if (cycle_check == TRUE)
-            {
-                *exit_code = CYCLE_FOUND;
-                free(vis_stack);
-                return;
-            }
-
-            // printf("Hi\n");
-            // debug_print_scell(ss, tnode_r);
-
-            //  remove_old_dependencies(node);
             add_new_dependencies(node, tnode_r, tnode_r, ss);
         }
+
+        // if (cformula->is_left_value_constant == FALSE)
+        // {
+        //     init_stack(vis_stack, 10);
+        //     tnode_l = &(ss->arr[(cformula->left_cell->row) * (ss->SS_COLS) + cformula->left_cell->col]);
+        //     SIM_BOOL cycle_check = FALSE;
+        //     dfs_cycle_check(node, tnode_l, tnode_l, vis_stack, &cycle_check);
+        //     pop_and_unmark(ss, vis_stack);
+        //     if (cycle_check == TRUE)
+        //     {
+        //         *exit_code = CYCLE_FOUND;
+        //         free(vis_stack);
+        //         return;
+        //     }
+
+        //     // printf("Hi\n");
+        //     // debug_print_scell(ss, tnode_l);
+
+        //     // remove_old_dependencies(node);
+        //     add_new_dependencies(node, tnode_l, tnode_l, ss);
+        // }
+
+        // if (cformula->is_right_value_constant == FALSE && (cformula->left_cell != cformula->right_cell))
+        // {
+        //     init_stack(vis_stack, 10);
+        //     tnode_r = &(ss->arr[(cformula->right_cell->row) * (ss->SS_COLS) + cformula->right_cell->col]);
+        //     SIM_BOOL cycle_check = FALSE;
+        //     dfs_cycle_check(node, tnode_r, tnode_r, vis_stack, &cycle_check);
+        //     pop_and_unmark(ss, vis_stack);
+        //     if (cycle_check == TRUE)
+        //     {
+        //         *exit_code = CYCLE_FOUND;
+        //         free(vis_stack);
+        //         return;
+        //     }
+
+        //     // printf("Hi\n");
+        //     // debug_print_scell(ss, tnode_r);
+
+        //     //  remove_old_dependencies(node);
+        //     add_new_dependencies(node, tnode_r, tnode_r, ss);
+        // }
     }
     else if (cformula->valid_exp_type == FUNCT_ON_RANGE)
     {
@@ -1372,8 +1418,11 @@ void update_logic_unit(Spread_Sheet *ss, SCell *node, Cell_Formula *cformula, TC
                 set_cell_value(node->cell, sleep_val);
                 node->cell_formula = cformula;
             }
+
+            remove_old_dependencies(ss, node);
+            add_new_dependencies(node, tnode_l, tnode_r, ss);
+
             free(vis_stack);
-            return;
         }
         else
         {
@@ -1385,13 +1434,16 @@ void update_logic_unit(Spread_Sheet *ss, SCell *node, Cell_Formula *cformula, TC
             pop_and_unmark(ss, vis_stack);
             if (cycle_check == TRUE)
             {
+                printf("Cycle Found\n");
                 *exit_code = CYCLE_FOUND;
                 free(vis_stack);
                 return;
             }
-            // remove_old_dependencies(node);
+            remove_old_dependencies(ss, node);
             add_new_dependencies(node, tnode_l, tnode_r, ss);
         }
+
+        return;
     }
     else
     {
@@ -1560,7 +1612,7 @@ void set_error_message(TCU_EXIT_CODE exit_code, char error_buff[])
         strcpy(error_buff, "Unknown Error");
         break;
     case CYCLE_FOUND:
-        strcpy(error_buff, "Cyclic not Found");
+        strcpy(error_buff, "Cycle Found");
         break;
     default:
         printf("Unrecognized error code");

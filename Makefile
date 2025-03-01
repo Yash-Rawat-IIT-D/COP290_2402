@@ -2,7 +2,7 @@
 
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall -I./header  # Include the header directory for header files
+CFLAGS = -Wall -g -I./header  # Include the header directory for header files
 
 # Directories
 SRC_DIR = src
