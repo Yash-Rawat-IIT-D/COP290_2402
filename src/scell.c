@@ -12,6 +12,18 @@
 
 // ------------------------------------------------------------------------- //
 
+void init_scell_formula(SCell *scell)
+{
+    scell->cell_formula->valid_exp_type = VALUE;
+    scell->cell_formula->is_constant = TRUE;
+    scell->cell_formula->value = 0;
+
+    scell->cell_formula->left_cell = NULL;
+    scell->cell_formula->right_cell = NULL;
+    scell->cell_formula->cell_range = NULL;
+    return;
+}
+
 void init_scell(SCell *scell, int row, int col, int value, SS_EXIT_CODE *exit_code)
 {
     scell->cell = (Cell *)malloc(sizeof(Cell));
@@ -36,7 +48,8 @@ void init_scell(SCell *scell, int row, int col, int value, SS_EXIT_CODE *exit_co
     }
 
     SS_EXIT_CODE cptrs_exit_code;
-    init_scell_ptrs(scell->dependent_scells, 10, 0, &cptrs_exit_code);
+
+    init_scell_ptrs(scell->dependent_scells, 4, 0, &cptrs_exit_code);
 
     if (cptrs_exit_code != SS_OK)
     {
@@ -44,15 +57,16 @@ void init_scell(SCell *scell, int row, int col, int value, SS_EXIT_CODE *exit_co
         return;
     }
 
-    scell->precedent_scells = (SCell1D *)malloc(sizeof(SCell1D));
-    SS_EXIT_CODE cptrs_exit_code2;
-    init_scell_ptrs(scell->precedent_scells, 10, 0, &cptrs_exit_code2);
+    // scell->precedent_scells = (SCell1D *)malloc(sizeof(SCell1D));
 
-    if (cptrs_exit_code2 != SS_OK)
-    {
-        *exit_code = cptrs_exit_code2;
-        return;
-    }
+    // SS_EXIT_CODE cptrs_exit_code2;
+    // init_scell_ptrs(scell->precedent_scells, 10, 0, &cptrs_exit_code2);
+
+    // if (cptrs_exit_code2 != SS_OK)
+    // {
+    //     *exit_code = cptrs_exit_code2;
+    //     return;
+    // }
 
     scell->cell_formula = (Cell_Formula *)malloc(sizeof(Cell_Formula));
 
@@ -66,30 +80,14 @@ void init_scell(SCell *scell, int row, int col, int value, SS_EXIT_CODE *exit_co
 
     scell->visited = FALSE;
 
-    scell->cell_formula->cell = NULL;
-    scell->cell_formula->left_cell = NULL;
-    scell->cell_formula->right_cell = NULL;
-    scell->cell_formula->cell_range = NULL;
+    init_scell_formula(scell);
+
     *(exit_code) = SS_OK;
     return;
 }
 
 // ------------------------------------------------------------------------- //
 
-void debug_print_scell(SCell *scell)
-{
-    printf("Cell - Row: %d, Col: %d, Value: %d\n", get_cell_row(scell->cell), get_cell_col(scell->cell), get_cell_value(scell->cell));
-    for (int i = 0; i < scell->dependent_scells->size; i++)
-    {
-        printf("Dependent Cell %d: Row: %d, Col: %d, Value: %d\n", i, get_cell_row(scell->dependent_scells->scell_ptrs[i]->cell), get_cell_col(scell->dependent_scells->scell_ptrs[i]->cell), get_cell_value(scell->dependent_scells->scell_ptrs[i]->cell));
-    }
-    for (int i = 0; i < scell->precedent_scells->size; i++)
-    {
-        printf("Precedent Cell %d: Row: %d, Col: %d, Value: %d\n", i, get_cell_row(scell->precedent_scells->scell_ptrs[i]->cell), get_cell_col(scell->precedent_scells->scell_ptrs[i]->cell), get_cell_value(scell->precedent_scells->scell_ptrs[i]->cell));
-    }
-    printf("// ------------------------------------------------------------------------- //\n");
-    return;
-}
 
 void swap_scell_ptrs(SCell1D *arr, int index1, int index2)
 {

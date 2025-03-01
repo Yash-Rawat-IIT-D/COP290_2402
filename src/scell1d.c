@@ -144,6 +144,44 @@ Queue_SCell *create_queue(int intial_capacity, Q_EXIT_CODE *exit_code)
     return q;
 }
 
+void resize_q(Queue_SCell *q, int new_capacity, Q_EXIT_CODE *exit_code)
+{
+    // q->queue = (SCell **)realloc(q->queue, new_capacity * sizeof(SCell *));
+
+    if (q->queue == NULL)
+    {
+        printf("Memory reallocation failed - Reallocating Queue Memory\n");
+        exit(1);
+    }
+
+    int qu_old_size = q->size;
+
+    SCell **new_queue = (SCell **)malloc(new_capacity * sizeof(SCell *));
+
+    if (new_queue == NULL)
+    {
+
+        // printf("Memory allocation failed - Allocating New Queue Memory\n");
+        // exit(1);
+        *(exit_code) = MALLOC_QUEUE;
+        return;
+    }
+
+    for (int i = 0; i < qu_old_size; i++)
+    {
+        new_queue[i] = q->queue[(q->front + i) % q->capacity];
+    }
+
+    free(q->queue);
+
+    q->queue = new_queue;
+    q->front = 0;
+    q->rear = qu_old_size - 1;
+    q->capacity = new_capacity;
+    return;
+}
+
+
 void enqueue(Queue_SCell *q, SCell *scell_ptr, Q_EXIT_CODE *exit_code)
 {
     if (q->size == q->capacity)
@@ -203,43 +241,6 @@ SCell *rear(Queue_SCell *q, Q_EXIT_CODE *exit_code)
 
     *(exit_code) = Q_OK;
     return q->queue[q->rear];
-}
-
-void resize_q(Queue_SCell *q, int new_capacity, Q_EXIT_CODE *exit_code)
-{
-    // q->queue = (SCell **)realloc(q->queue, new_capacity * sizeof(SCell *));
-
-    if (q->queue == NULL)
-    {
-        printf("Memory reallocation failed - Reallocating Queue Memory\n");
-        exit(1);
-    }
-
-    int qu_old_size = q->size;
-
-    SCell **new_queue = (SCell **)malloc(new_capacity * sizeof(SCell *));
-
-    if (new_queue == NULL)
-    {
-
-        // printf("Memory allocation failed - Allocating New Queue Memory\n");
-        // exit(1);
-        *(exit_code) = MALLOC_QUEUE;
-        return;
-    }
-
-    for (int i = 0; i < qu_old_size; i++)
-    {
-        new_queue[i] = q->queue[(q->front + i) % q->capacity];
-    }
-
-    free(q->queue);
-
-    q->queue = new_queue;
-    q->front = 0;
-    q->rear = qu_old_size - 1;
-    q->capacity = new_capacity;
-    return;
 }
 
 void free_queue(Queue_SCell *q, Q_EXIT_CODE *exit_code)
@@ -319,8 +320,6 @@ void free_stack(Stack_SCell *stack)
 
 // ------------------------------------------------------------------------- //
 
-
-
 // ------------------------------------------------------------------------- //
 
 SIM_BOOL is_node_in_target(SCell *node, SCell *target_node_tl, SCell *target_node_br)
@@ -388,18 +387,6 @@ void dfs_cycle_check(SCell *node, SCell *target_node_tl, SCell *target_node_br, 
     return;
 }
 
-void pop_and_unmark(Stack_SCell *visitedStack)
-{
-    while(visitedStack->top >= 0)
-    {
-        SCell *node = pop_stack(visitedStack);
-        node->visited = FALSE;
-        debug_print_scell(node);
-    }
-    return;
-}
-
-
 //sharma bhai start
 
 // Helper: Remove a specific SCell pointer from a dynamic array (SCell1D) by swapping with the last element.
@@ -424,9 +411,9 @@ void dfs_topological(SCell *node, Stack_SCell *stack) {
     if (node->visited == TRUE)
          return;
 
-    debug_print_scell(node);
-    printf("Inside DFS:\n");
-    debug_print_formula(node->cell_formula);
+    // debug_print_scell(node);
+    // printf("Inside DFS:\n");
+    // debug_print_formula(node->cell_formula);
     node->visited = TRUE;
     
     for (int i = 0; i < node->dependent_scells->size; i++) {

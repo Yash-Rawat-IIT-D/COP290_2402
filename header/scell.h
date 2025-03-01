@@ -17,15 +17,14 @@ typedef struct SCell
 {
     Cell * cell;
     SCell1D *dependent_scells;
-    SCell1D *precedent_scells;
+    // SCell1D *precedent_scells;
 
     Cell_Formula * cell_formula;
     SIM_BOOL visited;
 } SCell;
 
-
+void init_scell_formula(SCell *scell);
 void init_scell(SCell *scell, int row, int col, int value, SS_EXIT_CODE *exit_code);
-void debug_print_scell(SCell *scell);
 // ------------------------------------------------------------------------- //
 
 #endif

@@ -952,21 +952,21 @@ int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, SIM_BOOL sleep_ove
         int right = (formula->is_right_value_constant == TRUE) ? formula->right_value : get_cell_value(formula->right_cell);
         switch (formula->arithmetic_op)
         {
-            case ADDITION:
-                return left + right;
-            case SUBTRACTION:
-                return left - right;
-            case MULTIPLICATION:
-                return left * right;
-            case DIVISION:
-                if (right == 0)
-                {
-                    *exit_code = INVALID_INPUT;
-                    return 0;
-                }
-                return left / right;
-            default:
+        case ADDITION:
+            return left + right;
+        case SUBTRACTION:
+            return left - right;
+        case MULTIPLICATION:
+            return left * right;
+        case DIVISION:
+            if (right == 0)
+            {
+                *exit_code = INVALID_INPUT;
                 return 0;
+            }
+            return left / right;
+        default:
+            return 0;
         }
     }
     else if (formula->valid_exp_type == FUNCT_ON_RANGE)
@@ -984,8 +984,8 @@ int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, SIM_BOOL sleep_ove
         {
             int start_row = get_cell_row(formula->cell_range->start_cell);
             int start_col = get_cell_col(formula->cell_range->start_cell);
-            int end_row   = get_cell_row(formula->cell_range->end_cell);
-            int end_col   = get_cell_col(formula->cell_range->end_cell);
+            int end_row = get_cell_row(formula->cell_range->end_cell);
+            int end_col = get_cell_col(formula->cell_range->end_cell);
             int count = 0, sum = 0, min = 0, max = 0;
             double mean, variance = 0, stdev;
             SCell *first = get_scell_by_coordinates(ss, start_row, start_col);
@@ -1014,34 +1014,34 @@ int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, SIM_BOOL sleep_ove
             }
             switch (formula->function)
             {
-                case MIN:
-                    return min;
-                case MAX:
-                    return max;
-                case SUM:
-                    return sum;
-                case AVG:
-                    return (count > 0) ? sum / count : 0;
-                case STDEV:
-                    mean = (count > 0) ? (double)sum / count : 0;
-                    for (int r = start_row; r <= end_row; r++)
+            case MIN:
+                return min;
+            case MAX:
+                return max;
+            case SUM:
+                return sum;
+            case AVG:
+                return (count > 0) ? sum / count : 0;
+            case STDEV:
+                mean = (count > 0) ? (double)sum / count : 0;
+                for (int r = start_row; r <= end_row; r++)
+                {
+                    for (int c = start_col; c <= end_col; c++)
                     {
-                        for (int c = start_col; c <= end_col; c++)
+                        SCell *curr = get_scell_by_coordinates(ss, r, c);
+                        if (curr)
                         {
-                            SCell *curr = get_scell_by_coordinates(ss, r, c);
-                            if (curr)
-                            {
-                                int val = get_cell_value(curr->cell);
-                                variance += (val - mean) * (val - mean);
-                            }
+                            int val = get_cell_value(curr->cell);
+                            variance += (val - mean) * (val - mean);
                         }
                     }
-                    if (count > 0)
-                        variance /= count;
-                    stdev = sqrt(variance);
-                    return (int)stdev;
-                default:
-                    return 0;
+                }
+                if (count > 0)
+                    variance /= count;
+                stdev = sqrt(variance);
+                return (int)stdev;
+            default:
+                return 0;
             }
         }
     }
@@ -1088,9 +1088,9 @@ void parse_expression(char target_cell_buff[], char exp_buff[], Spread_Sheet *ss
     }
 
     /*
-        Checking for Value_OP_Value 
+        Checking for Value_OP_Value
     */
-    
+
     else if ((strchr(exp_buff, '+') - exp_buff) > 0 || (strchr(exp_buff, '-') - exp_buff > 0) || (strchr(exp_buff, '*') - exp_buff > 0) || (strchr(exp_buff, '/') - exp_buff > 0))
     {
 
@@ -1111,7 +1111,6 @@ void parse_expression(char target_cell_buff[], char exp_buff[], Spread_Sheet *ss
 
     TCU_EXIT_CODE update_exit_code;
 
-    
     update_logic_unit(ss, target_scell, formula, &update_exit_code);
     // target_scell->cell_formula = formula;
     // int result = evaluate_formula(formula, ss, exit_code);
@@ -1122,19 +1121,129 @@ void parse_expression(char target_cell_buff[], char exp_buff[], Spread_Sheet *ss
 
 // ------------------------------------------------------------------------- //
 
+void debug_print_scell(Spread_Sheet *ss, SCell *scell)
+{
+    printf("// -------------------------------------------------------------------------------------------------------------------------------------------------- //\n");
+    printf("Cell - Row: %d, Col: %d, Value: %d\n", get_cell_row(scell->cell), get_cell_col(scell->cell), get_cell_value(scell->cell));
+    for (int i = 0; i < scell->dependent_scells->size; i++)
+    {
+        printf("Dependent Cell %d: Row: %d, Col: %d, Value: %d\n", i, get_cell_row(scell->dependent_scells->scell_ptrs[i]->cell), get_cell_col(scell->dependent_scells->scell_ptrs[i]->cell), get_cell_value(scell->dependent_scells->scell_ptrs[i]->cell));
+    }
+
+
+    debug_print_formula(scell->cell_formula);
+
+
+
+
+
+
+
+
+    int prec_cell_count = 0;
+
+    if (scell->cell_formula->valid_exp_type == VALUE && scell->cell_formula->is_constant == FALSE)
+    {
+        printf("Precedent Cell %d: Row: %d, Col: %d, Value: %d\n", prec_cell_count, scell->cell->row, scell->cell->col, scell->cell->value);
+        prec_cell_count++;
+    }
+    else if (scell->cell_formula->valid_exp_type == VALUE_OP_VALUE)
+    {
+        if (scell->cell_formula->is_left_value_constant == FALSE)
+        {
+            printf("Precedent Cell %d: Row: %d, Col: %d, Value: %d\n", prec_cell_count, scell->cell_formula->left_cell->row, scell->cell_formula->left_cell->col, scell->cell_formula->left_cell->value);
+            prec_cell_count++;
+        }
+        if (scell->cell_formula->is_right_value_constant == FALSE)
+        {
+            printf("Precedent Cell %d: Row: %d, Col: %d, Value: %d\n", prec_cell_count, scell->cell_formula->right_cell->row, scell->cell_formula->right_cell->col, scell->cell_formula->right_cell->value);
+            prec_cell_count++;
+        }
+    }
+    else if (scell->cell_formula->valid_exp_type == FUNCT_ON_RANGE && scell->cell_formula->function != SLEEP && scell->cell_formula->cell_range != NULL)
+    {
+
+        if (scell->cell_formula->function != SLEEP)
+        {
+            int i_min = get_cell_row(scell->cell_formula->cell_range->start_cell);
+            int j_min = get_cell_col(scell->cell_formula->cell_range->start_cell);
+            int i_max = get_cell_row(scell->cell_formula->cell_range->end_cell);
+            int j_max = get_cell_col(scell->cell_formula->cell_range->end_cell);
+
+            for (int r = i_min; r <= i_max; r++)
+            {
+                for (int c = j_min; c <= j_max; c++)
+                {
+                    printf("Precedent Cell %d: Row: %d, Col: %d, Value: %d\n", prec_cell_count, r, c, get_cell_value(ss->arr[r * ss->SS_COLS + c].cell));
+                    prec_cell_count++;
+                }
+            }
+        }
+    }
+
+    printf("// -------------------------------------------------------------------------------------------------------------------------------------------------- //\n");
+    return;
+}
+
 // (1) Remove Old Dependencies
 // For each cell in target->precedent_scells, remove target from that cell's dependent list.
-void remove_old_dependencies(SCell *target)
+void remove_old_dependencies(Spread_Sheet *ss, SCell *target)
 {
-    if (target == NULL || target->precedent_scells == NULL)
+
+    if (target == NULL)
         return;
-    for (int i = 0; i < target->precedent_scells->size; i++)
+
+    SCell *prec_scell = NULL;
+    Cell *prec_cell = NULL;
+
+    if (target->cell_formula->valid_exp_type == VALUE)
     {
-        SCell *prec = target->precedent_scells->scell_ptrs[i];
-        remove_scell_ptr(prec->dependent_scells, target);
+        if (target->cell_formula->is_constant == FALSE)
+        {
+            prec_cell = target->cell_formula->cell;
+            prec_scell = get_scell_by_coordinates(ss, get_cell_row(prec_cell), get_cell_col(prec_cell));
+            remove_scell_ptr(prec_scell->dependent_scells, target);
+        }
     }
-    // Clear target's precedent list.
-    target->precedent_scells->size = 0;
+    else if (target->cell_formula->valid_exp_type == VALUE_OP_VALUE)
+    {
+        if (target->cell_formula->is_left_value_constant == FALSE)
+        {
+            prec_cell = target->cell_formula->left_cell;
+            prec_scell = get_scell_by_coordinates(ss, get_cell_row(prec_cell), get_cell_col(prec_cell));
+            remove_scell_ptr(prec_scell->dependent_scells, target);
+        }
+        if (target->cell_formula->is_right_value_constant == FALSE)
+        {
+            prec_cell = target->cell_formula->right_cell;
+            prec_scell = get_scell_by_coordinates(ss, get_cell_row(prec_cell), get_cell_col(prec_cell));
+            remove_scell_ptr(prec_scell->dependent_scells, target);
+        }
+    }
+    else if (target->cell_formula->valid_exp_type == FUNCT_ON_RANGE)
+    {
+        if (target->cell_formula->function != SLEEP)
+        {
+            int i_min = get_cell_row(target->cell_formula->cell_range->start_cell);
+            int j_min = get_cell_col(target->cell_formula->cell_range->start_cell);
+            int i_max = get_cell_row(target->cell_formula->cell_range->end_cell);
+            int j_max = get_cell_col(target->cell_formula->cell_range->end_cell);
+
+            for (int r = i_min; r <= i_max; r++)
+            {
+                for (int c = j_min; c <= j_max; c++)
+                {
+                    prec_scell = get_scell_by_coordinates(ss, r, c);
+                    if (prec_scell != NULL)
+                    {
+                        remove_scell_ptr(prec_scell->dependent_scells, target);
+                    }
+                }
+            }
+        }
+    }
+
+    return;
 }
 
 // (2) Add New Dependencies
@@ -1158,25 +1267,29 @@ void add_new_dependencies(SCell *target, SCell *new_precedent_tl, SCell *new_pre
             // Add target to the precedent's dependent list.
             push_back_scell_ptrs(prec->dependent_scells, target);
             // Also add the precedent to target's precedent list.
-            push_back_scell_ptrs(target->precedent_scells, prec);
         }
     }
+
+    return;
 }
 
 void update_logic_unit(Spread_Sheet *ss, SCell *node, Cell_Formula *cformula, TCU_EXIT_CODE *exit_code)
 {
-    debug_print_formula(cformula);
+    // debug_print_formula(cformula);
     SCell *tnode_l = NULL;
     SCell *tnode_r = NULL;
 
     // Allocate a stack for cycle detection
     Stack_SCell *vis_stack = (Stack_SCell *)malloc(sizeof(Stack_SCell));
-    if (!vis_stack) {
+    if (!vis_stack)
+    {
         *exit_code = MALLOC_FAILED;
         return;
     }
-    printf("Begin\n");
-    printf("%d\n", cformula->valid_exp_type);
+    // printf("Begin\n");
+    // printf("%d\n", cformula->valid_exp_type);
+
+    remove_old_dependencies(ss, node);
 
     if (cformula->valid_exp_type == VALUE)
     {
@@ -1186,7 +1299,7 @@ void update_logic_unit(Spread_Sheet *ss, SCell *node, Cell_Formula *cformula, TC
             SIM_BOOL cycle_check = FALSE;
             tnode_l = &(ss->arr[(cformula->cell->row) * (ss->SS_COLS) + cformula->cell->col]);
             dfs_cycle_check(node, tnode_l, tnode_l, vis_stack, &cycle_check);
-            pop_and_unmark(vis_stack);
+            pop_and_unmark(ss, vis_stack);
             if (cycle_check == TRUE)
             {
                 *exit_code = CYCLE_FOUND;
@@ -1194,45 +1307,54 @@ void update_logic_unit(Spread_Sheet *ss, SCell *node, Cell_Formula *cformula, TC
                 return;
             }
 
-            printf("HI\n");
-            remove_old_dependencies(node);
+            // printf("HI\n");
+            // remove_old_dependencies(node);
             add_new_dependencies(node, tnode_l, tnode_l, ss);
         }
-        printf("YO\n");
+        // printf("YO\n");
     }
     else if (cformula->valid_exp_type == VALUE_OP_VALUE)
     {
+
         if (cformula->is_left_value_constant == FALSE)
         {
             init_stack(vis_stack, 10);
             tnode_l = &(ss->arr[(cformula->left_cell->row) * (ss->SS_COLS) + cformula->left_cell->col]);
             SIM_BOOL cycle_check = FALSE;
             dfs_cycle_check(node, tnode_l, tnode_l, vis_stack, &cycle_check);
-            pop_and_unmark(vis_stack);
+            pop_and_unmark(ss, vis_stack);
             if (cycle_check == TRUE)
             {
                 *exit_code = CYCLE_FOUND;
                 free(vis_stack);
                 return;
             }
-            remove_old_dependencies(node);
+
+            // printf("Hi\n");
+            // debug_print_scell(ss, tnode_l);
+
+            // remove_old_dependencies(node);
             add_new_dependencies(node, tnode_l, tnode_l, ss);
         }
 
-        if (cformula->is_right_value_constant == FALSE)
+        if (cformula->is_right_value_constant == FALSE && (cformula->left_cell != cformula->right_cell))
         {
             init_stack(vis_stack, 10);
             tnode_r = &(ss->arr[(cformula->right_cell->row) * (ss->SS_COLS) + cformula->right_cell->col]);
             SIM_BOOL cycle_check = FALSE;
             dfs_cycle_check(node, tnode_r, tnode_r, vis_stack, &cycle_check);
-            pop_and_unmark(vis_stack);
+            pop_and_unmark(ss, vis_stack);
             if (cycle_check == TRUE)
             {
                 *exit_code = CYCLE_FOUND;
                 free(vis_stack);
                 return;
             }
-            remove_old_dependencies(node);
+
+            // printf("Hi\n");
+            // debug_print_scell(ss, tnode_r);
+
+            //  remove_old_dependencies(node);
             add_new_dependencies(node, tnode_r, tnode_r, ss);
         }
     }
@@ -1260,14 +1382,14 @@ void update_logic_unit(Spread_Sheet *ss, SCell *node, Cell_Formula *cformula, TC
             tnode_r = &(ss->arr[(cformula->cell_range->end_cell->row) * (ss->SS_COLS) + cformula->cell_range->end_cell->col]);
             SIM_BOOL cycle_check = FALSE;
             dfs_cycle_check(node, tnode_l, tnode_r, vis_stack, &cycle_check);
-            pop_and_unmark(vis_stack);
+            pop_and_unmark(ss, vis_stack);
             if (cycle_check == TRUE)
             {
                 *exit_code = CYCLE_FOUND;
                 free(vis_stack);
                 return;
             }
-            remove_old_dependencies(node);
+            // remove_old_dependencies(node);
             add_new_dependencies(node, tnode_l, tnode_r, ss);
         }
     }
@@ -1281,17 +1403,19 @@ void update_logic_unit(Spread_Sheet *ss, SCell *node, Cell_Formula *cformula, TC
     node->cell_formula = cformula;
 
     Stack_SCell *topo_sort_st = (Stack_SCell *)malloc(sizeof(Stack_SCell));
-    if (!topo_sort_st) {
+    if (!topo_sort_st)
+    {
         *exit_code = MALLOC_FAILED;
         free(vis_stack);
         return;
     }
+
     init_stack(topo_sort_st, 10);
-    printf("Checking formula assignment\n");
-    debug_print_formula(node->cell_formula);
+    // printf("Checking formula assignment\n");
+    // debug_print_formula(node->cell_formula);
     dfs_topological(node, topo_sort_st);
-    printf("Checking formula assignment after dfs\n");
-    debug_print_formula(node->cell_formula);
+    // printf("Checking formula assignment after dfs\n");
+    // debug_print_formula(node->cell_formula);
     pop_and_update(topo_sort_st, ss, exit_code);
 
     free(vis_stack);
@@ -1307,9 +1431,20 @@ void pop_and_update(Stack_SCell *topo_sort_st, Spread_Sheet *ss, TCU_EXIT_CODE *
     {
         SCell *node = pop_stack(topo_sort_st);
         node->visited = FALSE;
-        debug_print_formula(node->cell_formula);
-        debug_print_scell(node);
+        // debug_print_formula(node->cell_formula);
+        // debug_print_scell(node);
         node->cell->value = evaluate_formula(node->cell_formula, ss, FALSE, exit_code);
+    }
+    return;
+}
+
+void pop_and_unmark(Spread_Sheet *ss, Stack_SCell *visitedStack)
+{
+    while (visitedStack->top >= 0)
+    {
+        SCell *node = pop_stack(visitedStack);
+        node->visited = FALSE;
+        // debug_print_scell(ss, node);
     }
     return;
 }
@@ -1531,10 +1666,10 @@ void terminal_control_unit(Spread_Sheet *ss)
                 // Debug command: parse cell name from after "dbg "
                 int rows = 0, cols = 0;
                 parse_cell_name(command_buff + 4, &rows, &cols);
-                printf("ROW: %d, COL: %d\n", rows, cols);
+                // printf("ROW: %d, COL: %d\n", rows, cols);
                 SCell *sc = get_scell_by_coordinates(ss, rows, cols);
-                printf("Value : %d\n", sc->cell->value);
-                debug_print_scell(sc);
+                // printf("Value : %d\n", sc->cell->value);
+                debug_print_scell(ss, sc);
             }
             else
             {
@@ -1562,6 +1697,5 @@ void terminal_control_unit(Spread_Sheet *ss)
 
     return;
 }
-
 
 // ------------------------------------------------------------------------- //

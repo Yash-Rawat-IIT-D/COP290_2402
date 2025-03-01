@@ -69,8 +69,28 @@ void debug_print_formula(Cell_Formula* formula)
         printf("Formula is NULL\n");
         return;
     }
-    printf("Formula : ");
     printf("EXP_TYPE : %d\n", formula->valid_exp_type);
+    if (formula->valid_exp_type == VALUE)
+    {
+        printf("Value : %d\n", formula->value);
+    }
+    else if (formula->valid_exp_type == VALUE_OP_VALUE)
+    {
+        printf("Left Value : %d\n", formula->left_value);
+        printf("Right Value : %d\n", formula->right_value);
+    }
+    else if (formula->valid_exp_type == FUNCT_ON_RANGE)
+    {
+        printf("Function : %d\n", formula->function);
+        if (formula->cell_range != NULL)
+        {
+            printf("Cell Range (Top Left) : ");
+            debug_print_cell(formula->cell_range->start_cell);
+            printf("Cell Range (Bottom Right) : ");
+            debug_print_cell(formula->cell_range->end_cell);
+        }
+    }
+    
     return;
 }
 

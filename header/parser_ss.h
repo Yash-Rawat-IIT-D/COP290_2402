@@ -59,14 +59,17 @@ void update_logic_unit(Spread_Sheet *ss, SCell* node, Cell_Formula * cformula, T
 //sharma bhai start
 
 // Remove the target cell from all precedent cells’ dependent lists.
-void remove_old_dependencies(SCell *target);
+
+void debug_print_scell(Spread_Sheet *ss, SCell *scell);
+void remove_old_dependencies(Spread_Sheet *ss,  SCell *target);
+
 
 // Add new dependency links based on the new formula.
 // new_precedents is a dynamic array (SCell1D) containing pointers to the new precedent cells.
 void add_new_dependencies(SCell *target, SCell *new_precedent_tl, SCell *new_precedent_br, Spread_Sheet *ss);
 
 void pop_and_update(Stack_SCell * topo_sort_st, Spread_Sheet *ss, TCU_EXIT_CODE *exit_code);
-
+void pop_and_unmark(Spread_Sheet *ss, Stack_SCell *visitedStack);
 
 int safe_render_dim(int rc, int rc_max);
 
