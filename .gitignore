@@ -1,3 +1,4 @@
 # Ignore all .o files in obj/my_specific_folder
 obj/*.o
 obj/*.o.orig
+sheet
