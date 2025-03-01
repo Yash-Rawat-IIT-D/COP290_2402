@@ -16,7 +16,8 @@
 #define IN_BUFF_SIZE 100
 #define COL_HEADER_BUFF_SIZE 4
 #define COL_DATA_BUFF_SIZE 12
-#define SPACER "|"
+#define SPACER ""
+#define SPACER_00 "              "
 #define COL_SPACER ' '
 #define LO_RESIZE_THRESHOLD 32
 

@@ -24,6 +24,7 @@ typedef struct Cell_Range
 
 } Cell_Range;
 
+
 typedef struct Cell_Formula
 {
     VALID_EXP valid_exp_type;
