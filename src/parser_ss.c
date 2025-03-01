@@ -917,7 +917,12 @@ double sqrt(double x)
        You may choose to handle this differently. */
     if (x < 0.0)
     {
-        return -1.0;
+        if(my_fabs(x) < 1e-6)
+        {
+            return 0.0;
+        }
+        
+        return -1;
     }
 
     /* Initial guess: use x if x > 1, otherwise 1 */
@@ -929,6 +934,7 @@ double sqrt(double x)
     {
         guess = (guess + x / guess) / 2.0;
     }
+
 
     return guess;
 }
@@ -942,30 +948,70 @@ int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, SIM_BOOL sleep_ove
     if (formula->valid_exp_type == VALUE)
     {
         if (formula->is_constant == TRUE)
-            return formula->value;
+        {   
+            *(exit_code) = TCU_OK;
+            return formula->value; 
+        }
         else
+        {
+            if(get_scell_by_coordinates(ss, get_cell_row(formula->cell), get_cell_col(formula->cell))->err_flag == TRUE)
+            {
+                *exit_code = DIV_BY_ZERO;
+                return 0;
+            }
+
+            *exit_code = TCU_OK ;
             return get_cell_value(formula->cell);
+        }
     }
     else if (formula->valid_exp_type == VALUE_OP_VALUE)
     {
         int left = (formula->is_left_value_constant == TRUE) ? formula->left_value : get_cell_value(formula->left_cell);
         int right = (formula->is_right_value_constant == TRUE) ? formula->right_value : get_cell_value(formula->right_cell);
+
+
+        if(formula->is_left_value_constant == FALSE)
+        {
+            SCell * left_scell = get_scell_by_coordinates(ss, get_cell_row(formula->left_cell), get_cell_col(formula->left_cell));
+            if(left_scell->err_flag == TRUE)
+            {
+                *exit_code = DIV_BY_ZERO;
+                return 0;
+            }
+        }
+
+        if(formula->is_right_value_constant == FALSE)
+        {
+            SCell * right_scell = get_scell_by_coordinates(ss, get_cell_row(formula->right_cell), get_cell_col(formula->right_cell));
+            if(right_scell->err_flag == TRUE)
+            {
+                *exit_code = DIV_BY_ZERO;
+                return 0;
+            }
+        }
+
+
         switch (formula->arithmetic_op)
         {
         case ADDITION:
+            *(exit_code) = TCU_OK;
             return left + right;
         case SUBTRACTION:
+            *(exit_code) = TCU_OK;
             return left - right;
         case MULTIPLICATION:
+            *(exit_code) = TCU_OK;
             return left * right;
         case DIVISION:
             if (right == 0)
             {
-                *exit_code = INVALID_INPUT;
+                *exit_code = DIV_BY_ZERO;
                 return 0;
             }
+            *(exit_code) = TCU_OK;
             return left / right;
         default:
+            *(exit_code) = INVALID_INPUT;
             return 0;
         }
     }
@@ -974,10 +1020,21 @@ int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, SIM_BOOL sleep_ove
         if (formula->function == SLEEP)
         {
             int sleep_val = get_cell_value(formula->cell_range->start_cell);
+
+
+            // Review this later : 
+            if(get_scell_by_coordinates(ss, get_cell_row(formula->cell_range->start_cell), get_cell_col(formula->cell_range->start_cell))->err_flag == TRUE)
+            {
+                *exit_code = DIV_BY_ZERO;
+                return 0;
+            }
+
             if (sleep_over_ride == FALSE)
             {
                 sleep(sleep_val);
             }
+
+            *(exit_code) = TCU_OK;
             return sleep_val;
         }
         else
@@ -986,9 +1043,10 @@ int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, SIM_BOOL sleep_ove
             int start_col = get_cell_col(formula->cell_range->start_cell);
             int end_row = get_cell_row(formula->cell_range->end_cell);
             int end_col = get_cell_col(formula->cell_range->end_cell);
-            int count = 0, sum = 0, min = 0, max = 0;
-            double mean, variance = 0, stdev;
+            int count = 0, sum = 0, min = 0, max = 0, sum_sq = 0;
+            double mean = 0, variance = 0, stdev = 0;
             SCell *first = get_scell_by_coordinates(ss, start_row, start_col);
+
             if (!first)
             {
                 *exit_code = OUT_OF_RANGE;
@@ -1002,8 +1060,16 @@ int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, SIM_BOOL sleep_ove
                     SCell *curr = get_scell_by_coordinates(ss, r, c);
                     if (curr)
                     {
+                        // Check later
+                        if(curr->err_flag == TRUE)
+                        {
+                            *exit_code = DIV_BY_ZERO;
+                            return 0;
+                        }
+
                         int val = get_cell_value(curr->cell);
                         sum += val;
+                        sum_sq += val * val;
                         if (val < min)
                             min = val;
                         if (val > max)
@@ -1015,32 +1081,41 @@ int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, SIM_BOOL sleep_ove
             switch (formula->function)
             {
             case MIN:
+                *exit_code = TCU_OK;
                 return min;
             case MAX:
+                *exit_code = TCU_OK;
                 return max;
             case SUM:
+                *exit_code = TCU_OK;
                 return sum;
             case AVG:
+                *exit_code = TCU_OK;
                 return (count > 0) ? sum / count : 0;
             case STDEV:
                 mean = (count > 0) ? (double)sum / count : 0;
-                for (int r = start_row; r <= end_row; r++)
-                {
-                    for (int c = start_col; c <= end_col; c++)
-                    {
-                        SCell *curr = get_scell_by_coordinates(ss, r, c);
-                        if (curr)
-                        {
-                            int val = get_cell_value(curr->cell);
-                            variance += (val - mean) * (val - mean);
-                        }
-                    }
-                }
+                // for (int r = start_row; r <= end_row; r++)
+                // {
+                //     for (int c = start_col; c <= end_col; c++)
+                //     {
+                //         SCell *curr = get_scell_by_coordinates(ss, r, c);
+                //         if (curr)
+                //         {
+                //             int val = get_cell_value(curr->cell);
+                //             variance += (val - mean) * (val - mean);
+                //         }
+                //     }
+                // }
                 if (count > 0)
-                    variance /= count;
+                    variance = sum_sq/count - mean * mean;
+
+                
                 stdev = sqrt(variance);
+                
+                *exit_code = TCU_OK;
                 return (int)stdev;
             default:
+                *exit_code = INVALID_INPUT;
                 return 0;
             }
         }
@@ -1137,13 +1212,6 @@ void debug_print_scell(Spread_Sheet *ss, SCell *scell)
 
 
     debug_print_formula(scell->cell_formula);
-
-
-
-
-
-
-
 
     int prec_cell_count = 0;
 
@@ -1362,47 +1430,6 @@ void update_logic_unit(Spread_Sheet *ss, SCell *node, Cell_Formula *cformula, TC
             add_new_dependencies(node, tnode_r, tnode_r, ss);
         }
 
-        // if (cformula->is_left_value_constant == FALSE)
-        // {
-        //     init_stack(vis_stack, 10);
-        //     tnode_l = &(ss->arr[(cformula->left_cell->row) * (ss->SS_COLS) + cformula->left_cell->col]);
-        //     SIM_BOOL cycle_check = FALSE;
-        //     dfs_cycle_check(node, tnode_l, tnode_l, vis_stack, &cycle_check);
-        //     pop_and_unmark(ss, vis_stack);
-        //     if (cycle_check == TRUE)
-        //     {
-        //         *exit_code = CYCLE_FOUND;
-        //         free(vis_stack);
-        //         return;
-        //     }
-
-        //     // printf("Hi\n");
-        //     // debug_print_scell(ss, tnode_l);
-
-        //     // remove_old_dependencies(node);
-        //     add_new_dependencies(node, tnode_l, tnode_l, ss);
-        // }
-
-        // if (cformula->is_right_value_constant == FALSE && (cformula->left_cell != cformula->right_cell))
-        // {
-        //     init_stack(vis_stack, 10);
-        //     tnode_r = &(ss->arr[(cformula->right_cell->row) * (ss->SS_COLS) + cformula->right_cell->col]);
-        //     SIM_BOOL cycle_check = FALSE;
-        //     dfs_cycle_check(node, tnode_r, tnode_r, vis_stack, &cycle_check);
-        //     pop_and_unmark(ss, vis_stack);
-        //     if (cycle_check == TRUE)
-        //     {
-        //         *exit_code = CYCLE_FOUND;
-        //         free(vis_stack);
-        //         return;
-        //     }
-
-        //     // printf("Hi\n");
-        //     // debug_print_scell(ss, tnode_r);
-
-        //     //  remove_old_dependencies(node);
-        //     add_new_dependencies(node, tnode_r, tnode_r, ss);
-        // }
     }
     else if (cformula->valid_exp_type == FUNCT_ON_RANGE)
     {
@@ -1410,10 +1437,11 @@ void update_logic_unit(Spread_Sheet *ss, SCell *node, Cell_Formula *cformula, TC
         {
             // For SLEEP, immediately evaluate the formula.
             // get_cell_value of the dummy cell in the cell_range will yield the sleep argument.
-            int sleep_val = evaluate_formula(cformula, ss, FALSE, exit_code);
+            evaluate_formula(cformula, ss, FALSE, exit_code);
             // Only sleep if sleep_over_ride is false (here we pass FALSE)
             if (*exit_code == TCU_OK)
             {
+                int sleep_val = get_cell_value(cformula->cell_range->start_cell);
                 sleep(sleep_val);
                 set_cell_value(node->cell, sleep_val);
                 node->cell_formula = cformula;
@@ -1443,7 +1471,6 @@ void update_logic_unit(Spread_Sheet *ss, SCell *node, Cell_Formula *cformula, TC
             add_new_dependencies(node, tnode_l, tnode_r, ss);
         }
 
-        return;
     }
     else
     {
@@ -1472,6 +1499,7 @@ void update_logic_unit(Spread_Sheet *ss, SCell *node, Cell_Formula *cformula, TC
 
     free(vis_stack);
     free(topo_sort_st);
+    *(exit_code) = TCU_OK;
     return;
 }
 
@@ -1484,8 +1512,24 @@ void pop_and_update(Stack_SCell *topo_sort_st, Spread_Sheet *ss, TCU_EXIT_CODE *
         SCell *node = pop_stack(topo_sort_st);
         node->visited = FALSE;
         // debug_print_formula(node->cell_formula);
-        // debug_print_scell(node);
-        node->cell->value = evaluate_formula(node->cell_formula, ss, FALSE, exit_code);
+        // debug_print_scell(ss, node);
+        TCU_EXIT_CODE update_exit_code;
+        
+        int temp = evaluate_formula(node->cell_formula, ss, FALSE, &update_exit_code);
+        
+        *exit_code = update_exit_code;
+
+        printf("Update Exit Code: %d\n", update_exit_code);
+        if(update_exit_code == DIV_BY_ZERO)
+        {
+            node->err_flag = TRUE;
+        }
+        else if(update_exit_code == TCU_OK)
+        {
+            node->err_flag = FALSE;
+            set_cell_value(node->cell, temp);
+        }
+
     }
     return;
 }
@@ -1577,7 +1621,16 @@ void render_ss(Spread_Sheet *ss, int row, int col)
         // printf("Hi printing row [%d]",i);
         for (int j = col; j < safe_render_dim(col, ss->SS_COLS); j++)
         {
-            sprintf(col_data_buff, "%d", ((ss->arr[i * (ss->SS_COLS) + j]).cell)->value);
+            if((ss->arr[i * (ss->SS_COLS) + j]).err_flag == TRUE)
+            {
+                sprintf(col_data_buff, "ERR");
+            }
+            else
+            {
+                sprintf(col_data_buff, "%d", ((ss->arr[i * (ss->SS_COLS) + j]).cell)->value);
+
+            }
+            // sprintf(col_data_buff, "%d", ((ss->arr[i * (ss->SS_COLS) + j]).cell)->value);
             // printf("Value at [%d][%d] = %.2f\n",i,j,(((ss->arr[i][j]).cell).value));
             set_out_buff(obuff, col_data_buff);
             printf("%*s%s", MIN_COL_WIDTH, obuff, SPACER);
@@ -1614,8 +1667,11 @@ void set_error_message(TCU_EXIT_CODE exit_code, char error_buff[])
     case CYCLE_FOUND:
         strcpy(error_buff, "Cycle Found");
         break;
+    case DIV_BY_ZERO:
+        strcpy(error_buff, "Division by Zero");
+        break;
     default:
-        printf("Unrecognized error code");
+        printf("Unrecognized error code\n");
         break;
     }
 }

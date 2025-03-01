@@ -79,7 +79,7 @@ void init_scell(SCell *scell, int row, int col, int value, SS_EXIT_CODE *exit_co
     }
 
     scell->visited = FALSE;
-
+    scell->err_flag = FALSE;
     init_scell_formula(scell);
 
     *(exit_code) = SS_OK;

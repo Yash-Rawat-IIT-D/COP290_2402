@@ -21,6 +21,7 @@ typedef struct SCell
 
     Cell_Formula * cell_formula;
     SIM_BOOL visited;
+    SIM_BOOL err_flag;
 } SCell;
 
 void init_scell_formula(SCell *scell);
