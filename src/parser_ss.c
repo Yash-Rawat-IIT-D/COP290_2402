@@ -846,6 +846,7 @@ void parse_function(const char *exp, Cell_Formula *formula, Spread_Sheet *ss, TC
     }
     else if (strcmp(func_name, "AVG") == 0)
     {
+        printf("AVG\n");
         formula->function = AVG;
         formula->cell_range = parse_range(param, ss, exit_code);
     }
@@ -939,6 +940,7 @@ double sqrt(double x)
 */
 int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, SIM_BOOL sleep_over_ride, TCU_EXIT_CODE *exit_code)
 {
+    printf("Evaluating formula\n");
     if (formula->valid_exp_type == VALUE)
     {
         if (formula->is_constant == TRUE)
@@ -1012,6 +1014,7 @@ int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, SIM_BOOL sleep_ove
                     }
                 }
             }
+            // printf("Count: %d, Sum: %d, Min: %d, Max: %d\n", count, sum, min, max);
             switch (formula->function)
             {
             case MIN:
@@ -1055,7 +1058,6 @@ int evaluate_formula(Cell_Formula *formula, Spread_Sheet *ss, SIM_BOOL sleep_ove
 */
 void parse_expression(char target_cell_buff[], char exp_buff[], Spread_Sheet *ss, TCU_EXIT_CODE *exit_code)
 {
-
     int target_row, target_col;
     parse_cell_name(target_cell_buff, &target_row, &target_col);
     SCell *target_scell = get_scell_by_coordinates(ss, target_row, target_col);
@@ -1066,7 +1068,6 @@ void parse_expression(char target_cell_buff[], char exp_buff[], Spread_Sheet *ss
     }
 
     Cell_Formula *formula = malloc(sizeof(Cell_Formula));
-    // printf("Exp Buff: %s\n", exp_buff);
     if (!formula)
     {
         *exit_code = MALLOC_FAILED;
@@ -1086,17 +1087,11 @@ void parse_expression(char target_cell_buff[], char exp_buff[], Spread_Sheet *ss
     {
         parse_function(exp_buff, formula, ss, exit_code);
     }
-
-    /*
-        Checking for Value_OP_Value
-    */
-
-    else if ((strchr(exp_buff, '+') - exp_buff) > 0 || (strchr(exp_buff, '-') - exp_buff > 0) || (strchr(exp_buff, '*') - exp_buff > 0) || (strchr(exp_buff, '/') - exp_buff > 0))
+    // Instead of checking the entire string, we look for an operator starting from index 1.
+    else if (strpbrk(exp_buff + 1, "+-*/") != NULL)
     {
-
         parse_arithmetic(exp_buff, formula, ss, exit_code);
     }
-    // 3) Otherwise parse as a single value or cell reference
     else
     {
         parse_value(exp_buff, formula, ss, exit_code);
@@ -1110,19 +1105,14 @@ void parse_expression(char target_cell_buff[], char exp_buff[], Spread_Sheet *ss
     }
 
     TCU_EXIT_CODE update_exit_code;
-
     update_logic_unit(ss, target_scell, formula, &update_exit_code);
-
     if (update_exit_code != TCU_OK)
     {
         *exit_code = update_exit_code;
     }
-    // target_scell->cell_formula = formula;
-    // int result = evaluate_formula(formula, ss, exit_code);
-    // set_cell_value(target_scell->cell, result);
-
     return;
 }
+
 
 // ------------------------------------------------------------------------- //
 
@@ -1406,26 +1396,9 @@ void update_logic_unit(Spread_Sheet *ss, SCell *node, Cell_Formula *cformula, TC
     }
     else if (cformula->valid_exp_type == FUNCT_ON_RANGE)
     {
-        if (cformula->function == SLEEP)
-        {
-            // For SLEEP, immediately evaluate the formula.
-            // get_cell_value of the dummy cell in the cell_range will yield the sleep argument.
-            int sleep_val = evaluate_formula(cformula, ss, FALSE, exit_code);
-            // Only sleep if sleep_over_ride is false (here we pass FALSE)
-            if (*exit_code == TCU_OK)
-            {
-                sleep(sleep_val);
-                set_cell_value(node->cell, sleep_val);
-                node->cell_formula = cformula;
-            }
-
-            remove_old_dependencies(ss, node);
-            add_new_dependencies(node, tnode_l, tnode_r, ss);
-
-            free(vis_stack);
-        }
-        else
-        {
+        
+        
+            
             init_stack(vis_stack, 10);
             tnode_l = &(ss->arr[(cformula->cell_range->start_cell->row) * (ss->SS_COLS) + cformula->cell_range->start_cell->col]);
             tnode_r = &(ss->arr[(cformula->cell_range->end_cell->row) * (ss->SS_COLS) + cformula->cell_range->end_cell->col]);
@@ -1437,13 +1410,13 @@ void update_logic_unit(Spread_Sheet *ss, SCell *node, Cell_Formula *cformula, TC
                 printf("Cycle Found\n");
                 *exit_code = CYCLE_FOUND;
                 free(vis_stack);
-                return;
+                
             }
             remove_old_dependencies(ss, node);
             add_new_dependencies(node, tnode_l, tnode_r, ss);
-        }
+        
 
-        return;
+        
     }
     else
     {
@@ -1484,7 +1457,7 @@ void pop_and_update(Stack_SCell *topo_sort_st, Spread_Sheet *ss, TCU_EXIT_CODE *
         SCell *node = pop_stack(topo_sort_st);
         node->visited = FALSE;
         // debug_print_formula(node->cell_formula);
-        // debug_print_scell(node);
+        // debug_print_scell(ss,node);
         node->cell->value = evaluate_formula(node->cell_formula, ss, FALSE, exit_code);
     }
     return;
@@ -1594,6 +1567,7 @@ void render_ss(Spread_Sheet *ss, int row, int col)
 
 void set_error_message(TCU_EXIT_CODE exit_code, char error_buff[])
 {
+    // printf("Exit Code: %d\n", exit_code);
     switch (exit_code)
     {
     case TCU_OK:
@@ -1615,7 +1589,7 @@ void set_error_message(TCU_EXIT_CODE exit_code, char error_buff[])
         strcpy(error_buff, "Cycle Found");
         break;
     default:
-        printf("Unrecognized error code");
+        printf("Unrecognized error code\n");
         break;
     }
 }
@@ -1750,4 +1724,4 @@ void terminal_control_unit(Spread_Sheet *ss)
     return;
 }
 
-// ------------------------------------------------------------------------- //
+// ------------------------------------------------------------------------- // 
