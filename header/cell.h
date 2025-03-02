@@ -58,13 +58,13 @@ typedef struct Cell_Formula
     VALID_EXP valid_exp_type;
     
 
-    union
-    {
-        F_VALUE_CONS fvcons;
-        F_VALUE_CELL fvcell;
-        F_ARITHMETIC farith;
-        F_FUNCTION  ffunc;
-    }
+    // union
+    // {
+    //     F_VALUE_CONS fvcons;
+    //     F_VALUE_CELL fvcell;
+    //     F_ARITHMETIC farith;
+    //     F_FUNCTION  ffunc;
+    // }
 
     // valid_exp_type = VALUE
     SIM_BOOL is_constant;
