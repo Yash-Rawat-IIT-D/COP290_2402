@@ -3,4 +3,5 @@ obj/*.o
 obj/*.o.orig
 ProjectX/obj/*.o
 ProjectX/obj/*.o.orig
+ProjectX/sheet
 sheet
