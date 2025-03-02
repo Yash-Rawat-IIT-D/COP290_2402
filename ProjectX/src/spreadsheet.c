@@ -377,6 +377,7 @@ void update_cell_value(Spread_Sheet *ss, Pair node)
     //        0, // replace with actual column if available
     //        node->value);
     SCell *scell = &(ss->arr[node.x * ss->SS_COLS + node.y]);
+    int vl, vr;
     if (scell->cell_formula == NULL)
     {
         return;
@@ -391,8 +392,8 @@ void update_cell_value(Spread_Sheet *ss, Pair node)
         scell->value = ss->arr[scell->cell_formula->fvcell.cell_row * ss->SS_COLS + scell->cell_formula->fvcell.cell_col].value;
         break;
     case '2':
-        int vl = scell->cell_formula->farith_cons_cons.left_value;
-        int vr = scell->cell_formula->farith_cons_cons.right_value;
+        vl = scell->cell_formula->farith_cons_cons.left_value;
+        vr = scell->cell_formula->farith_cons_cons.right_value;
 
         switch (scell->cell_formula->farith_cons_cons.arithmetic_op)
         {
@@ -415,8 +416,8 @@ void update_cell_value(Spread_Sheet *ss, Pair node)
         break;
 
     case '3':
-        int vl = scell->cell_formula->farith_cons_cell.left_value;
-        int vr = ss->arr[scell->cell_formula->farith_cons_cell.right_cell_row * ss->SS_COLS + scell->cell_formula->farith_cons_cell.right_cell_col].value;
+        vl = scell->cell_formula->farith_cons_cell.left_value;
+        vr = ss->arr[scell->cell_formula->farith_cons_cell.right_cell_row * ss->SS_COLS + scell->cell_formula->farith_cons_cell.right_cell_col].value;
 
         switch (scell->cell_formula->farith_cons_cell.arithmetic_op)
         {
@@ -438,8 +439,8 @@ void update_cell_value(Spread_Sheet *ss, Pair node)
         break;
 
     case '4':
-        int vl = ss->arr[scell->cell_formula->farith_cell_cons.left_cell_row * ss->SS_COLS + scell->cell_formula->farith_cell_cons.left_cell_col].value;
-        int vr = scell->cell_formula->farith_cell_cons.right_value;
+        vl = ss->arr[scell->cell_formula->farith_cell_cons.left_cell_row * ss->SS_COLS + scell->cell_formula->farith_cell_cons.left_cell_col].value;
+        vr = scell->cell_formula->farith_cell_cons.right_value;
 
         switch (scell->cell_formula->farith_cell_cons.arithmetic_op)
         {
@@ -461,8 +462,8 @@ void update_cell_value(Spread_Sheet *ss, Pair node)
         break;
 
     case '5':
-        int vl = ss->arr[scell->cell_formula->farith_cell_cell.left_cell_row * ss->SS_COLS + scell->cell_formula->farith_cell_cell.left_cell_col].value;
-        int vr = ss->arr[scell->cell_formula->farith_cell_cell.right_cell_row * ss->SS_COLS + scell->cell_formula->farith_cell_cell.right_cell_col].value;
+        vl = ss->arr[scell->cell_formula->farith_cell_cell.left_cell_row * ss->SS_COLS + scell->cell_formula->farith_cell_cell.left_cell_col].value;
+        vr = ss->arr[scell->cell_formula->farith_cell_cell.right_cell_row * ss->SS_COLS + scell->cell_formula->farith_cell_cell.right_cell_col].value;
 
         switch (scell->cell_formula->farith_cell_cell.arithmetic_op)
         {
@@ -621,11 +622,6 @@ void topological_sort_and_update(Spread_Sheet *ss, Pair start)
 
 // Functions for Update Logic
 
-/*
- * remove_old_dependencies:
- * Removes target from the dependency lists of cells referenced in its current (old) formula.
- */
-
 void remove_old_dependencies(Spread_Sheet *ss, Pair target)
 {
    SCell * scell = &(ss->arr[target.x * ss->SS_COLS + target.y]);
@@ -647,41 +643,8 @@ void remove_old_dependencies(Spread_Sheet *ss, Pair target)
  */
 void add_new_dependencies(SCell *target, CELL_FORMULA *new_formula, Spread_Sheet *ss)
 {
-    char type = new_formula->valid_exp_type;
-    SCell *dep;
-    if (type == '1')
-    {
-        dep = get_scell_by_coordinates(ss, new_formula->fvcell.cell_row,
-                                       new_formula->fvcell.cell_col);
-        if (dep)
-            add_dependency_to_cell(dep, target);
-    }
-    else if (type == '5')
-    {
-        dep = get_scell_by_coordinates(ss, new_formula->farith_cell_cell.left_cell_row,
-                                       new_formula->farith_cell_cell.left_cell_col);
-        if (dep)
-            add_dependency_to_cell(dep, target);
-        dep = get_scell_by_coordinates(ss, new_formula->farith_cell_cell.right_cell_row,
-                                       new_formula->farith_cell_cell.right_cell_col);
-        if (dep)
-            add_dependency_to_cell(dep, target);
-    }
-    else if (type == '8')
-    {
-        for (int r = new_formula->ffunc.start_row; r <= new_formula->ffunc.end_row; r++)
-        {
-            for (int c = new_formula->ffunc.start_col; c <= new_formula->ffunc.end_col; c++)
-            {
-                dep = get_scell_by_coordinates(ss, r, c);
-                if (dep)
-                    add_dependency_to_cell(dep, target);
-            }
-        }
-    }
-    // Other types (e.g., constants) have no dependencies.
+    return;
 }
-
 /*
  * update_logic_unit:
  * Main update logic function.
@@ -693,28 +656,7 @@ void add_new_dependencies(SCell *target, CELL_FORMULA *new_formula, Spread_Sheet
  */
 char update_logic_unit(Spread_Sheet *ss, SCell *target, CELL_FORMULA *new_formula)
 {
-    char exit_code = '0';
-
-    // Check for cycle: for each dependency in the new formula, perform DFS starting at the target.
-    if (check_cycle_for_formula(target, new_formula, ss) == '1')
-    {
-        printf("Cycle Found\n");
-        return '5';
-    }
-
-    // Remove target from dependency lists of cells referenced in its old formula.
-    remove_old_dependencies(ss, target);
-
-    // Add target to dependency lists of cells referenced in the new formula.
-    add_new_dependencies(target, new_formula, ss);
-
-    // Update the target's formula pointer.
-    target->cell_formula = new_formula;
-
-    // Now perform a topological sort starting from the target and update cells in order.
-    topological_sort_and_update(target, ss);
-
-    return exit_code;
+    return '0';
 }
 
 // ------------------------------------------------------------------------- //

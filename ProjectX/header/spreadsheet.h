@@ -3,6 +3,7 @@
 #ifndef SPREADSHEET_H
 #define SPREADSHEET_H
 
+#include <unistd.h>
 #include "constants.h"
 #include <math.h>
 #include <stdbool.h>
@@ -142,6 +143,7 @@ char init_cell_formula(CELL_FORMULA * cf);
 // ------------------------------------------------------------------------- //
 
 // Methods to deal with the dependencies of a cell
+typedef struct Spread_Sheet Spread_Sheet;
 
 char resize_dependency_list(Spread_Sheet *ss, Pair target, int new_capacity);
 char add_dependency_to_cell(Spread_Sheet *ss, Pair target, Pair dep);
@@ -200,6 +202,6 @@ SCell * get_scell_by_coordinates(Spread_Sheet *ss, int row, int col);
 
 // ------------------------------------------------------------------------- //
 
-#endif 
+#endif
 
 // SPREADSHEET_H // End of Header File

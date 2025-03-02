@@ -26,7 +26,7 @@ all: $(OUTPUT)
 
 # Link object files into the final executable
 $(OUTPUT): $(OBJ_FILES)
-	$(CC) -o $(OUTPUT) $(OBJ_FILES)
+	$(CC) -o $(OUTPUT) $(OBJ_FILES) -lm
 
 # Compile each .c file to a .o object file
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
