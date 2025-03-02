@@ -47,15 +47,15 @@ void debug_print_scell(Spread_Sheet *ss, int row, int col)
 
     printf("Cell Location = (%d, %d)\n", row, col);
     printf("Cell Value = %d\n", scell->value);
-    // printf("Visited Error Flag: %c\n", scell->visited_err_flag);
-    // printf("Dependent Cells List: \n");
+    printf("Visited Error Flag: %c\n", scell->visited_err_flag);
+    printf("Dependent Cells List: \n");
     for (int i = 0; i < scell->dependent_scells_size; i++)
     {
         int tempv = ss->arr[scell->dependent_scells[i].x * ss->SS_COLS + scell->dependent_scells[i].y].value;
         printf("Dependent Cell %d : (%d, %d) , Value : %d\n", i, scell->dependent_scells[i].x, scell->dependent_scells[i].y, tempv);
     }
 
-    // debug_print_cell_formula(ss, p);
+    debug_print_cell_formula(ss, make_pair(row, col));
     printf("%s\n", LONG_SPACER);
 
     return;

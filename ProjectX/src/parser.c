@@ -10,37 +10,37 @@
 // Rendering & Utility Functions
 
 
-SCell *get_scell_by_coordinates(Spread_Sheet *ss, int row, int col)
-{
-    if (row < 0 || row >= ss->SS_ROWS || col < 0 || col >= ss->SS_COLS)
-    {
-        printf("Error: Out of Bounds\n");
-        return NULL;
-    }
+// SCell *get_scell_by_coordinates(Spread_Sheet *ss, int row, int col)
+// {
+//     if (row < 0 || row >= ss->SS_ROWS || col < 0 || col >= ss->SS_COLS)
+//     {
+//         printf("Error: Out of Bounds\n");
+//         return NULL;
+//     }
 
-    return &(ss->arr[row * ss->SS_COLS + col]);
-}
+//     return &(ss->arr[row * ss->SS_COLS + col]);
+// }
 
-void debug_print_scell(Spread_Sheet *ss, int row, int col)
-{
-    SCell *scell = &(ss->arr[row * ss->SS_COLS + col]);
-    printf("%s\n", LONG_SPACER);
+// void debug_print_scell(Spread_Sheet *ss, int row, int col)
+// {
+//     SCell *scell = &(ss->arr[row * ss->SS_COLS + col]);
+//     printf("%s\n", LONG_SPACER);
 
-    printf("Cell Location = (%d, %d)\n", row, col);
-    printf("Cell Value = %d\n", scell->value);
-    // printf("Visited Error Flag: %c\n", scell->visited_err_flag);
-    // printf("Dependent Cells List: \n");
-    for (int i = 0; i < scell->dependent_scells_size; i++)
-    {
-        int tempv = ss->arr[scell->dependent_scells[i].x * ss->SS_COLS + scell->dependent_scells[i].y].value;
-        printf("Dependent Cell %d : (%d, %d) , Value : %d\n", i, scell->dependent_scells[i].x, scell->dependent_scells[i].y, tempv);
-    }
+//     printf("Cell Location = (%d, %d)\n", row, col);
+//     printf("Cell Value = %d\n", scell->value);
+//     // printf("Visited Error Flag: %c\n", scell->visited_err_flag);
+//     // printf("Dependent Cells List: \n");
+//     for (int i = 0; i < scell->dependent_scells_size; i++)
+//     {
+//         int tempv = ss->arr[scell->dependent_scells[i].x * ss->SS_COLS + scell->dependent_scells[i].y].value;
+//         printf("Dependent Cell %d : (%d, %d) , Value : %d\n", i, scell->dependent_scells[i].x, scell->dependent_scells[i].y, tempv);
+//     }
 
-    // debug_print_cell_formula(ss, p);
-    printf("%s\n", LONG_SPACER);
+//     // debug_print_cell_formula(ss, p);
+//     printf("%s\n", LONG_SPACER);
 
-    return;
-}
+//     return;
+// }
 
 
 
@@ -813,11 +813,16 @@ void parse_expression(char exp_buff[], char target_cell_buff[], Spread_Sheet *ss
         parse_operand_expr(exp_buff, new_formula, ss, exit_code);
         if (*exit_code != '0') { free(new_formula); return; }
     }
-    target->cell_formula = new_formula;
-    int new_val = evaluate_formula(new_formula, ss, false, exit_code);
-    target->value = new_val;
-    printf("parse_expression(): Set cell %s to value %d\n", target_cell_buff, new_val);
-    *exit_code = '0';
+    
+
+    char my_update = update_logic_unit(ss, make_pair(row,col), new_formula);
+
+    // target->cell_formula = new_formula;
+    // int new_val = evaluate_formula(new_formula, ss, false, exit_code);
+    // target->value = new_val;
+    // printf("parse_expression(): Set cell %s to value %d\n", target_cell_buff, new_val);
+    
+    *exit_code = my_update;
 }
 
 
