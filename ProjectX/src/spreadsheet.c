@@ -1211,7 +1211,7 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
 
         if (exit_code == '1')
         {
-            printf("Error: Cycle Detected\n");
+            // printf("Error: Cycle Detected\n");
             return '5';
         }
 
@@ -1232,7 +1232,7 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
 
         if (exit_code == '1')
         {
-            printf("Error: Cycle Detected\n");
+            // printf("Error: Cycle Detected\n");
             return '5';
         }
 
@@ -1256,7 +1256,7 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
 
         if (exit_code == '1')
         {
-            printf("Error: Cycle Detected\n");
+            // printf("Error: Cycle Detected\n");
             return '5';
         }
 
@@ -1272,7 +1272,7 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
 
         if (exit_code == '1')
         {
-            printf("Error: Cycle Detected\n");
+            // printf("Error: Cycle Detected\n");
             return '5';
         }
 
@@ -1303,7 +1303,7 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
 
         if (exit_code == '1')
         {
-            printf("Error: Cycle Detected\n");
+            // printf("Error: Cycle Detected\n");
             return '5';
         }
 
@@ -1323,7 +1323,7 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
 
         if (exit_code == '1')
         {
-            printf("Error: Cycle Detected\n");
+            // printf("Error: Cycle Detected\n");
             return '5';
         }
 
