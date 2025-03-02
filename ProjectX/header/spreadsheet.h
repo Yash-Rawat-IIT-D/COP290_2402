@@ -1,6 +1,6 @@
 // SPREADHEET_H // Start of Header File
 
-#ifndef SPREADSHEET_H
+#ifndef SPREADSHEET_H   
 #define SPREADSHEET_H
 
 #include <unistd.h>
@@ -14,12 +14,22 @@
 // Pair : (row, col) coordinates of the cell in the spreadsheet
 typedef struct CELL_FORMULA CELL_FORMULA;
 typedef struct SCell SCell;
+typedef struct Pair Pair;
+typedef struct Spread_Sheet Spread_Sheet;
+typedef struct Stack_SCell Stack_SCell;
+
+
+// Pair : Structure to store the coordinates of a cell in the spreadsheet
 
 typedef struct Pair
 {
     short int x;
     short int y;
 } Pair;
+
+Pair make_pair(int x, int y);
+
+// SCell : Structure to store the data of a cell in the spreadsheet
 
 typedef struct SCell
 {
@@ -36,10 +46,30 @@ typedef struct SCell
 
 } SCell;
 
+// Spread_Sheet : Structure to store the data of the spreadsheet
+
+typedef struct Spread_Sheet
+{
+    SCell *arr;
+    int SS_ROWS;
+    int SS_COLS;    
+} Spread_Sheet;
+
+// ------------------------------------------------------------------------- //
 
 // Function Prototypes for the SCell Structure
 
 char init_scell(SCell * scell);
+void debug_print_scell(Spread_Sheet *ss, int row, int col);
+
+// ------------------------------------------------------------------------- //
+
+// Function Prototypes for the Spread_Sheet Structure
+
+Spread_Sheet * init_spread_sheet(int rows, int cols);
+
+SCell * get_scell_by_coordinates(Spread_Sheet *ss, int row, int col);
+
 
 // ------------------------------------------------------------------------- //
 
@@ -138,12 +168,11 @@ typedef struct CELL_FORMULA
 // Function Prototypes for the Cell_Formula Structure
 
 char init_cell_formula(CELL_FORMULA * cf);
-
+void debug_print_cell_formula(Spread_Sheet *ss, Pair p);
 
 // ------------------------------------------------------------------------- //
 
 // Methods to deal with the dependencies of a cell
-typedef struct Spread_Sheet Spread_Sheet;
 
 char resize_dependency_list(Spread_Sheet *ss, Pair target, int new_capacity);
 char add_dependency_to_cell(Spread_Sheet *ss, Pair target, Pair dep);
@@ -176,29 +205,15 @@ void dfs_topological(Spread_Sheet *ss, Pair data, Stack_SCell *stack);
 
 char dfs_cycle_check(Spread_Sheet *ss, Pair data_node, Pair data_tl, Pair data_br);
 
-void update_cell_value(Spread_Sheet *ss, Pair node);
+char update_cell_value(Spread_Sheet *ss, Pair node);
 
-void topological_sort_and_update(Spread_Sheet *ss, Pair start);
+char topological_sort_and_update(Spread_Sheet *ss, Pair start);
 
-char update_logic_unit(Spread_Sheet *ss, SCell *target, CELL_FORMULA *new_formula);
+char remove_old_dependencies(Spread_Sheet *ss, Pair target);
 
-// ------------------------------------------------------------------------- //
+char add_new_dependencies(Spread_Sheet *ss, Pair node, Pair data_tl, Pair data_br);
 
-// Spread_Sheet : Structure to store the data of the spreadsheet
-
-typedef struct Spread_Sheet
-{
-    SCell *arr;
-    int SS_ROWS;
-    int SS_COLS;    
-} Spread_Sheet;
-
-// Function Prototypes for the Spread_Sheet Structure
-
-Spread_Sheet * init_spread_sheet(int rows, int cols);
-
-SCell * get_scell_by_coordinates(Spread_Sheet *ss, int row, int col);
-
+char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula);
 
 // ------------------------------------------------------------------------- //
 

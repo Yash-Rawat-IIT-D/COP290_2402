@@ -1,7 +1,7 @@
 #include "../header/spreadsheet.h"
 // ------------------------------------------------------------------------- //
 
-// Function for SCell
+// Function for SCell and basic utility functions
 
 char init_scell(SCell *scell)
 {
@@ -32,6 +32,35 @@ char init_scell(SCell *scell)
     return '0';
 }
 
+Pair make_pair(int x, int y)
+{
+    Pair p;
+    p.x = (short int) x;
+    p.y = (short int) y;
+    return p;
+}
+
+void debug_print_scell(Spread_Sheet *ss, int row, int col)
+{
+    SCell *scell = &(ss->arr[row * ss->SS_COLS + col]);
+    printf("%s\n", LONG_SPACER);
+
+    printf("Cell Location = (%d, %d)\n", row, col);
+    printf("Cell Value = %d\n", scell->value);
+    // printf("Visited Error Flag: %c\n", scell->visited_err_flag);
+    // printf("Dependent Cells List: \n");
+    for (int i = 0; i < scell->dependent_scells_size; i++)
+    {
+        int tempv = ss->arr[scell->dependent_scells[i].x * ss->SS_COLS + scell->dependent_scells[i].y].value;
+        printf("Dependent Cell %d : (%d, %d) , Value : %d\n", i, scell->dependent_scells[i].x, scell->dependent_scells[i].y, tempv);
+    }
+
+    // debug_print_cell_formula(ss, p);
+    printf("%s\n", LONG_SPACER);
+
+    return;
+}
+
 // ------------------------------------------------------------------------- //
 
 // Function for SCell_Formula
@@ -50,9 +79,71 @@ char init_cell_formula(CELL_FORMULA *cf)
     return '0';
 }
 
+void debug_print_cell_formula(Spread_Sheet *ss, Pair p)
+{
+    SCell *scell = &(ss->arr[p.x * ss->SS_COLS + p.y]);
+    CELL_FORMULA *cf = scell->cell_formula;
+
+    printf("Cell Formula: \n");
+    switch (cf->valid_exp_type)
+    {
+    case '0':
+    {
+        printf("Constant Value: %d\n", cf->fvcons.value);
+        break;
+    }
+    case '1':
+    {
+        printf("Cell Reference: (%d, %d)\n", cf->fvcell.cell_row, cf->fvcell.cell_col);
+        break;
+    }
+    case '2':
+    {
+        printf("Arithmetic Expression: %d %c %d\n", cf->farith_cons_cons.left_value, cf->farith_cons_cons.arithmetic_op, cf->farith_cons_cons.right_value);
+        break;
+    }
+    case '3':
+    {
+        printf("Arithmetic Expression: %d %c [(%d, %d)]\n", cf->farith_cons_cell.left_value, cf->farith_cons_cell.arithmetic_op, cf->farith_cons_cell.right_cell_row, cf->farith_cons_cell.right_cell_col);
+        break;
+    }
+    case '4':
+    {
+        printf("Arithmetic Expression: [(%d, %d)] %c %d\n", cf->farith_cell_cons.left_cell_row, cf->farith_cell_cons.left_cell_col, cf->farith_cell_cons.arithmetic_op, cf->farith_cell_cons.right_value);
+        break;
+    }
+    case '5':
+    {
+        printf("Arithmetic Expression: [(%d, %d)] %c [(%d, %d)]\n", cf->farith_cell_cell.left_cell_row, cf->farith_cell_cell.left_cell_col, cf->farith_cell_cell.arithmetic_op, cf->farith_cell_cell.right_cell_row, cf->farith_cell_cell.right_cell_col);
+        break;
+    }
+    case '6':
+    {
+        printf("Sleep Function: %d\n", cf->fsleep_cons.sleep_time);
+        break;
+    }
+    case '7':
+    {
+        printf("Sleep Function: [(%d, %d)] \n", cf->fsleep_cell.sleep_cell_row, cf->fsleep_cell.sleep_cell_col);
+        break;
+    }
+    case '8':
+    {
+        printf("Function: %c [(%d, %d) : (%d, %d)]\n", cf->ffunc.function, cf->ffunc.start_row, cf->ffunc.start_col, cf->ffunc.end_row, cf->ffunc.end_col);
+        break;
+    }
+    default:
+    {
+        printf("Invalid Expression Type\n");
+        break;
+    }
+    }
+
+    return;
+}
 // ------------------------------------------------------------------------- //
 
-// Function for Spreadsheet
+// Function for Spreadsheet and other utils
 
 Spread_Sheet *init_spread_sheet(int rows, int cols)
 {
@@ -93,6 +184,17 @@ Spread_Sheet *init_spread_sheet(int rows, int cols)
     return ss;
 }
 
+SCell *get_scell_by_coordinates(Spread_Sheet *ss, int row, int col)
+{
+    if (row < 0 || row >= ss->SS_ROWS || col < 0 || col >= ss->SS_COLS)
+    {
+        printf("Error: Out of Bounds\n");
+        return NULL;
+    }
+
+    return &(ss->arr[row * ss->SS_COLS + col]);
+}
+
 // ------------------------------------------------------------------------- //
 
 // Functions for Dependency List of SCell
@@ -104,7 +206,7 @@ char add_dependency_to_cell(Spread_Sheet *ss, Pair target, Pair dep)
     if (scell->dependent_scells == NULL)
     {
         scell->dependent_scells = (Pair *)malloc(INIT_DEPENDENCY_SIZE * sizeof(Pair));
-        
+
         if (scell->dependent_scells == NULL)
         {
             printf("Error: Malloc for Dependency List\n");
@@ -127,7 +229,7 @@ char add_dependency_to_cell(Spread_Sheet *ss, Pair target, Pair dep)
         }
 
         free(scell->dependent_scells);
-        
+
         scell->dependent_scells = new_deps;
         scell->dependent_scells_capacity = new_capacity;
     }
@@ -142,7 +244,7 @@ char add_dependency_to_cell(Spread_Sheet *ss, Pair target, Pair dep)
 char remove_dependency_from_cell(Spread_Sheet *ss, Pair target, Pair dep)
 {
     SCell *scell = &(ss->arr[target.x * ss->SS_COLS + target.y]);
-    if(scell->dependent_scells == NULL)
+    if (scell->dependent_scells == NULL)
     {
         printf("Error: Dependency List is NULL\n");
         return '1';
@@ -367,7 +469,7 @@ char dfs_cycle_check(Spread_Sheet *ss, Pair data_node, Pair data_tl, Pair data_b
     return '0';
 }
 
-void update_cell_value(Spread_Sheet *ss, Pair node)
+char update_cell_value(Spread_Sheet *ss, Pair node)
 {
     // // For example: node->value = evaluate_formula(node->cell_formula, ss);
     // // Here we'll just print that we're updating the cell.
@@ -380,121 +482,183 @@ void update_cell_value(Spread_Sheet *ss, Pair node)
     int vl, vr;
     if (scell->cell_formula == NULL)
     {
-        return;
+        return '1';
     }
 
     switch (scell->cell_formula->valid_exp_type)
     {
     case '0':
+    {
         scell->value = scell->cell_formula->fvcons.value;
         break;
+    }
     case '1':
+    {
         scell->value = ss->arr[scell->cell_formula->fvcell.cell_row * ss->SS_COLS + scell->cell_formula->fvcell.cell_col].value;
         break;
+    }
     case '2':
+    {
         vl = scell->cell_formula->farith_cons_cons.left_value;
         vr = scell->cell_formula->farith_cons_cons.right_value;
 
         switch (scell->cell_formula->farith_cons_cons.arithmetic_op)
         {
+
         case '+':
+        {
             scell->value = vl + vr;
             break;
+        }
         case '-':
+        {
             scell->value = vl - vr;
             break;
+        }
         case '*':
+        {
             scell->value = vl * vr;
             break;
+        }
         case '/':
+        {
             scell->value = vl / vr;
             break;
+        }
         default:
+        {
+            return '1';
             break;
+        }
         }
 
         break;
+    }
 
     case '3':
+    {
         vl = scell->cell_formula->farith_cons_cell.left_value;
         vr = ss->arr[scell->cell_formula->farith_cons_cell.right_cell_row * ss->SS_COLS + scell->cell_formula->farith_cons_cell.right_cell_col].value;
 
         switch (scell->cell_formula->farith_cons_cell.arithmetic_op)
         {
         case '+':
+        {
             scell->value = vl + vr;
             break;
+        }
         case '-':
+        {
             scell->value = vl - vr;
             break;
+        }
         case '*':
+        {
             scell->value = vl * vr;
             break;
+        }
         case '/':
+        {
             scell->value = vl / vr;
             break;
+        }
         default:
+        {
+            return '1';
             break;
         }
+        }
         break;
+    }
 
     case '4':
+    {
         vl = ss->arr[scell->cell_formula->farith_cell_cons.left_cell_row * ss->SS_COLS + scell->cell_formula->farith_cell_cons.left_cell_col].value;
         vr = scell->cell_formula->farith_cell_cons.right_value;
 
         switch (scell->cell_formula->farith_cell_cons.arithmetic_op)
         {
         case '+':
+        {
             scell->value = vl + vr;
             break;
+        }
         case '-':
+        {
             scell->value = vl - vr;
             break;
+        }
         case '*':
+        {
             scell->value = vl * vr;
             break;
+        }
         case '/':
+        {
             scell->value = vl / vr;
             break;
+        }
         default:
+        {
+            return '1';
             break;
         }
+        }
         break;
+    }
 
     case '5':
+    {
         vl = ss->arr[scell->cell_formula->farith_cell_cell.left_cell_row * ss->SS_COLS + scell->cell_formula->farith_cell_cell.left_cell_col].value;
         vr = ss->arr[scell->cell_formula->farith_cell_cell.right_cell_row * ss->SS_COLS + scell->cell_formula->farith_cell_cell.right_cell_col].value;
 
         switch (scell->cell_formula->farith_cell_cell.arithmetic_op)
         {
         case '+':
+        {
             scell->value = vl + vr;
             break;
+        }
         case '-':
+        {
             scell->value = vl - vr;
             break;
+        }
         case '*':
+        {
             scell->value = vl * vr;
             break;
+        }
         case '/':
+        {
             scell->value = vl / vr;
             break;
+        }
         default:
+        {
+            return '1';
             break;
         }
+        }
         break;
+    }
 
     case '6':
+    {
         scell->value = scell->cell_formula->fsleep_cons.sleep_time;
         sleep(scell->value);
         break;
+    }
 
     case '7':
+    {
         scell->value = ss->arr[scell->cell_formula->fsleep_cell.sleep_cell_row * ss->SS_COLS + scell->cell_formula->fsleep_cell.sleep_cell_col].value;
         sleep(scell->value);
         break;
+    }
 
     case '8':
+    {
         short int start_row = scell->cell_formula->ffunc.start_row;
         short int start_col = scell->cell_formula->ffunc.start_col;
         short int end_row = scell->cell_formula->ffunc.end_row;
@@ -517,18 +681,18 @@ void update_cell_value(Spread_Sheet *ss, Pair node)
                 sum += val;
                 sum_sq += val * val;
 
-                if(count == 0)
+                if (count == 0)
                 {
                     min = val;
                     max = val;
                 }
                 else
                 {
-                    if(val < min)
+                    if (val < min)
                     {
                         min = val;
                     }
-                    if(val > max)
+                    if (val > max)
                     {
                         max = val;
                     }
@@ -537,42 +701,55 @@ void update_cell_value(Spread_Sheet *ss, Pair node)
             }
         }
 
-        mean = (double) 1.0 * sum / count;
-        stdev = sqrt((double) 1.0* sum_sq / count - 1.0 * mean * mean);
+        mean = (double)1.0 * sum / count;
+        stdev = sqrt((double)1.0 * sum_sq / count - 1.0 * mean * mean);
 
         switch (scell->cell_formula->ffunc.function)
         {
         case 'M':
+        {
             scell->value = min;
             break;
+        }
         case 'X':
+        {
             scell->value = max;
             break;
+        }
         case 'A':
+        {
             scell->value = mean;
             break;
+        }
         case 'S':
+        {
             scell->value = sum;
             break;
+        }
         case 'D':
+        {
             scell->value = stdev;
             break;
+        }
         default:
+        {
+            return '1';
             break;
+        }
         }
 
         break;
-    
-    default:
+    }
 
+    default:
+        return '1';
         break;
     }
-    
-    return;
-    
+
+    return '0';
 }
 
-void topological_sort_and_update(Spread_Sheet *ss, Pair start)
+char topological_sort_and_update(Spread_Sheet *ss, Pair start)
 {
     // Create and initialize a stack for DFS topological sort.
 
@@ -581,7 +758,7 @@ void topological_sort_and_update(Spread_Sheet *ss, Pair start)
     if (init_stack(&stack, INIT_SCELL_SIZE) != '0')
     {
         printf("Error: Failed to initialize topological sort stack.\n");
-        return;
+        return '1';
     }
 
     // Perform DFS starting at the given node; dfs_topological will push nodes
@@ -615,35 +792,153 @@ void topological_sort_and_update(Spread_Sheet *ss, Pair start)
     // Optionally, free any resources associated with the stack.
     // (Our stack implementation frees its internal array with free_stack, if needed.)
     free_stack(&stack);
-    return;
+    return '0';
 }
 
 // ------------------------------------------------------------------------- //
 
 // Functions for Update Logic
 
-void remove_old_dependencies(Spread_Sheet *ss, Pair target)
+char remove_old_dependencies(Spread_Sheet *ss, Pair target)
 {
-   SCell * scell = &(ss->arr[target.x * ss->SS_COLS + target.y]);
+    SCell *scell = &(ss->arr[target.x * ss->SS_COLS + target.y]);
 
-   if(scell->cell_formula == NULL)
-   {
-       return;
-   }
+    if (scell->cell_formula == NULL)
+    {
+        return '1';
+    }
 
-   switch ( scell->cell_formula->valid_exp_type)
-   {
+    char ecode = '0';
 
-   }
+    switch (scell->cell_formula->valid_exp_type)
+    {
+    case '0':
+    {
+        break;
+    }
+    case '1':
+    {
+        ecode = remove_dependency_from_cell(ss, target, make_pair(scell->cell_formula->fvcell.cell_row, scell->cell_formula->fvcell.cell_col));
+        if(ecode == '1')
+        {
+            printf("Error: Removing Dependency\n");
+            return '1';
+        }
+        break;
+    }
+    case '2':
+    {
+        break;
+    }
+    case '3':
+    {
+        ecode = remove_dependency_from_cell(ss, target, make_pair(scell->cell_formula->farith_cons_cell.right_cell_row, scell->cell_formula->farith_cons_cell.right_cell_col));
+        if(ecode == '1')
+        {
+            printf("Error: Removing Dependency\n");
+            return '1';
+        }
+        break;
+    }
+    case '4':
+    {
+        ecode = remove_dependency_from_cell(ss, target, make_pair(scell->cell_formula->farith_cell_cons.left_cell_row, scell->cell_formula->farith_cell_cons.left_cell_col));
+        if(ecode == '1')
+        {
+            printf("Error: Removing Dependency\n");
+            return '1';
+        }
+        break;
+    }    
+    case '5':
+    {
+        ecode = remove_dependency_from_cell(ss, target, make_pair(scell->cell_formula->farith_cell_cell.left_cell_row, scell->cell_formula->farith_cell_cell.left_cell_col));
+        if(ecode == '1')
+        {
+            printf("Error: Removing Dependency\n");
+            return '1';
+        }
+        
+        ecode = remove_dependency_from_cell(ss, target, make_pair(scell->cell_formula->farith_cell_cell.right_cell_row, scell->cell_formula->farith_cell_cell.right_cell_col));
+        if(ecode == '1')
+        {
+            printf("Error: Removing Dependency\n");
+            return '1';
+        }
+        break;
+    }
+    case '6':
+    {
+        break;
+    }
+    case '7':
+    {
+        ecode = remove_dependency_from_cell(ss, target, make_pair(scell->cell_formula->fsleep_cell.sleep_cell_row, scell->cell_formula->fsleep_cell.sleep_cell_col));
+        if(ecode == '1')
+        {
+            printf("Error: Removing Dependency\n");
+            return '1';
+        }
+        break;
+    }
+    case '8':
+    {
+        int start_row = scell->cell_formula->ffunc.start_row;
+        int start_col = scell->cell_formula->ffunc.start_col;
+        int end_row = scell->cell_formula->ffunc.end_row;
+        int end_col = scell->cell_formula->ffunc.end_col;
+
+        for (int r = start_row; r <= end_row; r++)
+        {
+            for (int c = start_col; c <= end_col; c++)
+            {
+                ecode = remove_dependency_from_cell(ss, target, make_pair(r, c));
+                if(ecode == '1')
+                {
+                    printf("Error: Removing Dependency\n");
+                    return '1';
+                }
+            }
+        }
+        break;
+    }
+
+    default:
+    {
+        return '1';
+        break;
+    }
+    }
+
+    return '0';
 }
 
 /*
  * add_new_dependencies:
  * Adds target to the dependency lists of cells referenced in the new formula.
  */
-void add_new_dependencies(SCell *target, CELL_FORMULA *new_formula, Spread_Sheet *ss)
+char add_new_dependencies(Spread_Sheet *ss, Pair node, Pair data_tl, Pair data_br)
 {
-    return;
+    int i_min = data_tl.x;
+    int i_max = data_br.x;
+    int j_min = data_tl.y;
+    int j_max = data_br.y;
+
+    for(int i = i_min; i <= i_max; i++)
+    {
+        for(int j = j_min; j <= j_max; j++)
+        {
+            int ecode = add_dependency_to_cell(ss, make_pair(i, j), node);
+            if(ecode == '1')
+            {
+                printf("Error: Adding Dependency\n");
+                return '1';
+            }
+        }
+    }
+
+    return '0';
+
 }
 /*
  * update_logic_unit:
@@ -654,8 +949,286 @@ void add_new_dependencies(SCell *target, CELL_FORMULA *new_formula, Spread_Sheet
  *   adds target to the dependency lists of cells referenced by the new formula,
  *   updates the target's formula pointer, and then triggers a topological sort–based update.
  */
-char update_logic_unit(Spread_Sheet *ss, SCell *target, CELL_FORMULA *new_formula)
+char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
 {
+    
+    SCell *scell = &(ss->arr[target.x * ss->SS_COLS + target.y]);
+
+    if(scell->cell_formula == NULL)
+    {
+        printf("Error: Cell Formula is NULL\n");
+        return '1';
+    }
+
+    char exit_code = '0';
+    Pair data_tl, data_br;
+    
+    // Check for cycles using DFS and abort if a cycle is detected otherwise
+
+    switch (scell->cell_formula->valid_exp_type)
+    {
+        case '0':
+        {
+            exit_code = remove_old_dependencies(ss, target);
+
+            if(exit_code == '1')
+            {
+                printf("Error: Removing Old Dependencies\n");
+                return '1';
+            }
+            
+            break;
+        }
+        case '1':
+        {
+            data_tl = make_pair(scell->cell_formula->fvcell.cell_row, scell->cell_formula->fvcell.cell_col);
+            data_br.x = data_tl.x;
+            data_br.y = data_tl.y;
+
+            exit_code = dfs_cycle_check(ss, target, data_tl, data_br);
+
+            if(exit_code == '1')
+            {
+                printf("Error: Cycle Detected\n");
+                return '5';
+            }
+
+            exit_code = remove_old_dependencies(ss, target);
+            
+            if(exit_code == '1')
+            {
+                printf("Error: Removing Old Dependencies\n");
+                return '1';
+            }
+
+            exit_code = add_new_dependencies(ss, target, data_tl, data_br);
+
+            if(exit_code == '1')
+            {
+                printf("Error: Adding New Dependencies\n");
+                return '1';
+            }
+
+            break;
+        }
+        case '2':
+        {
+            exit_code = remove_old_dependencies(ss, target);
+
+            if(exit_code == '1')
+            {
+                printf("Error: Removing Old Dependencies\n");
+                return '1';
+            }
+            
+            break;
+        }
+        case '3':
+        {
+            data_tl = make_pair(scell->cell_formula->farith_cons_cell.right_cell_row, scell->cell_formula->farith_cons_cell.right_cell_col);
+            data_br.x = data_tl.x;
+            data_br.y = data_tl.y;
+
+            exit_code = dfs_cycle_check(ss, target, data_tl, data_br);
+
+            if(exit_code == '1')
+            {
+                printf("Error: Cycle Detected\n");
+                return '5';
+            }
+
+            exit_code = remove_old_dependencies(ss, target);
+            
+            if(exit_code == '1')
+            {
+                printf("Error: Removing Old Dependencies\n");
+                return '1';
+            }
+
+            exit_code = add_new_dependencies(ss, target, data_tl, data_br);
+
+            if(exit_code == '1')
+            {
+                printf("Error: Adding New Dependencies\n");
+                return '1';
+            }
+            
+            break;
+        }
+        case '4':
+        {
+            data_tl = make_pair(scell->cell_formula->farith_cell_cons.left_cell_row, scell->cell_formula->farith_cell_cons.left_cell_col);
+            data_br.x = data_tl.x;
+            data_br.y = data_tl.y;
+
+            exit_code = dfs_cycle_check(ss, target, data_tl, data_br);
+            
+            if(exit_code == '1')
+            {
+                printf("Error: Cycle Detected\n");
+                return '5';
+            }
+
+            exit_code = remove_old_dependencies(ss, target);
+            
+            if(exit_code == '1')
+            {
+                printf("Error: Removing Old Dependencies\n");
+                return '1';
+            }
+
+            exit_code = add_new_dependencies(ss, target, data_tl, data_br);
+
+            break;
+        }
+
+        case '5':
+        {
+            data_tl = make_pair(scell->cell_formula->farith_cell_cell.left_cell_row, scell->cell_formula->farith_cell_cell.left_cell_col);
+            data_br = make_pair(scell->cell_formula->farith_cell_cell.right_cell_row, scell->cell_formula->farith_cell_cell.right_cell_col);
+
+            exit_code = dfs_cycle_check(ss, target, data_tl, data_br);
+
+            if(exit_code == '1')
+            {
+                printf("Error: Cycle Detected\n");
+                return '5';
+            }
+
+            exit_code = remove_old_dependencies(ss, target);
+            
+            if(exit_code == '1')
+            {
+                printf("Error: Removing Old Dependencies\n");
+                return '1';
+            }
+
+            exit_code = add_new_dependencies(ss, target, data_tl, data_tl);
+
+            if(exit_code == '1')
+            {
+                printf("Error: Adding New Dependencies\n");
+                return '1';
+            }
+
+            exit_code = add_new_dependencies(ss, target, data_br, data_br);
+
+            if(exit_code == '1')
+            {
+                printf("Error: Adding New Dependencies\n");
+                return '1';
+            }
+
+            break;
+        }
+
+        case '6':
+        {
+
+            exit_code = remove_old_dependencies(ss, target);
+
+            if(exit_code == '1')
+            {
+                printf("Error: Removing Old Dependencies\n");
+                return '1';
+            }
+            
+            break;
+        }
+
+        case '7':
+        {
+            data_tl = make_pair(scell->cell_formula->fsleep_cell.sleep_cell_row, scell->cell_formula->fsleep_cell.sleep_cell_col);
+            data_br.x = data_tl.x;
+            data_br.y = data_tl.y;
+
+            exit_code = dfs_cycle_check(ss, target, data_tl, data_br);
+
+            if(exit_code == '1')
+            {
+                printf("Error: Cycle Detected\n");
+                return '5';
+            }
+
+            exit_code = remove_old_dependencies(ss, target);
+            
+            if(exit_code == '1')
+            {
+                printf("Error: Removing Old Dependencies\n");
+                return '1';
+            }
+
+            exit_code = add_new_dependencies(ss, target, data_tl, data_br);
+
+            if(exit_code == '1')
+            {
+                printf("Error: Adding New Dependencies\n");
+                return '1';
+            }
+
+            break;
+        }
+        case '8':
+        {
+            int start_row = scell->cell_formula->ffunc.start_row;
+            int start_col = scell->cell_formula->ffunc.start_col;
+            int end_row = scell->cell_formula->ffunc.end_row;
+            int end_col = scell->cell_formula->ffunc.end_col;
+
+            data_tl = make_pair(start_row, start_col);
+            data_br = make_pair(end_row, end_col);
+
+            exit_code = dfs_cycle_check(ss, target, data_tl, data_br);
+
+            if(exit_code == '1')
+            {
+                printf("Error: Cycle Detected\n");
+                return '5';
+            }
+
+            exit_code = remove_old_dependencies(ss, target);
+            
+            if(exit_code == '1')
+            {
+                printf("Error: Removing Old Dependencies\n");
+                return '1';
+            }
+
+            exit_code = add_new_dependencies(ss, target, data_tl, data_br);
+
+            if(exit_code == '1')
+            {
+                printf("Error: Adding New Dependencies\n");
+                return '1';
+            }
+
+            break;
+        }
+        default :
+        {
+            printf("Error: Invalid Expression Type\n");
+            return '1';
+        }
+    }
+
+    // Remove target from the dependency lists of cells referenced in its old formula
+
+ 
+    // Update the formula pointer for the target cell.
+    
+    free(scell->cell_formula);    
+    scell->cell_formula = new_formula;
+    
+    // Trigger a topological sort–based update.
+
+    exit_code = topological_sort_and_update(ss, target);
+
+    if(exit_code == '1')
+    {
+        printf("Error: Topological Sort and Update\n");
+        return '1';
+    }
+
     return '0';
 }
 
