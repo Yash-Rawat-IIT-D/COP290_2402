@@ -38,7 +38,14 @@ void terminal_control_unit(Spread_Sheet *ss);
 
 // Function Prototypes for parsing and utilities
 
-bool is_valid_cell(char data_buff[], int SS_ROWS, int SS_COLS, int *tcell_row, int *tcell_col);
+bool is_valid_cell(char data_buff[], int SS_ROWS, int SS_COLS, int *tcell_row, int *tcell_col, char *exit_code);
+bool is_range(char data_buff[], int SS_ROWS, int SS_COLS, char *exit_code);
+void trim_whitespace(char *str);
+void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[], Spread_Sheet *ss, char *exit_code);
+void parse_expression(char exp_buff[], char target_cell_buff[], Spread_Sheet *ss, char *exit_code);
+void parse_operand_expr(const char *operand, CELL_FORMULA *cf, Spread_Sheet *ss, char *exit_code);
+
+
 
 void parse_cell_name(const char *cell_str, int *row, int *col);
 
