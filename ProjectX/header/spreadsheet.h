@@ -4,14 +4,21 @@
 #define SPREADSHEET_H
 
 #include "constants.h"
+#include <math.h>
 #include <stdbool.h>
 
 // ------------------------------------------------------------------------- //
 
 // SCell : Structure to store the data of a cell in the spreadsheet
-
+// Pair : (row, col) coordinates of the cell in the spreadsheet
 typedef struct CELL_FORMULA CELL_FORMULA;
 typedef struct SCell SCell;
+
+typedef struct Pair
+{
+    short int x;
+    short int y;
+} Pair;
 
 typedef struct SCell
 {
@@ -19,7 +26,7 @@ typedef struct SCell
 
     CELL_FORMULA *cell_formula;
 
-    struct SCell ** dependent_scells;
+    Pair * dependent_scells;
     int dependent_scells_size;
     int dependent_scells_capacity;
     
@@ -134,20 +141,28 @@ char init_cell_formula(CELL_FORMULA * cf);
 
 // ------------------------------------------------------------------------- //
 
+// Methods to deal with the dependencies of a cell
+
+char resize_dependency_list(Spread_Sheet *ss, Pair target, int new_capacity);
+char add_dependency_to_cell(Spread_Sheet *ss, Pair target, Pair dep);
+char remove_dependency_from_cell(Spread_Sheet *ss, Pair target, Pair dep);
+
+// ------------------------------------------------------------------------- //
+
 // Stack_SCell : Structure to Aid in the implementation of the DFS algorithm
 
 typedef struct Stack_SCell 
 {
-    SCell **items;
+    Pair* items;
     int top;
     int capacity;
 } Stack_SCell;
 
 char init_stack(Stack_SCell *stack, int capacity);
 
-char push_stack(Stack_SCell *stack, SCell *item);
+char push_stack(Stack_SCell *stack, Pair item);
 
-SCell *pop_stack(Stack_SCell *stack);
+Pair pop_stack(Stack_SCell *stack);
 
 void free_stack(Stack_SCell *stack);
 
@@ -155,11 +170,13 @@ void free_stack(Stack_SCell *stack);
 
 // Function Prototypes for the DFS Algorithm and the Update Logic
 
-void dfs_topological(SCell *node, Stack_SCell *stack);
+void dfs_topological(Spread_Sheet *ss, Pair data, Stack_SCell *stack);
 
-char dfs_cycle_check(SCell *node, SCell *target);
+char dfs_cycle_check(Spread_Sheet *ss, Pair data_node, Pair data_tl, Pair data_br);
 
-void topological_sort_and_update(SCell *start, Spread_Sheet *ss);
+void update_cell_value(Spread_Sheet *ss, Pair node);
+
+void topological_sort_and_update(Spread_Sheet *ss, Pair start);
 
 char update_logic_unit(Spread_Sheet *ss, SCell *target, CELL_FORMULA *new_formula);
 

@@ -20,7 +20,8 @@
 #define SPACER_00 "              "
 #define COL_SPACER ' '
 #define LO_RESIZE_THRESHOLD 32
-#define INIT_SCELL_SIZE 1
+#define INIT_DEPENDENCY_SIZE 4
+#define INIT_SCELL_SIZE 5
 
 #define REGEX_PATTERN \
   "^[ \t]*" \
