@@ -211,7 +211,7 @@ char topological_sort_and_update(Spread_Sheet *ss, Pair start);
 
 char remove_old_dependencies(Spread_Sheet *ss, Pair target);
 
-char add_new_dependencies(Spread_Sheet *ss, Pair node, Pair data_tl, Pair data_br);
+char add_new_dependencies(Spread_Sheet *ss, Pair node);
 
 char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula);
 

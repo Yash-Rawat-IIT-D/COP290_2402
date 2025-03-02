@@ -1,0 +1,1222 @@
+desc: --stacks=yes --time-unit=ms
+cmd: ./sheet 999 18278
+time_unit: ms
+#-----------
+snapshot=0
+#-----------
+time=0
+mem_heap_B=0
+mem_heap_extra_B=0
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=1
+#-----------
+time=1696
+mem_heap_B=732190176
+mem_heap_extra_B=902240
+mem_stacks_B=440
+heap_tree=empty
+#-----------
+snapshot=2
+#-----------
+time=4830
+mem_heap_B=738485248
+mem_heap_extra_B=4049776
+mem_stacks_B=432
+heap_tree=empty
+#-----------
+snapshot=3
+#-----------
+time=6736
+mem_heap_B=745143264
+mem_heap_extra_B=7378784
+mem_stacks_B=528
+heap_tree=detailed
+n3: 745143264 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 14754368 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 14754368 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 14754368 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=4
+#-----------
+time=9070
+mem_heap_B=753389456
+mem_heap_extra_B=11501880
+mem_stacks_B=432
+heap_tree=empty
+#-----------
+snapshot=5
+#-----------
+time=12626
+mem_heap_B=765513600
+mem_heap_extra_B=17563952
+mem_stacks_B=528
+heap_tree=detailed
+n3: 765513600 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 35124704 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 35124704 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 35124704 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=6
+#-----------
+time=15169
+mem_heap_B=774208416
+mem_heap_extra_B=21911360
+mem_stacks_B=528
+heap_tree=empty
+#-----------
+snapshot=7
+#-----------
+time=17284
+mem_heap_B=781332320
+mem_heap_extra_B=25473312
+mem_stacks_B=528
+heap_tree=detailed
+n3: 781332320 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 50943424 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 50943424 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 50943424 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=8
+#-----------
+time=20396
+mem_heap_B=792143536
+mem_heap_extra_B=30878920
+mem_stacks_B=528
+heap_tree=detailed
+n3: 792143536 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 61754640 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 61754640 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 61754640 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=9
+#-----------
+time=24161
+mem_heap_B=805208528
+mem_heap_extra_B=37411416
+mem_stacks_B=400
+heap_tree=empty
+#-----------
+snapshot=10
+#-----------
+time=27404
+mem_heap_B=816491680
+mem_heap_extra_B=43052992
+mem_stacks_B=528
+heap_tree=empty
+#-----------
+snapshot=11
+#-----------
+time=29046
+mem_heap_B=822200240
+mem_heap_extra_B=45907272
+mem_stacks_B=432
+heap_tree=empty
+#-----------
+snapshot=12
+#-----------
+time=31855
+mem_heap_B=831722976
+mem_heap_extra_B=50668640
+mem_stacks_B=528
+heap_tree=detailed
+n3: 831722976 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 101334080 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 101334080 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 101334080 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=13
+#-----------
+time=35257
+mem_heap_B=843547056
+mem_heap_extra_B=56580680
+mem_stacks_B=528
+heap_tree=detailed
+n3: 843547056 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 113158160 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 113158160 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 113158160 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=14
+#-----------
+time=38734
+mem_heap_B=855608784
+mem_heap_extra_B=62611544
+mem_stacks_B=528
+heap_tree=detailed
+n3: 855608784 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 125219888 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 125219888 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 125219888 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=15
+#-----------
+time=42240
+mem_heap_B=867912960
+mem_heap_extra_B=68763632
+mem_stacks_B=528
+heap_tree=detailed
+n3: 867912960 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 137524064 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 137524064 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 137524064 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=16
+#-----------
+time=45871
+mem_heap_B=880464448
+mem_heap_extra_B=75039376
+mem_stacks_B=528
+heap_tree=detailed
+n3: 880464448 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 150075552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 150075552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 150075552 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=17
+#-----------
+time=47793
+mem_heap_B=886834480
+mem_heap_extra_B=78224392
+mem_stacks_B=528
+heap_tree=detailed
+n3: 886834480 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 156445584 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 156445584 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 156445584 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=18
+#-----------
+time=51466
+mem_heap_B=899766304
+mem_heap_extra_B=84690304
+mem_stacks_B=528
+heap_tree=detailed
+n3: 899766304 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 169377408 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 169377408 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 169377408 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=19
+#-----------
+time=55299
+mem_heap_B=912958048
+mem_heap_extra_B=91286176
+mem_stacks_B=528
+heap_tree=detailed
+n3: 912958048 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 182569152 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 182569152 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 182569152 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=20
+#-----------
+time=59102
+mem_heap_B=926414944
+mem_heap_extra_B=98014624
+mem_stacks_B=528
+heap_tree=detailed
+n3: 926414944 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 196026048 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 196026048 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 196026048 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=21
+#-----------
+time=62009
+mem_heap_B=935551040
+mem_heap_extra_B=102582672
+mem_stacks_B=432
+heap_tree=empty
+#-----------
+snapshot=22
+#-----------
+time=65493
+mem_heap_B=947109136
+mem_heap_extra_B=108361720
+mem_stacks_B=528
+heap_tree=detailed
+n3: 947109136 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 216720240 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 216720240 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 216720240 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=23
+#-----------
+time=67687
+mem_heap_B=954145616
+mem_heap_extra_B=111879960
+mem_stacks_B=528
+heap_tree=detailed
+n3: 954145616 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 223756720 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 223756720 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 223756720 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=24
+#-----------
+time=69881
+mem_heap_B=961252464
+mem_heap_extra_B=115433384
+mem_stacks_B=528
+heap_tree=detailed
+n3: 961252464 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 230863568 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 230863568 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 230863568 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=25
+#-----------
+time=72022
+mem_heap_B=968430384
+mem_heap_extra_B=119022344
+mem_stacks_B=528
+heap_tree=detailed
+n3: 968430384 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 238041488 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 238041488 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 238041488 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=26
+#-----------
+time=74221
+mem_heap_B=975680080
+mem_heap_extra_B=122647192
+mem_stacks_B=528
+heap_tree=detailed
+n3: 975680080 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 245291184 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 245291184 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 245291184 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=27
+#-----------
+time=76588
+mem_heap_B=983002272
+mem_heap_extra_B=126308288
+mem_stacks_B=528
+heap_tree=detailed
+n3: 983002272 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 252613376 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 252613376 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 252613376 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=28
+#-----------
+time=78756
+mem_heap_B=990397680
+mem_heap_extra_B=130005992
+mem_stacks_B=528
+heap_tree=detailed
+n3: 990397680 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 260008784 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 260008784 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 260008784 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=29
+#-----------
+time=80911
+mem_heap_B=997867056
+mem_heap_extra_B=133740680
+mem_stacks_B=528
+heap_tree=detailed
+n3: 997867056 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 267478160 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 267478160 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 267478160 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=30
+#-----------
+time=83133
+mem_heap_B=1005411120
+mem_heap_extra_B=137512712
+mem_stacks_B=528
+heap_tree=detailed
+n3: 1005411120 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 275022224 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 275022224 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 275022224 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=31
+#-----------
+time=85323
+mem_heap_B=1013030624
+mem_heap_extra_B=141322464
+mem_stacks_B=528
+heap_tree=detailed
+n3: 1013030624 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 282641728 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 282641728 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 282641728 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=32
+#-----------
+time=87644
+mem_heap_B=1020726320
+mem_heap_extra_B=145170312
+mem_stacks_B=528
+heap_tree=detailed
+n3: 1020726320 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 290337424 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 290337424 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 290337424 0x109651: main (main.c:48)
+ n0: 16 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=33
+#-----------
+time=109110
+mem_heap_B=1022546496
+mem_heap_extra_B=146079392
+mem_stacks_B=1024
+heap_tree=empty
+#-----------
+snapshot=34
+#-----------
+time=112842
+mem_heap_B=1036349568
+mem_heap_extra_B=152980928
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1036349568 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 13803056 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 13803056 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 13803056 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 13803056 0x10BD41: parse_expression (parser.c:818)
+     n1: 13803056 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 13803056 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=35
+#-----------
+time=114926
+mem_heap_B=1044278448
+mem_heap_extra_B=156945368
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1044278448 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 21731936 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 21731936 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 21731936 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 21731936 0x10BD41: parse_expression (parser.c:818)
+     n1: 21731936 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 21731936 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=36
+#-----------
+time=117011
+mem_heap_B=1052286624
+mem_heap_extra_B=160949456
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1052286624 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 29740112 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 29740112 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 29740112 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 29740112 0x10BD41: parse_expression (parser.c:818)
+     n1: 29740112 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 29740112 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=37
+#-----------
+time=119122
+mem_heap_B=1060374880
+mem_heap_extra_B=164993584
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1060374880 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 37828368 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 37828368 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 37828368 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 37828368 0x10BD41: parse_expression (parser.c:818)
+     n1: 37828368 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 37828368 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=38
+#-----------
+time=121264
+mem_heap_B=1068544016
+mem_heap_extra_B=169078152
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1068544016 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 45997504 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 45997504 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 45997504 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 45997504 0x10BD41: parse_expression (parser.c:818)
+     n1: 45997504 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 45997504 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=39
+#-----------
+time=123423
+mem_heap_B=1076794848
+mem_heap_extra_B=173203568
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1076794848 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 54248336 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 54248336 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 54248336 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 54248336 0x10BD41: parse_expression (parser.c:818)
+     n1: 54248336 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 54248336 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=40
+#-----------
+time=125611
+mem_heap_B=1085128192
+mem_heap_extra_B=177370240
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1085128192 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 62581680 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 62581680 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 62581680 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 62581680 0x10BD41: parse_expression (parser.c:818)
+     n1: 62581680 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 62581680 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=41
+#-----------
+time=127809
+mem_heap_B=1093544864
+mem_heap_extra_B=181578576
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1093544864 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 70998352 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 70998352 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 70998352 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 70998352 0x10BD41: parse_expression (parser.c:818)
+     n1: 70998352 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 70998352 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=42
+#-----------
+time=130025
+mem_heap_B=1102045696
+mem_heap_extra_B=185828992
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1102045696 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 79499184 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 79499184 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 79499184 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 79499184 0x10BD41: parse_expression (parser.c:818)
+     n1: 79499184 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 79499184 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=43
+#-----------
+time=132274
+mem_heap_B=1110631536
+mem_heap_extra_B=190121912
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1110631536 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 88085024 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 88085024 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 88085024 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 88085024 0x10BD41: parse_expression (parser.c:818)
+     n1: 88085024 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 88085024 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=44
+#-----------
+time=134551
+mem_heap_B=1119303248
+mem_heap_extra_B=194457768
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1119303248 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 96756736 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 96756736 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 96756736 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 96756736 0x10BD41: parse_expression (parser.c:818)
+     n1: 96756736 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 96756736 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=45
+#-----------
+time=136874
+mem_heap_B=1128061664
+mem_heap_extra_B=198836976
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1128061664 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 105515152 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 105515152 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 105515152 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 105515152 0x10BD41: parse_expression (parser.c:818)
+     n1: 105515152 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 105515152 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=46
+#-----------
+time=139709
+mem_heap_B=1136907664
+mem_heap_extra_B=203259976
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1136907664 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 114361152 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 114361152 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 114361152 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 114361152 0x10BD41: parse_expression (parser.c:818)
+     n1: 114361152 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 114361152 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=47
+#-----------
+time=142149
+mem_heap_B=1145842128
+mem_heap_extra_B=207727208
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1145842128 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 123295616 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 123295616 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 123295616 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 123295616 0x10BD41: parse_expression (parser.c:818)
+     n1: 123295616 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 123295616 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=48
+#-----------
+time=144544
+mem_heap_B=1154865936
+mem_heap_extra_B=212239112
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1154865936 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 132319424 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 132319424 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 132319424 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 132319424 0x10BD41: parse_expression (parser.c:818)
+     n1: 132319424 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 132319424 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=49
+#-----------
+time=146981
+mem_heap_B=1163979984
+mem_heap_extra_B=216796136
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1163979984 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 141433472 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 141433472 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 141433472 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 141433472 0x10BD41: parse_expression (parser.c:818)
+     n1: 141433472 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 141433472 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=50
+#-----------
+time=148623
+mem_heap_B=1170151088
+mem_heap_extra_B=219881688
+mem_stacks_B=1136
+heap_tree=empty
+#-----------
+snapshot=51
+#-----------
+time=149435
+mem_heap_B=1173185168
+mem_heap_extra_B=221398728
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1173185168 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 150638656 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 150638656 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 150638656 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 150638656 0x10BD41: parse_expression (parser.c:818)
+     n1: 150638656 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 150638656 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=52
+#-----------
+time=151077
+mem_heap_B=1179309328
+mem_heap_extra_B=224460808
+mem_stacks_B=1216
+heap_tree=empty
+#-----------
+snapshot=53
+#-----------
+time=151927
+mem_heap_B=1182482416
+mem_heap_extra_B=226047352
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1182482416 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 159935904 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 159935904 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 159935904 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 159935904 0x10BD41: parse_expression (parser.c:818)
+     n1: 159935904 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 159935904 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=54
+#-----------
+time=153569
+mem_heap_B=1188663728
+mem_heap_extra_B=229138008
+mem_stacks_B=1216
+heap_tree=empty
+#-----------
+snapshot=55
+#-----------
+time=154429
+mem_heap_B=1191872624
+mem_heap_extra_B=230742456
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1191872624 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 169326112 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 169326112 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 169326112 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 169326112 0x10BD41: parse_expression (parser.c:818)
+     n1: 169326112 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 169326112 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=56
+#-----------
+time=156071
+mem_heap_B=1197800464
+mem_heap_extra_B=233706376
+mem_stacks_B=1064
+heap_tree=empty
+#-----------
+snapshot=57
+#-----------
+time=157038
+mem_heap_B=1201356736
+mem_heap_extra_B=235484512
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1201356736 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 178810224 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 178810224 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 178810224 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 178810224 0x10BD41: parse_expression (parser.c:818)
+     n1: 178810224 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 178810224 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=58
+#-----------
+time=158680
+mem_heap_B=1207488704
+mem_heap_extra_B=238550496
+mem_stacks_B=1064
+heap_tree=empty
+#-----------
+snapshot=59
+#-----------
+time=159611
+mem_heap_B=1210935696
+mem_heap_extra_B=240273992
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1210935696 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 188389184 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 188389184 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 188389184 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 188389184 0x10BD41: parse_expression (parser.c:818)
+     n1: 188389184 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 188389184 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=60
+#-----------
+time=161253
+mem_heap_B=1217178224
+mem_heap_extra_B=243395256
+mem_stacks_B=1216
+heap_tree=empty
+#-----------
+snapshot=61
+#-----------
+time=162157
+mem_heap_B=1220610448
+mem_heap_extra_B=245111368
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1220610448 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 198063936 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 198063936 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 198063936 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 198063936 0x10BD41: parse_expression (parser.c:818)
+     n1: 198063936 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 198063936 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=62
+#-----------
+time=163799
+mem_heap_B=1226788304
+mem_heap_extra_B=248200296
+mem_stacks_B=1216
+heap_tree=empty
+#-----------
+snapshot=63
+#-----------
+time=164752
+mem_heap_B=1230381936
+mem_heap_extra_B=249997112
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1230381936 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 207835424 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 207835424 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 207835424 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 207835424 0x10BD41: parse_expression (parser.c:818)
+     n1: 207835424 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 207835424 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=64
+#-----------
+time=166394
+mem_heap_B=1236575424
+mem_heap_extra_B=253093856
+mem_stacks_B=1128
+heap_tree=empty
+#-----------
+snapshot=65
+#-----------
+time=167363
+mem_heap_B=1240251152
+mem_heap_extra_B=254931720
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1240251152 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 217704640 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 217704640 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 217704640 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 217704640 0x10BD41: parse_expression (parser.c:818)
+     n1: 217704640 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 217704640 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=66
+#-----------
+time=169005
+mem_heap_B=1246559776
+mem_heap_extra_B=258086032
+mem_stacks_B=1072
+heap_tree=empty
+#-----------
+snapshot=67
+#-----------
+time=170001
+mem_heap_B=1250219056
+mem_heap_extra_B=259915672
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1250219056 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 227672544 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 227672544 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 227672544 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 227672544 0x10BD41: parse_expression (parser.c:818)
+     n1: 227672544 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 227672544 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=68
+#-----------
+time=171643
+mem_heap_B=1256259360
+mem_heap_extra_B=262935824
+mem_stacks_B=1072
+heap_tree=empty
+#-----------
+snapshot=69
+#-----------
+time=172697
+mem_heap_B=1260286640
+mem_heap_extra_B=264949464
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1260286640 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 237740128 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 237740128 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 237740128 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 237740128 0x10BD41: parse_expression (parser.c:818)
+     n1: 237740128 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 237740128 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=70
+#-----------
+time=174339
+mem_heap_B=1266433696
+mem_heap_extra_B=268022992
+mem_stacks_B=1128
+heap_tree=empty
+#-----------
+snapshot=71
+#-----------
+time=175411
+mem_heap_B=1270454896
+mem_heap_extra_B=270033592
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1270454896 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 247908384 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 247908384 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 247908384 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 247908384 0x10BD41: parse_expression (parser.c:818)
+     n1: 247908384 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 247908384 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=72
+#-----------
+time=177053
+mem_heap_B=1276742816
+mem_heap_extra_B=273177552
+mem_stacks_B=1216
+heap_tree=empty
+#-----------
+snapshot=73
+#-----------
+time=178097
+mem_heap_B=1280724832
+mem_heap_extra_B=275168560
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1280724832 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 258178320 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 258178320 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 258178320 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 258178320 0x10BD41: parse_expression (parser.c:818)
+     n1: 258178320 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 258178320 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=74
+#-----------
+time=179739
+mem_heap_B=1286975600
+mem_heap_extra_B=278293944
+mem_stacks_B=1064
+heap_tree=empty
+#-----------
+snapshot=75
+#-----------
+time=180827
+mem_heap_B=1291097472
+mem_heap_extra_B=280354880
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1291097472 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 268550960 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 268550960 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 268550960 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 268550960 0x10BD41: parse_expression (parser.c:818)
+     n1: 268550960 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 268550960 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=76
+#-----------
+time=182469
+mem_heap_B=1297310352
+mem_heap_extra_B=283461320
+mem_stacks_B=1064
+heap_tree=empty
+#-----------
+snapshot=77
+#-----------
+time=183592
+mem_heap_B=1301573840
+mem_heap_extra_B=285593064
+mem_stacks_B=1216
+heap_tree=detailed
+n4: 1301573840 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 279027328 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 279027328 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 279027328 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 279027328 0x10BD41: parse_expression (parser.c:818)
+     n1: 279027328 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 279027328 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=78
+#-----------
+time=185234
+mem_heap_B=1307852736
+mem_heap_extra_B=288732512
+mem_stacks_B=1120
+heap_tree=empty
+#-----------
+snapshot=79
+#-----------
+time=186379
+mem_heap_B=1312154976
+mem_heap_extra_B=290883632
+mem_stacks_B=1216
+heap_tree=peak
+n4: 1312154976 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 730388880 0x10C933: init_spread_sheet (spreadsheet.c:160)
+  n0: 730388880 0x109651: main (main.c:48)
+ n1: 292155552 0x10C362: init_scell (spreadsheet.c:16)
+  n1: 292155552 0x10C9B8: init_spread_sheet (spreadsheet.c:173)
+   n0: 292155552 0x109651: main (main.c:48)
+ n1: 289608464 0x10CAF7: add_dependency_to_cell (spreadsheet.c:208)
+  n1: 289608464 0x10EBB7: add_new_dependencies (spreadsheet.c:1146)
+   n1: 289608464 0x10F05D: update_logic_unit (spreadsheet.c:1341)
+    n1: 289608464 0x10BD41: parse_expression (parser.c:818)
+     n1: 289608464 0x10C28D: terminal_control_unit (parser.c:895)
+      n0: 289608464 0x1096A2: main (main.c:58)
+ n0: 2080 in 55 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=80
+#-----------
+time=193750
+mem_heap_B=1314409600
+mem_heap_extra_B=292010944
+mem_stacks_B=1024
+heap_tree=empty
