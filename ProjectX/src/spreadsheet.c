@@ -141,7 +141,56 @@ char add_dependency_to_cell(Spread_Sheet *ss, Pair target, Pair dep)
 
 char remove_dependency_from_cell(Spread_Sheet *ss, Pair target, Pair dep)
 {
-    SCell *scell = &()
+    SCell *scell = &(ss->arr[target.x * ss->SS_COLS + target.y]);
+    if(scell->dependent_scells == NULL)
+    {
+        printf("Error: Dependency List is NULL\n");
+        return '1';
+    }
+
+    int i = 0;
+    for (i = 0; i < scell->dependent_scells_size; i++)
+    {
+        if (scell->dependent_scells[i].x == dep.x && scell->dependent_scells[i].y == dep.y)
+        {
+            break;
+        }
+    }
+
+    if (i == scell->dependent_scells_size)
+    {
+        printf("Error: Dependency not found\n");
+        return '1';
+    }
+
+    scell->dependent_scells[i].x = scell->dependent_scells[scell->dependent_scells_size - 1].x;
+    scell->dependent_scells[i].y = scell->dependent_scells[scell->dependent_scells_size - 1].y;
+    scell->dependent_scells_size--;
+    return '0';
+}
+
+char resize_dependency_list(Spread_Sheet *ss, Pair target, int new_capacity)
+{
+    SCell *scell = &(ss->arr[target.x * ss->SS_COLS + target.y]);
+
+    if (scell->dependent_scells == NULL)
+    {
+        printf("Error: Dependency List is NULL\n");
+        return '1';
+    }
+
+    Pair *new_deps = (Pair *)realloc(scell->dependent_scells, new_capacity * sizeof(Pair));
+
+    if (new_deps == NULL)
+    {
+        printf("Error: Realloc for Dependency List\n");
+        return '1';
+    }
+
+    scell->dependent_scells = new_deps;
+    scell->dependent_scells_capacity = new_capacity;
+
+    return '0';
 }
 
 // ------------------------------------------------------------------------- //
@@ -631,64 +680,6 @@ void add_new_dependencies(SCell *target, CELL_FORMULA *new_formula, Spread_Sheet
         }
     }
     // Other types (e.g., constants) have no dependencies.
-}
-
-/*
- * check_cycle_for_formula:
- * Checks for cycles by, for each dependency in the new formula, performing DFS
- * starting at the target cell and checking if that dependency is already present
- * in the dependency graph.
- *
- * For non-range formulas, we check each dependency (for type '1' or '5').
- * For range formulas (type '8'), we iterate over all cells in the range and
- * check if any cell is encountered during DFS from the target.
- *
- * Returns '1' if a cycle is detected, '0' otherwise.
- */
-char check_cycle_for_formula(SCell *target, CELL_FORMULA *formula, Spread_Sheet *ss)
-{
-    char type = formula->valid_exp_type;
-    SCell *dep;
-    if (type == '1')
-    { // Single cell dependency.
-        dep = get_scell_by_coordinates(ss, formula->fvcell.cell_row, formula->fvcell.cell_col);
-        // DFS starting at target, checking for dep.
-        if (dep && dfs_cycle_check(target, dep) == '1')
-        {
-            return '1';
-        }
-    }
-    else if (type == '5')
-    { // Arithmetic expression with two cell dependencies.
-        dep = get_scell_by_coordinates(ss, formula->farith_cell_cell.left_cell_row,
-                                       formula->farith_cell_cell.left_cell_col);
-        if (dep && dfs_cycle_check(target, dep) == '1')
-        {
-            return '1';
-        }
-        dep = get_scell_by_coordinates(ss, formula->farith_cell_cell.right_cell_row,
-                                       formula->farith_cell_cell.right_cell_col);
-        if (dep && dfs_cycle_check(target, dep) == '1')
-        {
-            return '1';
-        }
-    }
-    else if (type == '8')
-    { // Range function dependency.
-        for (int r = formula->ffunc.start_row; r <= formula->ffunc.end_row; r++)
-        {
-            for (int c = formula->ffunc.start_col; c <= formula->ffunc.end_col; c++)
-            {
-                dep = get_scell_by_coordinates(ss, r, c);
-                // DFS starting at target, checking if any cell in the range is reached.
-                if (dep && dfs_cycle_check(target, dep) == '1')
-                {
-                    return '1';
-                }
-            }
-        }
-    }
-    return '0';
 }
 
 /*

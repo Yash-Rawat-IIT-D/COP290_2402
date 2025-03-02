@@ -311,7 +311,7 @@ void terminal_control_unit(Spread_Sheet *ss)
                     exit_code = '2';
                 }
             }
-
+            
             // Stop timing immediately after processing finishes
             clock_gettime(CLOCK_MONOTONIC, &end_ts);
             command_time = (end_ts.tv_sec - start_ts.tv_sec) +
