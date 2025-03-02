@@ -1236,13 +1236,13 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
             return '5';
         }
 
-        exit_code = remove_old_dependencies(ss, target);
+        // exit_code = remove_old_dependencies(ss, target);
 
-        if (exit_code == '1')
-        {
-            printf("Error: Removing Old Dependencies\n");
-            return '1';
-        }
+        // if (exit_code == '1')
+        // {
+        //     printf("Error: Removing Old Dependencies\n");
+        //     return '1';
+        // }
 
         break;
     }
@@ -1282,13 +1282,13 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
     case '6':
     {
 
-        exit_code = remove_old_dependencies(ss, target);
+        // exit_code = remove_old_dependencies(ss, target);
 
-        if (exit_code == '1')
-        {
-            printf("Error: Removing Old Dependencies\n");
-            return '1';
-        }
+        // if (exit_code == '1')
+        // {
+        //     printf("Error: Removing Old Dependencies\n");
+        //     return '1';
+        // }
 
         break;
     }
@@ -1352,6 +1352,7 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
         printf("Error: Removing Old Dependencies\n");
         scell->cell_formula = old_formula;
         free(new_formula);
+
         return '1';
     }
     else
