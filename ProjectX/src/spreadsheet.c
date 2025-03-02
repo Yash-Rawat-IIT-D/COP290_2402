@@ -560,7 +560,6 @@ char update_cell_value(Spread_Sheet *ss, Pair node)
         }
         }
 
-
         break;
     }
 
@@ -617,7 +616,6 @@ char update_cell_value(Spread_Sheet *ss, Pair node)
                 break;
             }
             }
-            
         }
 
         break;
@@ -725,7 +723,6 @@ char update_cell_value(Spread_Sheet *ss, Pair node)
                 {
                     scell->value = vl / vr;
                     ss->arr[node.x * ss->SS_COLS + node.y].visited_err_flag = '2';
-                    
                 }
                 break;
             }
@@ -735,7 +732,6 @@ char update_cell_value(Spread_Sheet *ss, Pair node)
                 break;
             }
             }
-            
         }
         break;
     }
@@ -743,7 +739,10 @@ char update_cell_value(Spread_Sheet *ss, Pair node)
     case '6':
     {
         scell->value = scell->cell_formula->fsleep_cons.sleep_time;
-        sleep(scell->value);
+        if (scell->value > 0)
+        {
+            sleep(scell->value);
+        }
         break;
     }
 
@@ -758,7 +757,11 @@ char update_cell_value(Spread_Sheet *ss, Pair node)
         {
             scell->value = ss->arr[scell->cell_formula->fsleep_cell.sleep_cell_row * ss->SS_COLS + scell->cell_formula->fsleep_cell.sleep_cell_col].value;
             ss->arr[node.x * ss->SS_COLS + node.y].visited_err_flag = '2';
-            sleep(scell->value);
+
+            if (scell->value > 0)
+            {
+                sleep(scell->value);
+            }
         }
         break;
     }
@@ -858,7 +861,7 @@ char update_cell_value(Spread_Sheet *ss, Pair node)
             }
             case 'D':
             {
-                scell->value = (int) stdev;
+                scell->value = (int)stdev;
                 ss->arr[node.x * ss->SS_COLS + node.y].visited_err_flag = '2';
                 break;
             }
@@ -1110,7 +1113,7 @@ char add_new_dependencies(Spread_Sheet *ss, Pair node)
             return '1';
         }
 
-        if(scell->cell_formula->farith_cell_cell.left_cell_row !=  scell->cell_formula->farith_cell_cell.right_cell_row || scell->cell_formula->farith_cell_cell.left_cell_col != scell->cell_formula->farith_cell_cell.right_cell_col)
+        if (scell->cell_formula->farith_cell_cell.left_cell_row != scell->cell_formula->farith_cell_cell.right_cell_row || scell->cell_formula->farith_cell_cell.left_cell_col != scell->cell_formula->farith_cell_cell.right_cell_col)
         {
             ecode = add_dependency_to_cell(ss, make_pair(scell->cell_formula->farith_cell_cell.right_cell_row, scell->cell_formula->farith_cell_cell.right_cell_col), node);
             if (ecode == '1')
@@ -1119,7 +1122,7 @@ char add_new_dependencies(Spread_Sheet *ss, Pair node)
                 return '1';
             }
         }
-        
+
         break;
     }
     case '6':

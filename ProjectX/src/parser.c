@@ -669,7 +669,14 @@ void parse_function_expr(const char *exp, CELL_FORMULA *cf, Spread_Sheet *ss, ch
         // For SLEEP, set type '6' for constant, '7' for cell.
         char arg[50] = {0};
         int arg_len = close_paren - open_paren - 1;
+
+        // if (arg_len <= 0 || arg_len >= sizeof(arg)) {
+        //     printf("Error: Invalid SLEEP argument\n");
+        //     return;
+        // }
+
         strncpy(arg, open_paren + 1, arg_len);
+        // memcpy(arg, open_paren + 1, arg_len);
         arg[arg_len] = '\0';
         char *endptr;
         long num = strtol(arg, &endptr, 10);
