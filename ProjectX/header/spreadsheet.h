@@ -33,8 +33,6 @@ typedef struct SCell
 
 char init_scell(SCell * scell);
 
-
-
 // ------------------------------------------------------------------------- //
 
 // Cell_Formula : Structure to store the formula of a cell in the spreadsheet
@@ -136,14 +134,34 @@ char init_cell_formula(CELL_FORMULA * cf);
 
 // ------------------------------------------------------------------------- //
 
-
 // Stack_SCell : Structure to Aid in the implementation of the DFS algorithm
 
-typedef struct Stack_SCell {
+typedef struct Stack_SCell 
+{
     SCell **items;
     int top;
     int capacity;
 } Stack_SCell;
+
+char init_stack(Stack_SCell *stack, int capacity);
+
+char push_stack(Stack_SCell *stack, SCell *item);
+
+SCell *pop_stack(Stack_SCell *stack);
+
+void free_stack(Stack_SCell *stack);
+
+// ------------------------------------------------------------------------- //
+
+// Function Prototypes for the DFS Algorithm and the Update Logic
+
+void dfs_topological(SCell *node, Stack_SCell *stack);
+
+char dfs_cycle_check(SCell *node, SCell *target);
+
+void topological_sort_and_update(SCell *start, Spread_Sheet *ss);
+
+char update_logic_unit(Spread_Sheet *ss, SCell *target, CELL_FORMULA *new_formula);
 
 // ------------------------------------------------------------------------- //
 
@@ -164,5 +182,7 @@ SCell * get_scell_by_coordinates(Spread_Sheet *ss, int row, int col);
 
 
 // ------------------------------------------------------------------------- //
+
 #endif 
+
 // SPREADSHEET_H // End of Header File

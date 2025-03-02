@@ -3,7 +3,8 @@
 
 #include "spreadsheet.h"  // for the definition of SCell
 
-typedef struct Stack_SCell {
+typedef struct Stack_SCell 
+{
     SCell **items;
     int top;
     int capacity;
