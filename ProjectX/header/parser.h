@@ -44,6 +44,8 @@ void trim_whitespace(char *str);
 void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[], Spread_Sheet *ss, char *exit_code);
 void parse_expression(char exp_buff[], char target_cell_buff[], Spread_Sheet *ss, char *exit_code);
 void parse_operand_expr(const char *operand, CELL_FORMULA *cf, Spread_Sheet *ss, char *exit_code);
+void parse_arithmetic_expr(const char *arithmetic_exp, CELL_FORMULA *cf, Spread_Sheet *ss, char *exit_code);
+void parse_function_expr(const char *function_exp, CELL_FORMULA *cf, Spread_Sheet *ss, char *exit_code);
 
 
 
