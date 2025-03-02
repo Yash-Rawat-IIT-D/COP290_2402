@@ -9,7 +9,6 @@
 // ------------------------------------------------------------------------- //
 // Rendering & Utility Functions
 
-
 // SCell *get_scell_by_coordinates(Spread_Sheet *ss, int row, int col)
 // {
 //     if (row < 0 || row >= ss->SS_ROWS || col < 0 || col >= ss->SS_COLS)
@@ -42,97 +41,114 @@
 //     return;
 // }
 
-
-
-
-
-
-void col_encoder(int col_num, char *col_header_buff) {
-    if (col_num < 1 || col_num > MAX_SS_COLS) {
+void col_encoder(int col_num, char *col_header_buff)
+{
+    if (col_num < 1 || col_num > MAX_SS_COLS)
+    {
         exit(1);
     }
     int ind = 0;
     char col_hbuff_temp[COL_HEADER_BUFF_SIZE];
-    while (col_num > 0) {
+    while (col_num > 0)
+    {
         col_num -= 1;
         col_hbuff_temp[ind++] = (col_num % 26) + 'A';
         col_num /= 26;
     }
-    for (int i = 0; i < ind; i++) {
+    for (int i = 0; i < ind; i++)
+    {
         col_header_buff[i] = col_hbuff_temp[ind - i - 1];
     }
     col_header_buff[ind] = '\0';
 }
 
-int col_decoder(char *col_data_buff) {
+int col_decoder(char *col_data_buff)
+{
     int col_dbuff_size = strlen(col_data_buff);
-    if (col_dbuff_size < 1 || col_dbuff_size > 4) {
+    if (col_dbuff_size < 1 || col_dbuff_size > 4)
+    {
         exit(1);
     }
     int res_col_num = 0;
-    for (int i = 0; i < col_dbuff_size; i++) {
+    for (int i = 0; i < col_dbuff_size; i++)
+    {
         res_col_num = res_col_num * 26 + (col_data_buff[i] - 'A' + 1);
     }
     return res_col_num;
 }
 
-void set_out_buff(char *obuff, char *col_data_buff) {
+void set_out_buff(char *obuff, char *col_data_buff)
+{
     int col_dbuff_size = strlen(col_data_buff);
     int left_padding = (MIN_COL_WIDTH - col_dbuff_size) / 2;
     int right_padding = MIN_COL_WIDTH - col_dbuff_size - left_padding;
-    for (int i = 0; i < left_padding; i++) {
+    for (int i = 0; i < left_padding; i++)
+    {
         obuff[i] = ' ';
     }
-    for (int i = 0; i < col_dbuff_size; i++) {
+    for (int i = 0; i < col_dbuff_size; i++)
+    {
         obuff[left_padding + i] = col_data_buff[i];
     }
-    for (int i = 0; i < right_padding; i++) {
+    for (int i = 0; i < right_padding; i++)
+    {
         obuff[left_padding + col_dbuff_size + i] = COL_SPACER;
     }
 }
 
-int safe_render_dim(int rc, int rc_max) {
+int safe_render_dim(int rc, int rc_max)
+{
     return (rc + MAX_RENDER_DIM > rc_max) ? rc_max : rc + MAX_RENDER_DIM;
 }
 
-int next_render_dim(int rc, int rc_max, int step_size) {
+int next_render_dim(int rc, int rc_max, int step_size)
+{
     int new_rc = rc + step_size;
-    if (new_rc < 0) {
+    if (new_rc < 0)
+    {
         return 0;
     }
-    if (new_rc + MAX_RENDER_DIM > rc_max) {
+    if (new_rc + MAX_RENDER_DIM > rc_max)
+    {
         new_rc = rc_max - MAX_RENDER_DIM;
-        if (new_rc < 0) new_rc = 0;
+        if (new_rc < 0)
+            new_rc = 0;
         return new_rc;
     }
     return new_rc;
 }
 
-void render_ss(Spread_Sheet *ss, int row, int col) {
+void render_ss(Spread_Sheet *ss, int row, int col)
+{
     char obuff[MIN_COL_WIDTH];
     char col_header_buff[COL_HEADER_BUFF_SIZE];
     char col_data_buff[COL_DATA_BUFF_SIZE];
     // Print Column Headers
     printf("%s", SPACER);
     printf("%*s%s", MIN_COL_WIDTH, SPACER_00, SPACER);
-    for (int j = col; j < safe_render_dim(col, ss->SS_COLS); j++) {
+    for (int j = col; j < safe_render_dim(col, ss->SS_COLS); j++)
+    {
         col_encoder(j + 1, col_header_buff);
         set_out_buff(obuff, col_header_buff);
         printf("%*s%s", MIN_COL_WIDTH, obuff, SPACER);
     }
     // Print Rows
-    for (int i = row; i < safe_render_dim(row, ss->SS_ROWS); i++) {
+    for (int i = row; i < safe_render_dim(row, ss->SS_ROWS); i++)
+    {
         printf("\n");
         sprintf(col_data_buff, "%d", i + 1);
         printf("%s", SPACER);
         set_out_buff(obuff, col_data_buff);
         printf("%*s%s", MIN_COL_WIDTH, obuff, SPACER);
-        for (int j = col; j < safe_render_dim(col, ss->SS_COLS); j++) {
+        for (int j = col; j < safe_render_dim(col, ss->SS_COLS); j++)
+        {
             if ((ss->arr[i * ss->SS_COLS + j]).visited_err_flag == '1' ||
                 (ss->arr[i * ss->SS_COLS + j]).visited_err_flag == '3')
             {
                 sprintf(col_data_buff, "ERR");
-            } else {
+            }
+            else
+            {
                 sprintf(col_data_buff, "%d", ((ss->arr[i * ss->SS_COLS + j]).value));
             }
             set_out_buff(obuff, col_data_buff);
@@ -142,23 +158,42 @@ void render_ss(Spread_Sheet *ss, int row, int col) {
     printf("\n");
 }
 
-void set_error_message(char exit_code, char error_buff[]) {
-    switch (exit_code) {
-        case '0': strcpy(error_buff, "ok"); break;
-        case '1': strcpy(error_buff, "Invalid Input"); break;
-        case '2': strcpy(error_buff, "Out of Range"); break;
-        case '3': strcpy(error_buff, "Malloc Failed"); break;
-        case '4': strcpy(error_buff, "Unknown Error"); break;
-        case '5': strcpy(error_buff, "Cycle Found"); break;
-        case '6': strcpy(error_buff, "Division by Zero"); break;
-        default:  strcpy(error_buff, "Unknown Error"); break;
+void set_error_message(char exit_code, char error_buff[])
+{
+    switch (exit_code)
+    {
+    case '0':
+        strcpy(error_buff, "ok");
+        break;
+    case '1':
+        strcpy(error_buff, "Invalid Input");
+        break;
+    case '2':
+        strcpy(error_buff, "Out of Range");
+        break;
+    case '3':
+        strcpy(error_buff, "Malloc Failed");
+        break;
+    case '4':
+        strcpy(error_buff, "Unknown Error");
+        break;
+    case '5':
+        strcpy(error_buff, "Cycle Found");
+        break;
+    case '6':
+        strcpy(error_buff, "Division by Zero");
+        break;
+    default:
+        strcpy(error_buff, "Unknown Error");
+        break;
     }
 }
 
 // ------------------------------------------------------------------------- //
 // Simple is_valid_cell function based on parse_cell_name
 
-bool is_valid_cell(char data_buff[], int SS_ROWS, int SS_COLS, int *tcell_row, int *tcell_col, char *exit_code) {
+bool is_valid_cell(char data_buff[], int SS_ROWS, int SS_COLS, int *tcell_row, int *tcell_col, char *exit_code)
+{
     if (data_buff == NULL || strlen(data_buff) == 0)
         return false;
     parse_cell_name(data_buff, tcell_row, tcell_col);
@@ -204,8 +239,6 @@ void parse_cell_name(const char *cell_str, int *row, int *col)
     }
     regfree(&regex);
 }
-
-
 
 bool is_range(char data_buff[], int SS_ROWS, int SS_COLS, char *exit_code)
 {
@@ -485,53 +518,49 @@ void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[]
     regfree(&regex);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*===========================================================================
   Parsing Functions with Exit Code Parameter
 ===========================================================================*/
 
 // parse_operand_expr: Parses an operand (number or cell reference) and sets the CELL_FORMULA union.
-void parse_operand_expr(const char *operand, CELL_FORMULA *cf, Spread_Sheet *ss, char *exit_code) {
+void parse_operand_expr(const char *operand, CELL_FORMULA *cf, Spread_Sheet *ss, char *exit_code)
+{
     char *endptr;
     long num = strtol(operand, &endptr, 10);
-    if (*endptr == '\0') {
+    if (*endptr == '\0')
+    {
         cf->valid_exp_type = '0';
-        cf->fvcons.value = (int) num;
+        cf->fvcons.value = (int)num;
         *exit_code = '0';
-    } else {
+    }
+    else
+    {
         int row, col;
         parse_cell_name(operand, &row, &col);
         cf->valid_exp_type = '1';
-        cf->fvcell.cell_row = (short int) row;
-        cf->fvcell.cell_col = (short int) col;
+        cf->fvcell.cell_row = (short int)row;
+        cf->fvcell.cell_col = (short int)col;
         *exit_code = '0';
     }
 }
 
 // parse_arithmetic_expr: Parses an arithmetic expression ("operand op operand") and fills the appropriate union.
-void parse_arithmetic_expr(const char *exp, CELL_FORMULA *cf, Spread_Sheet *ss, char *exit_code) {
+void parse_arithmetic_expr(const char *exp, CELL_FORMULA *cf, Spread_Sheet *ss, char *exit_code)
+{
     const char *ops = "+-*/";
     const char *op_ptr = NULL;
-    for (int i = 0; exp[i] != '\0'; i++) {
-        if (i == 0 && (exp[i]=='+' || exp[i]=='-')) continue; // skip leading sign
-        if (strchr(ops, exp[i]) != NULL) {
+    for (int i = 0; exp[i] != '\0'; i++)
+    {
+        if (i == 0 && (exp[i] == '+' || exp[i] == '-'))
+            continue; // skip leading sign
+        if (strchr(ops, exp[i]) != NULL)
+        {
             op_ptr = exp + i;
             break;
         }
     }
-    if (!op_ptr) {
+    if (!op_ptr)
+    {
         *exit_code = '1';
         return;
     }
@@ -548,27 +577,36 @@ void parse_arithmetic_expr(const char *exp, CELL_FORMULA *cf, Spread_Sheet *ss, 
     trim_whitespace(right_str);
     CELL_FORMULA left_cf, right_cf;
     parse_operand_expr(left_str, &left_cf, ss, exit_code);
-    if (*exit_code != '0') return;
+    if (*exit_code != '0')
+        return;
     parse_operand_expr(right_str, &right_cf, ss, exit_code);
-    if (*exit_code != '0') return;
-    if (left_cf.valid_exp_type == '0' && right_cf.valid_exp_type == '0') {
+    if (*exit_code != '0')
+        return;
+    if (left_cf.valid_exp_type == '0' && right_cf.valid_exp_type == '0')
+    {
         cf->valid_exp_type = '2';
         cf->farith_cons_cons.arithmetic_op = op;
         cf->farith_cons_cons.left_value = left_cf.fvcons.value;
         cf->farith_cons_cons.right_value = right_cf.fvcons.value;
-    } else if (left_cf.valid_exp_type == '0' && right_cf.valid_exp_type == '1') {
+    }
+    else if (left_cf.valid_exp_type == '0' && right_cf.valid_exp_type == '1')
+    {
         cf->valid_exp_type = '3';
         cf->farith_cons_cell.arithmetic_op = op;
         cf->farith_cons_cell.left_value = left_cf.fvcons.value;
         cf->farith_cons_cell.right_cell_row = right_cf.fvcell.cell_row;
         cf->farith_cons_cell.right_cell_col = right_cf.fvcell.cell_col;
-    } else if (left_cf.valid_exp_type == '1' && right_cf.valid_exp_type == '0') {
+    }
+    else if (left_cf.valid_exp_type == '1' && right_cf.valid_exp_type == '0')
+    {
         cf->valid_exp_type = '4';
         cf->farith_cell_cons.arithmetic_op = op;
         cf->farith_cell_cons.left_cell_row = left_cf.fvcell.cell_row;
         cf->farith_cell_cons.left_cell_col = left_cf.fvcell.cell_col;
         cf->farith_cell_cons.right_value = right_cf.fvcons.value;
-    } else if (left_cf.valid_exp_type == '1' && right_cf.valid_exp_type == '1') {
+    }
+    else if (left_cf.valid_exp_type == '1' && right_cf.valid_exp_type == '1')
+    {
         cf->valid_exp_type = '5';
         cf->farith_cell_cell.arithmetic_op = op;
         cf->farith_cell_cell.left_cell_row = left_cf.fvcell.cell_row;
@@ -580,11 +618,13 @@ void parse_arithmetic_expr(const char *exp, CELL_FORMULA *cf, Spread_Sheet *ss, 
 }
 
 // parse_range_expr: Parses a range string like "A1:B2" and fills the FFUNCTION union.
-void parse_range_expr(const char *range_str, CELL_FORMULA *cf, Spread_Sheet *ss, char *exit_code) {
+void parse_range_expr(const char *range_str, CELL_FORMULA *cf, Spread_Sheet *ss, char *exit_code)
+{
     char start_cell[10] = {0};
     char end_cell[10] = {0};
     const char *colon = strchr(range_str, ':');
-    if (!colon) {
+    if (!colon)
+    {
         *exit_code = '1';
         return;
     }
@@ -595,25 +635,28 @@ void parse_range_expr(const char *range_str, CELL_FORMULA *cf, Spread_Sheet *ss,
     int start_row, start_col, end_row, end_col;
     parse_cell_name(start_cell, &start_row, &start_col);
     parse_cell_name(end_cell, &end_row, &end_col);
-    if (start_row > end_row || start_col > end_col) {
+    if (start_row > end_row || start_col > end_col)
+    {
         *exit_code = '1';
         return;
     }
     cf->valid_exp_type = '8';
-    cf->ffunc.start_row = (short int) start_row;
-    cf->ffunc.start_col = (short int) start_col;
-    cf->ffunc.end_row = (short int) end_row;
-    cf->ffunc.end_col = (short int) end_col;
+    cf->ffunc.start_row = (short int)start_row;
+    cf->ffunc.start_col = (short int)start_col;
+    cf->ffunc.end_row = (short int)end_row;
+    cf->ffunc.end_col = (short int)end_col;
     *exit_code = '0';
 }
 
 // parse_function_expr: Parses a function call expression.
 // For SLEEP, if the argument is a constant, sets type '6'; if a cell reference, sets type '7'.
 // For range functions (MIN, MAX, AVG, SUM, STDEV), sets type '8'.
-void parse_function_expr(const char *exp, CELL_FORMULA *cf, Spread_Sheet *ss, char *exit_code) {
+void parse_function_expr(const char *exp, CELL_FORMULA *cf, Spread_Sheet *ss, char *exit_code)
+{
     const char *open_paren = strchr(exp, '(');
     const char *close_paren = strrchr(exp, ')');
-    if (!open_paren || !close_paren) {
+    if (!open_paren || !close_paren)
+    {
         *exit_code = '1';
         return;
     }
@@ -621,7 +664,8 @@ void parse_function_expr(const char *exp, CELL_FORMULA *cf, Spread_Sheet *ss, ch
     char func_name[16] = {0};
     strncpy(func_name, exp, func_name_len);
     func_name[func_name_len] = '\0';
-    if (strcmp(func_name, "SLEEP") == 0) {
+    if (strcmp(func_name, "SLEEP") == 0)
+    {
         // For SLEEP, set type '6' for constant, '7' for cell.
         char arg[50] = {0};
         int arg_len = close_paren - open_paren - 1;
@@ -629,171 +673,255 @@ void parse_function_expr(const char *exp, CELL_FORMULA *cf, Spread_Sheet *ss, ch
         arg[arg_len] = '\0';
         char *endptr;
         long num = strtol(arg, &endptr, 10);
-        if (*endptr == '\0') {
+        if (*endptr == '\0')
+        {
             cf->valid_exp_type = '6';
-            cf->fsleep_cons.sleep_time = (int) num;
-        } else {
+            cf->fsleep_cons.sleep_time = (int)num;
+        }
+        else
+        {
             cf->valid_exp_type = '7';
             int row, col;
             parse_cell_name(arg, &row, &col);
-            cf->fsleep_cell.sleep_cell_row = (short int) row;
-            cf->fsleep_cell.sleep_cell_col = (short int) col;
+            cf->fsleep_cell.sleep_cell_row = (short int)row;
+            cf->fsleep_cell.sleep_cell_col = (short int)col;
         }
-    } else {
+    }
+    else
+    {
         // Otherwise, assume one of the range functions.
         cf->valid_exp_type = '8';
-        cf->ffunc.function = func_name[0]; // e.g., 'M' for MIN, 'X' for MAX, 'A' for AVG, 'S' for SUM, 'T' for STDEV.
+        // cf->ffunc.function = func_name[0]; // e.g., 'M' for MIN, 'X' for MAX, 'A' for AVG, 'S' for SUM, 'T' for STDEV.
+        if (func_name[0] == 'M')
+        {
+            if (func_name[1] == 'I')
+            {
+                cf->ffunc.function = 'M';
+            } // MIN
+            else
+            {
+                cf->ffunc.function = 'X';
+            } // AVG
+        }
+        else if (func_name[0] == 'A')
+        {
+            cf->ffunc.function = 'A';
+        }
+        else if (func_name[0] == 'S')
+        {
+            if (func_name[1] == 'U')
+            {
+                cf->ffunc.function = 'S';
+            }
+            else
+
+            {
+                cf->ffunc.function = 'D';
+            }
+        }
+
         char range_arg[50] = {0};
         int range_len = close_paren - open_paren - 1;
         strncpy(range_arg, open_paren + 1, range_len);
         range_arg[range_len] = '\0';
         parse_range_expr(range_arg, cf, ss, exit_code);
-        if (*exit_code != '0') return;
+        if (*exit_code != '0')
+            return;
     }
     *exit_code = '0';
 }
 
 // Evaluation function: evaluates the formula and returns an integer value.
-int evaluate_formula(CELL_FORMULA *cf, Spread_Sheet *ss, bool sleep_override, char *exit_code) {
-    switch (cf->valid_exp_type) {
-        case '0': // constant
-            *exit_code = '0';
-            return cf->fvcons.value;
-        case '1': { // cell reference
-            SCell *ref = get_scell_by_coordinates(ss, cf->fvcell.cell_row, cf->fvcell.cell_col);
-            *exit_code = '0';
-            return (ref ? ref->value : 0);
+int evaluate_formula(CELL_FORMULA *cf, Spread_Sheet *ss, bool sleep_override, char *exit_code)
+{
+    switch (cf->valid_exp_type)
+    {
+    case '0': // constant
+        *exit_code = '0';
+        return cf->fvcons.value;
+    case '1':
+    { // cell reference
+        SCell *ref = get_scell_by_coordinates(ss, cf->fvcell.cell_row, cf->fvcell.cell_col);
+        *exit_code = '0';
+        return (ref ? ref->value : 0);
+    }
+    case '2':
+    { // constant op constant
+        int l = cf->farith_cons_cons.left_value;
+        int r = cf->farith_cons_cons.right_value;
+        char op = cf->farith_cons_cons.arithmetic_op;
+        *exit_code = '0';
+        switch (op)
+        {
+        case '+':
+            return l + r;
+        case '-':
+            return l - r;
+        case '*':
+            return l * r;
+        case '/':
+            return (r != 0) ? l / r : 0;
+        default:
+            return 0;
         }
-        case '2': { // constant op constant
-            int l = cf->farith_cons_cons.left_value;
-            int r = cf->farith_cons_cons.right_value;
-            char op = cf->farith_cons_cons.arithmetic_op;
-            *exit_code = '0';
-            switch (op) {
-                case '+': return l + r;
-                case '-': return l - r;
-                case '*': return l * r;
-                case '/': return (r != 0) ? l / r : 0;
-                default: return 0;
-            }
+    }
+    case '3':
+    { // constant op cell
+        int l = cf->farith_cons_cell.left_value;
+        SCell *r_cell = get_scell_by_coordinates(ss, cf->farith_cons_cell.right_cell_row, cf->farith_cons_cell.right_cell_col);
+        int r = (r_cell ? r_cell->value : 0);
+        char op = cf->farith_cons_cell.arithmetic_op;
+        *exit_code = '0';
+        switch (op)
+        {
+        case '+':
+            return l + r;
+        case '-':
+            return l - r;
+        case '*':
+            return l * r;
+        case '/':
+            return (r != 0) ? l / r : 0;
+        default:
+            return 0;
         }
-        case '3': { // constant op cell
-            int l = cf->farith_cons_cell.left_value;
-            SCell *r_cell = get_scell_by_coordinates(ss, cf->farith_cons_cell.right_cell_row, cf->farith_cons_cell.right_cell_col);
-            int r = (r_cell ? r_cell->value : 0);
-            char op = cf->farith_cons_cell.arithmetic_op;
-            *exit_code = '0';
-            switch (op) {
-                case '+': return l + r;
-                case '-': return l - r;
-                case '*': return l * r;
-                case '/': return (r != 0) ? l / r : 0;
-                default: return 0;
-            }
+    }
+    case '4':
+    { // cell op constant
+        SCell *l_cell = get_scell_by_coordinates(ss, cf->farith_cell_cons.left_cell_row, cf->farith_cell_cons.left_cell_col);
+        int l = (l_cell ? l_cell->value : 0);
+        int r = cf->farith_cell_cons.right_value;
+        char op = cf->farith_cell_cons.arithmetic_op;
+        *exit_code = '0';
+        switch (op)
+        {
+        case '+':
+            return l + r;
+        case '-':
+            return l - r;
+        case '*':
+            return l * r;
+        case '/':
+            return (r != 0) ? l / r : 0;
+        default:
+            return 0;
         }
-        case '4': { // cell op constant
-            SCell *l_cell = get_scell_by_coordinates(ss, cf->farith_cell_cons.left_cell_row, cf->farith_cell_cons.left_cell_col);
-            int l = (l_cell ? l_cell->value : 0);
-            int r = cf->farith_cell_cons.right_value;
-            char op = cf->farith_cell_cons.arithmetic_op;
-            *exit_code = '0';
-            switch (op) {
-                case '+': return l + r;
-                case '-': return l - r;
-                case '*': return l * r;
-                case '/': return (r != 0) ? l / r : 0;
-                default: return 0;
-            }
+    }
+    case '5':
+    { // cell op cell
+        SCell *l_cell = get_scell_by_coordinates(ss, cf->farith_cell_cell.left_cell_row, cf->farith_cell_cell.left_cell_col);
+        SCell *r_cell = get_scell_by_coordinates(ss, cf->farith_cell_cell.right_cell_row, cf->farith_cell_cell.right_cell_col);
+        int l = (l_cell ? l_cell->value : 0);
+        int r = (r_cell ? r_cell->value : 0);
+        char op = cf->farith_cell_cell.arithmetic_op;
+        *exit_code = '0';
+        switch (op)
+        {
+        case '+':
+            return l + r;
+        case '-':
+            return l - r;
+        case '*':
+            return l * r;
+        case '/':
+            return (r != 0) ? l / r : 0;
+        default:
+            return 0;
         }
-        case '5': { // cell op cell
-            SCell *l_cell = get_scell_by_coordinates(ss, cf->farith_cell_cell.left_cell_row, cf->farith_cell_cell.left_cell_col);
-            SCell *r_cell = get_scell_by_coordinates(ss, cf->farith_cell_cell.right_cell_row, cf->farith_cell_cell.right_cell_col);
-            int l = (l_cell ? l_cell->value : 0);
-            int r = (r_cell ? r_cell->value : 0);
-            char op = cf->farith_cell_cell.arithmetic_op;
-            *exit_code = '0';
-            switch (op) {
-                case '+': return l + r;
-                case '-': return l - r;
-                case '*': return l * r;
-                case '/': return (r != 0) ? l / r : 0;
-                default: return 0;
-            }
-        }
-        case '6': { // SLEEP constant
-            int t = cf->fsleep_cons.sleep_time;
-            if (!sleep_override)
-                sleep(t);
-            *exit_code = '0';
-            return t;
-        }
-        case '7': { // SLEEP cell
-            SCell *ref = get_scell_by_coordinates(ss, cf->fsleep_cell.sleep_cell_row, cf->fsleep_cell.sleep_cell_col);
-            int t = (ref ? ref->value : 0);
-            if (!sleep_override)
-                sleep(t);
-            *exit_code = '0';
-            return t;
-        }
-        case '8': { // Range function
-            int start_row = cf->ffunc.start_row;
-            int end_row = cf->ffunc.end_row;
-            int start_col = cf->ffunc.start_col;
-            int end_col = cf->ffunc.end_col;
-            int count = 0, sum = 0, min = 0, max = 0, sum_sq = 0;
-            bool first = true;
-            for (int r = start_row; r <= end_row; r++) {
-                for (int c = start_col; c <= end_col; c++) {
-                    SCell *cell = get_scell_by_coordinates(ss, r, c);
-                    if (cell) {
-                        int v = cell->value;
-                        if (first) {
-                            min = max = v;
-                            first = false;
-                        } else {
-                            if (v < min) min = v;
-                            if (v > max) max = v;
-                        }
-                        sum += v;
-                        sum_sq += v * v;
-                        count++;
+    }
+    case '6':
+    { // SLEEP constant
+        int t = cf->fsleep_cons.sleep_time;
+        if (!sleep_override)
+            sleep(t);
+        *exit_code = '0';
+        return t;
+    }
+    case '7':
+    { // SLEEP cell
+        SCell *ref = get_scell_by_coordinates(ss, cf->fsleep_cell.sleep_cell_row, cf->fsleep_cell.sleep_cell_col);
+        int t = (ref ? ref->value : 0);
+        if (!sleep_override)
+            sleep(t);
+        *exit_code = '0';
+        return t;
+    }
+    case '8':
+    { // Range function
+        int start_row = cf->ffunc.start_row;
+        int end_row = cf->ffunc.end_row;
+        int start_col = cf->ffunc.start_col;
+        int end_col = cf->ffunc.end_col;
+        int count = 0, sum = 0, min = 0, max = 0, sum_sq = 0;
+        bool first = true;
+        for (int r = start_row; r <= end_row; r++)
+        {
+            for (int c = start_col; c <= end_col; c++)
+            {
+                SCell *cell = get_scell_by_coordinates(ss, r, c);
+                if (cell)
+                {
+                    int v = cell->value;
+                    if (first)
+                    {
+                        min = max = v;
+                        first = false;
                     }
+                    else
+                    {
+                        if (v < min)
+                            min = v;
+                        if (v > max)
+                            max = v;
+                    }
+                    sum += v;
+                    sum_sq += v * v;
+                    count++;
                 }
             }
-            char func = cf->ffunc.function;
-            *exit_code = '0';
-            if (func == 'M')      return min;              // MIN
-            else if (func == 'X') return max;              // MAX (using 'X' for max)
-            else if (func == 'S') return sum;              // SUM
-            else if (func == 'A') return (count > 0) ? sum / count : 0; // AVG
-            else if (func == 'T') { // STDEV: using the algorithm provided
-                double mean = (count > 0) ? (double)sum / count : 0;
-                double variance = (count > 0) ? ((double)sum_sq) / count - mean * mean : 0;
-                // Clamp tiny negative variance due to floating point error.
-                if (variance < 0 && fabs(variance) < 1e-12)
-                    variance = 0;
-                return (int)round(sqrt(variance));
-            }
-            return 0;
         }
-        default:
-            *exit_code = '4';
-            return 0;
+        char func = cf->ffunc.function;
+        *exit_code = '0';
+        if (func == 'M')
+            return min; // MIN
+        else if (func == 'X')
+            return max; // MAX (using 'X' for max)
+        else if (func == 'S')
+            return sum; // SUM
+        else if (func == 'A')
+            return (count > 0) ? sum / count : 0; // AVG
+        else if (func == 'T')
+        { // STDEV: using the algorithm provided
+            double mean = (count > 0) ? (double)sum / count : 0;
+            double variance = (count > 0) ? ((double)sum_sq) / count - mean * mean : 0;
+            // Clamp tiny negative variance due to floating point error.
+            if (variance < 0 && fabs(variance) < 1e-12)
+                variance = 0;
+            return (int)round(sqrt(variance));
+        }
+        return 0;
+    }
+    default:
+        *exit_code = '4';
+        return 0;
     }
 }
 
 // parse_expression: Parses the target cell and expression, builds a CELL_FORMULA,
 // evaluates the formula, and updates the target cell’s value.
-void parse_expression(char exp_buff[], char target_cell_buff[], Spread_Sheet *ss, char *exit_code) {
+void parse_expression(char exp_buff[], char target_cell_buff[], Spread_Sheet *ss, char *exit_code)
+{
     int row, col;
     parse_cell_name(target_cell_buff, &row, &col);
     SCell *target = get_scell_by_coordinates(ss, row, col);
-    if (!target) {
+    if (!target)
+    {
         *exit_code = '2';
         return;
     }
     CELL_FORMULA *new_formula = malloc(sizeof(CELL_FORMULA));
-    if (!new_formula) {
+    if (!new_formula)
+    {
         *exit_code = '3';
         return;
     }
@@ -803,33 +931,49 @@ void parse_expression(char exp_buff[], char target_cell_buff[], Spread_Sheet *ss
         strncmp(exp_buff, "AVG(", 4) == 0 ||
         strncmp(exp_buff, "SUM(", 4) == 0 ||
         strncmp(exp_buff, "STDEV(", 6) == 0 ||
-        strncmp(exp_buff, "SLEEP(", 6) == 0) {
+        strncmp(exp_buff, "SLEEP(", 6) == 0)
+    {
         parse_function_expr(exp_buff, new_formula, ss, exit_code);
-        if (*exit_code != '0') { free(new_formula); return; }
-    } else if (strpbrk(exp_buff + 1, "+-*/") != NULL) {
-        parse_arithmetic_expr(exp_buff, new_formula, ss, exit_code);
-        if (*exit_code != '0') { free(new_formula); return; }
-    } else {
-        parse_operand_expr(exp_buff, new_formula, ss, exit_code);
-        if (*exit_code != '0') { free(new_formula); return; }
+        if (*exit_code != '0')
+        {
+            free(new_formula);
+            return;
+        }
     }
-    
+    else if (strpbrk(exp_buff + 1, "+-*/") != NULL)
+    {
+        parse_arithmetic_expr(exp_buff, new_formula, ss, exit_code);
+        if (*exit_code != '0')
+        {
+            free(new_formula);
+            return;
+        }
+    }
+    else
+    {
+        parse_operand_expr(exp_buff, new_formula, ss, exit_code);
+        if (*exit_code != '0')
+        {
+            free(new_formula);
+            return;
+        }
+    }
 
-    char my_update = update_logic_unit(ss, make_pair(row,col), new_formula);
+    char my_update = update_logic_unit(ss, make_pair(row, col), new_formula);
 
     // target->cell_formula = new_formula;
     // int new_val = evaluate_formula(new_formula, ss, false, exit_code);
     // target->value = new_val;
     // printf("parse_expression(): Set cell %s to value %d\n", target_cell_buff, new_val);
-    
+
     *exit_code = my_update;
 }
-
 
 // ------------------------------------------------------------------------- //
 // Terminal Control Unit
 
-void terminal_control_unit(Spread_Sheet *ss) {
+void terminal_control_unit(Spread_Sheet *ss)
+{
     int row_render = 0, col_render = 0;
     int tcell_row, tcell_col;
     char exit_code = '0';
@@ -838,58 +982,84 @@ void terminal_control_unit(Spread_Sheet *ss) {
     struct timespec start_ts, end_ts;
     char command_buff[100], target_cell_buff[10], exp_buff[100], exit_message_buff[100];
     set_error_message(exit_code, exit_message_buff);
-    while (1) {
-        if (en_ss_render) {
+    while (1)
+    {
+        if (en_ss_render)
+        {
             render_ss(ss, row_render, col_render);
         }
         printf("[%.1f] (%s) > ", command_time, exit_message_buff);
-        if (fgets(command_buff, sizeof(command_buff), stdin) != NULL) {
+        if (fgets(command_buff, sizeof(command_buff), stdin) != NULL)
+        {
             command_buff[strcspn(command_buff, "\n")] = '\0';
             clock_gettime(CLOCK_MONOTONIC, &start_ts);
-            if (strcmp(command_buff, "q") == 0) {
+            if (strcmp(command_buff, "q") == 0)
+            {
                 exit_code = '0';
                 clock_gettime(CLOCK_MONOTONIC, &end_ts);
                 command_time = (end_ts.tv_sec - start_ts.tv_sec) +
                                (end_ts.tv_nsec - start_ts.tv_nsec) / 1e9;
                 break;
-            } else if (strcmp(command_buff, "w") == 0) {
+            }
+            else if (strcmp(command_buff, "w") == 0)
+            {
                 row_render = next_render_dim(row_render, ss->SS_ROWS, -MAX_RENDER_DIM);
                 exit_code = '0';
-            } else if (strcmp(command_buff, "s") == 0) {
+            }
+            else if (strcmp(command_buff, "s") == 0)
+            {
                 row_render = next_render_dim(row_render, ss->SS_ROWS, MAX_RENDER_DIM);
                 exit_code = '0';
-            } else if (strcmp(command_buff, "a") == 0) {
+            }
+            else if (strcmp(command_buff, "a") == 0)
+            {
                 col_render = next_render_dim(col_render, ss->SS_COLS, -MAX_RENDER_DIM);
                 exit_code = '0';
-            } else if (strcmp(command_buff, "d") == 0) {
+            }
+            else if (strcmp(command_buff, "d") == 0)
+            {
                 col_render = next_render_dim(col_render, ss->SS_COLS, MAX_RENDER_DIM);
                 exit_code = '0';
-            } else if (strcmp(command_buff, "disable_output") == 0) {
+            }
+            else if (strcmp(command_buff, "disable_output") == 0)
+            {
                 en_ss_render = false;
                 exit_code = '0';
-            } else if (strcmp(command_buff, "enable_output") == 0) {
+            }
+            else if (strcmp(command_buff, "enable_output") == 0)
+            {
                 en_ss_render = true;
                 exit_code = '0';
-            } else if (strncmp(command_buff, "scroll_to ", 10) == 0) {
+            }
+            else if (strncmp(command_buff, "scroll_to ", 10) == 0)
+            {
                 sscanf(command_buff, "scroll_to %s", target_cell_buff);
-                if (is_valid_cell(target_cell_buff, ss->SS_ROWS, ss->SS_COLS, &tcell_row, &tcell_col, &exit_code)) {
+                if (is_valid_cell(target_cell_buff, ss->SS_ROWS, ss->SS_COLS, &tcell_row, &tcell_col, &exit_code))
+                {
                     parse_cell_name(target_cell_buff, &tcell_row, &tcell_col);
                     row_render = tcell_row;
                     col_render = tcell_col;
                     exit_code = '0';
-                } else {
+                }
+                else
+                {
                     exit_code = '2';
                 }
-            } else if (strncmp(command_buff, "dbg ", 4) == 0) {
+            }
+            else if (strncmp(command_buff, "dbg ", 4) == 0)
+            {
                 int rows = 0, cols = 0;
                 parse_cell_name(command_buff + 4, &rows, &cols);
                 SCell *sc = get_scell_by_coordinates(ss, rows, cols);
                 debug_print_scell(ss, rows, cols);
-            } else {
+                exit_code = '0';
+            }
+            else
+            {
                 // In this branch, call parse_expression to parse and update cell value.
                 // (Assume that parse_command() already populated target_cell_buff and exp_buff.)
                 parse_command(command_buff, target_cell_buff, exp_buff, ss, &exit_code);
-                if(exit_code == '0')
+                if (exit_code == '0')
                 {
                     parse_expression(exp_buff, target_cell_buff, ss, &exit_code);
                 }
@@ -897,7 +1067,9 @@ void terminal_control_unit(Spread_Sheet *ss) {
             clock_gettime(CLOCK_MONOTONIC, &end_ts);
             command_time = (end_ts.tv_sec - start_ts.tv_sec) +
                            (end_ts.tv_nsec - start_ts.tv_nsec) / 1e9;
-        } else {
+        }
+        else
+        {
             exit_code = '4';
         }
         set_error_message(exit_code, exit_message_buff);
