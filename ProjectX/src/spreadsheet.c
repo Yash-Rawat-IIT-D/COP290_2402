@@ -824,6 +824,8 @@ char remove_old_dependencies(Spread_Sheet *ss, Pair target)
             printf("Error: Removing Dependency\n");
             return '1';
         }
+
+        
         break;
     }
     case '2':
@@ -976,6 +978,19 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
                 printf("Error: Removing Old Dependencies\n");
                 return '1';
             }
+
+            // Update the formula pointer for the target cell.
+    
+            free(scell->cell_formula);    
+            scell->cell_formula = new_formula;
+
+            exit_code = add_new_dependencies(ss, target, data_tl, data_br);
+
+            if(exit_code == '1')
+            {
+                printf("Error: Adding New Dependencies\n");
+                return '1';
+            }
             
             break;
         }
@@ -1001,6 +1016,11 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
                 return '1';
             }
 
+            // Update the formula pointer for the target cell.
+    
+            free(scell->cell_formula);    
+            scell->cell_formula = new_formula;
+
             exit_code = add_new_dependencies(ss, target, data_tl, data_br);
 
             if(exit_code == '1')
@@ -1021,6 +1041,19 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
                 return '1';
             }
             
+            // Update the formula pointer for the target cell.
+    
+            free(scell->cell_formula);    
+            scell->cell_formula = new_formula;
+
+            exit_code = add_new_dependencies(ss, target, data_tl, data_br);
+
+            if(exit_code == '1')
+            {
+                printf("Error: Adding New Dependencies\n");
+                return '1';
+            }
+
             break;
         }
         case '3':
@@ -1044,6 +1077,11 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
                 printf("Error: Removing Old Dependencies\n");
                 return '1';
             }
+
+            // Update the formula pointer for the target cell.
+    
+            free(scell->cell_formula);    
+            scell->cell_formula = new_formula;
 
             exit_code = add_new_dependencies(ss, target, data_tl, data_br);
 
@@ -1076,8 +1114,19 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
                 printf("Error: Removing Old Dependencies\n");
                 return '1';
             }
+            
+            // Update the formula pointer for the target cell.
+    
+            free(scell->cell_formula);    
+            scell->cell_formula = new_formula;
 
             exit_code = add_new_dependencies(ss, target, data_tl, data_br);
+
+            if(exit_code == '1')
+            {
+                printf("Error: Adding New Dependencies\n");
+                return '1';
+            }
 
             break;
         }
@@ -1102,6 +1151,11 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
                 printf("Error: Removing Old Dependencies\n");
                 return '1';
             }
+
+            // Update the formula pointer for the target cell.
+    
+            free(scell->cell_formula);    
+            scell->cell_formula = new_formula;
 
             exit_code = add_new_dependencies(ss, target, data_tl, data_tl);
 
@@ -1132,7 +1186,20 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
                 printf("Error: Removing Old Dependencies\n");
                 return '1';
             }
+
+            // Update the formula pointer for the target cell.
+    
+            free(scell->cell_formula);    
+            scell->cell_formula = new_formula;
             
+            exit_code = add_new_dependencies(ss, target, data_br, data_br);
+
+            if(exit_code == '1')
+            {
+                printf("Error: Adding New Dependencies\n");
+                return '1';
+            }
+
             break;
         }
 
@@ -1157,6 +1224,11 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
                 printf("Error: Removing Old Dependencies\n");
                 return '1';
             }
+
+            // Update the formula pointer for the target cell.
+    
+            free(scell->cell_formula);    
+            scell->cell_formula = new_formula;
 
             exit_code = add_new_dependencies(ss, target, data_tl, data_br);
 
@@ -1194,6 +1266,11 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
                 return '1';
             }
 
+            // Update the formula pointer for the target cell.
+    
+            free(scell->cell_formula);    
+            scell->cell_formula = new_formula;
+
             exit_code = add_new_dependencies(ss, target, data_tl, data_br);
 
             if(exit_code == '1')
@@ -1213,11 +1290,6 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
 
     // Remove target from the dependency lists of cells referenced in its old formula
 
- 
-    // Update the formula pointer for the target cell.
-    
-    free(scell->cell_formula);    
-    scell->cell_formula = new_formula;
     
     // Trigger a topological sort–based update.
 
