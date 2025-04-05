@@ -1,0 +1,177 @@
+\documentclass[10pt]{article}
+\usepackage[margin=0.9in]{geometry}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+
+% Section title formatting
+\titleformat{\section}{\bfseries\Large}{\thesection.}{1em}{}
+\titleformat{\subsection}{\bfseries\large}{\thesubsection.}{1em}{}
+
+\begin{document}
+
+% --- Title Page ---
+\begin{center}
+    \Large \textbf{COP 290} \\
+    \vspace{0.3cm}
+    \large Instructor: Abhilash Jindal \\
+    \vspace{0.3cm}
+    \LARGE \textbf{C Lab: Spreadsheet Program} \\
+    \vspace{0.3cm}
+    \large Group Members: \\
+    Aaditya Sharma (2023CS10420), Yash Rawat (2023CS50334), Ishan Rehal (2023CS10019) \\
+    \vspace{0.3cm}
+    Semester 2024-2025, Sem II
+\end{center}
+
+\vspace{0.5cm}
+
+\begin{abstract}
+This document provides a comprehensive overview of the design, implementation, and testing of a memory-optimized spreadsheet program in C. The program supports cell assignment, formula evaluation, and efficient recalculation through DFS-based cycle detection and topological sorting. We describe our design decisions—including memory optimizations and refined formula representation—and discuss edge cases and error scenarios covered by our test suite.
+\end{abstract}
+
+\section{Introduction}
+The objective of this project is to develop a command-line spreadsheet program that supports up to 999 rows and 18,278 columns. Each cell stores either an integer or a formula (e.g., \texttt{A1=3} or \texttt{B1=A1+1}). The interface supports formula entry, scrolling, and additional commands (\texttt{disable\_output}, \texttt{enable\_output}, \texttt{scroll\_to <CELL>}). Automatic recalculation is performed efficiently by updating only the affected cells.
+
+\section{System Design and Data Structures}
+\subsection{Cell Representation}
+Each cell is represented by a structure containing:
+\begin{itemize}[noitemsep]
+    \item \textbf{Cell Value:} An integer storing the cell's value.
+    \item \textbf{Visited/Error Flag:} A single \texttt{char} encoding both DFS visited state and error status using:
+    \begin{itemize}[noitemsep]
+        \item \texttt{'0'}: Not visited, no error.
+        \item \texttt{'1'}: Not visited, error flag set.
+        \item \texttt{'2'}: Visited, no error.
+        \item \texttt{'3'}: Visited, error flag set.
+    \end{itemize}
+    \item \textbf{Dependency List:} Instead of storing full pointers, we maintain a list of pairs (each pair consists of two \texttt{short int}s representing row and column) for dependent cells. This compact representation minimizes memory overhead.
+    \item \textbf{Cell Formula:} A pointer to a structure that represents the current formula. This structure distinguishes among:
+    \begin{itemize}[noitemsep]
+        \item Constant values,
+        \item Single cell references,
+        \item Arithmetic expressions, and
+        \item Function calls (e.g., \texttt{SUM}, \texttt{MIN}).
+    \end{itemize}
+    Type codes (e.g., \texttt{'1'}, \texttt{'5'}, \texttt{'8'}) identify the formula type.
+\end{itemize}
+
+\subsection{Optimizations in Data Storage}
+Key optimizations include:
+\begin{itemize}[noitemsep]
+    \item \textbf{Short int for Indices:} Row and column indices are stored as \texttt{short int} (2 bytes) instead of \texttt{int}.
+    \item \textbf{Combined Flag Encoding:} The visited and error flags are merged into one \texttt{char} (1 byte).
+    \item \textbf{Compact Dependency Storage:} Dependencies are stored as pairs of \texttt{short int}s (4 bytes per dependency, 2 for col and 2 for row) instead of full pointers.
+\end{itemize}
+
+\section{Algorithmic Strategies}
+\subsection{Cycle Detection via DFS}
+When a new formula is entered (e.g., \texttt{A1 = SUM(B1:C20)}), our DFS-based cycle detection works as follows:
+\begin{enumerate}[noitemsep]
+    \item \textbf{Initiation:} DFS is started at the target cell (A1).
+    \item \textbf{Dependency Check:} 
+    \begin{itemize}[noitemsep]
+        \item For non-range formulas (e.g., \texttt{A1 = B1+C1}), DFS checks whether any of the dependency cells (B1 or C1) appear in A1's dependency graph.
+        \item For range formulas, DFS traverses the dependency graph and checks if any visited cell’s coordinates fall within the specified range (e.g., from B1 to C20).
+    \end{itemize}
+    \item \textbf{Cycle Reporting:} If a matching dependency is found, a cycle is detected and the update is aborted.
+    \item \textbf{Unmarking:} After DFS, all visited nodes are unmarked (the visited portion of the flag is reset) so that the DFS state is clean for future operations.
+\end{enumerate}
+
+\subsection{Topological Sorting for Recalculation}
+Topological sorting ensures that each cell is recalculated only after its prerequisites are updated:
+\begin{itemize}[noitemsep]
+    \item A DFS-based topological sort is performed to produce a sorted order of cells.
+    \item For example, if \texttt{B1} depends on \texttt{A1} and \texttt{C1} depends on both \texttt{A1} and \texttt{B1}, then an update to \texttt{A1} will trigger \texttt{B1} to update first, followed by \texttt{C1}.
+    \item As nodes are popped from the DFS stack, their visited flags are cleared, ensuring readiness for future DFS calls.
+\end{itemize}
+
+
+\begin{figure}[H] % [H] forces the figure to be placed here (requires \usepackage{float} if needed)
+    \centering
+    \includegraphics[width=0.8\linewidth]{latex_source/cop_image.jpg}
+    % \caption{Caption for the image.}
+    % \label{fig:myimage}
+\end{figure}
+
+
+\subsection{ERR Propagation}
+ERR propagation is integrated within the recalculation algorithm:
+\begin{itemize}[noitemsep]
+    \item An error (ERR) is usually triggered by an invalid operation such as division by zero. When this occurs, the cell is flagged.
+    \item During topological sorting and recalculation, if a dependency cell is flagged with ERR, then its dependents are also marked with ERR.
+    \item Conversely, if an operation successfully computes a value, the error flag is cleared.
+\end{itemize}
+
+\subsection{Formula Parsing and Representation}
+Our parsing module uses regular expressions to handle formulas with any number of spaces (e.g., \texttt{A1 = B1 + C1}). The improvements in formula representation include:
+\begin{itemize}[noitemsep]
+    \item \textbf{Type Codes:} The \texttt{Cell\_Formula} structure includes explicit type codes to differentiate:
+    \begin{itemize}[noitemsep]
+        \item Constant values (e.g., \texttt{A1=23}),
+        \item Single cell references (e.g., \texttt{A1=B1}),
+        \item Arithmetic expressions (e.g., \texttt{A1=B1+C1}), and
+        \item Function calls (e.g., \texttt{A1=SUM(B1:C20)}).
+    \end{itemize}
+    \item \textbf{Structured Storage:} 
+    \begin{itemize}[noitemsep]
+        \item Constants are stored as a single value.
+        \item Cell references are stored as pairs of coordinates.
+        \item Arithmetic expressions store two pairs (for left and right operands).
+        \item Function calls store the top-left and bottom-right coordinates of the range.
+    \end{itemize}
+    This clear structure simplifies dependency extraction and update management.
+\end{itemize}
+
+\section{Dependency Management and Update Logic}
+When a cell’s formula is updated:
+\begin{enumerate}[noitemsep]
+    \item \textbf{Cycle Detection:} DFS is run from the target cell to check whether any new dependency (or any cell within the new dependency range) is already present in the dependency graph. If a cycle is detected, the update is aborted.
+    \item \textbf{Removing Old Dependencies:} Based on the previous formula, the target cell is removed from the dependency lists of cells it formerly referenced. For example, if the old formula was \texttt{A1 = E1+F1}, then A1 is removed from both E1’s and F1’s dependency lists. An edge case was found in formulas like \texttt{A1 = A2+A2} where A1 appears twice in A2’s list; in such cases, all duplicate entries of A1 are removed.
+    \item \textbf{Adding New Dependencies:} New dependencies are added by updating the dependency lists (storing pairs of \texttt{short int}s) of the cells referenced by the new formula.
+    \item \textbf{Topological Update:} Finally, a DFS-based topological sort is performed to update cells in the correct order. This guarantees that a cell is recalculated only after all its dependencies have been updated.
+\end{enumerate}
+
+\section{Edge Cases and Error Handling}
+Our test suite covers several scenarios:
+\begin{itemize}[noitemsep]
+    \item \textbf{Invalid Inputs:} Formulas with incorrect syntax or invalid cell names (e.g., \texttt{A0=3}, \texttt{a1=2}) are rejected by our regex-based parser.
+    \item \textbf{Out-of-Range Cells:} References to cells outside the grid are flagged as errors.
+    \item \textbf{Division by Zero:} Cells that encounter division by zero are flagged with ERR. During recalculation, if a dependency is flagged, the error propagates to dependent cells.
+    \item \textbf{Circular Dependencies:} Direct or indirect cycles (e.g., \texttt{A1 = SUM(B1:C20)} causing a loop) are detected via DFS and the update is aborted.
+    \item \textbf{Duplicate Dependencies:} For formulas like \texttt{A1 = A2+A2}, duplicate entries are removed from the dependency list to avoid redundant processing.
+    \item \textbf{Recalculation Order:} Topological sorting ensures that updates occur in the proper order.
+\end{itemize}
+
+\section{Conclusion}
+Our spreadsheet program is designed to be both robust and memory efficient. Key contributions include:
+\begin{itemize}[noitemsep]
+    \item \textbf{Memory Optimization:} Using \texttt{short int} for indices, a single \texttt{char} for combined visited/error flags, and compact dependency storage as pairs of \texttt{short int}s.
+    \item \textbf{Enhanced Formula Representation:} Clear type differentiation for constants, cell references, arithmetic expressions, and function calls that simplifies dependency management.
+    \item \textbf{Efficient Algorithms:} DFS-based cycle detection and topological sorting guarantee that cells are updated in the correct order. ERR propagation is integrated so that errors (e.g., division by zero) are flagged and propagated through the dependency chain.
+    \item \textbf{Robust Parsing:} Our parser, based on regular expressions, accommodates any number of spaces, ensuring flexibility in user input.
+\end{itemize}
+This design not only meets the project requirements but also provides a scalable and efficient foundation for future enhancements.
+
+
+
+\begin{figure}[H] % [H] forces the figure to be placed here (requires \usepackage{float} if needed)
+    \centering
+    \includegraphics[width=0.65\linewidth]{latex_source/cop_image_2.jpg}
+    % \caption{Caption for the image.}
+    % \label{fig:myimage}
+\end{figure}
+
+
+
+Video of our Project at \href{https://drive.google.com/drive/folders/1FDV38c6CLBf_Dr6B8WMI2vJb8E7ZQL74?usp=sharing}{This link}.
+
+Github Link for our Project is \href{https://github.com/Yash-Rawat-IIT-D/COP290_2402}{This link}.
+
+\end{document}

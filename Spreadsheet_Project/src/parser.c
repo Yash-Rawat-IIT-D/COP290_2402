@@ -415,7 +415,7 @@ void parse_command(char command_buff[], char target_cell_buff[], char exp_buff[]
     }
     else if (reti)
     {
-        char errbuf[256];
+        // char errbuf[256];
         // size_t errlen = regerror(reti, &regex, errbuf, sizeof(errbuf));
         // fprintf(stderr, "Regex compile failed: %s\n", errbuf);
 
@@ -853,61 +853,116 @@ int evaluate_formula(CELL_FORMULA *cf, Spread_Sheet *ss, bool sleep_override, ch
         *exit_code = '0';
         return t;
     }
-    case '8':
-    { // Range function
+    case '8': { // Range function
         int start_row = cf->ffunc.start_row;
         int end_row = cf->ffunc.end_row;
         int start_col = cf->ffunc.start_col;
         int end_col = cf->ffunc.end_col;
-        int count = 0, sum = 0, min = 0, max = 0, sum_sq = 0;
-        bool first = true;
-        for (int r = start_row; r <= end_row; r++)
-        {
-            for (int c = start_col; c <= end_col; c++)
-            {
+        int count = 0, sum = 0, min = 0, max = 0;
+        // First pass: determine count (and optionally min/max, sum if needed)
+        for (int r = start_row; r <= end_row; r++) {
+            for (int c = start_col; c <= end_col; c++) {
                 SCell *cell = get_scell_by_coordinates(ss, r, c);
-                if (cell)
-                {
-                    int v = cell->value;
-                    if (first)
-                    {
-                        min = max = v;
-                        first = false;
-                    }
-                    else
-                    {
-                        if (v < min)
-                            min = v;
-                        if (v > max)
-                            max = v;
-                    }
-                    sum += v;
-                    sum_sq += v * v;
+                if (cell) {
                     count++;
                 }
             }
         }
         char func = cf->ffunc.function;
         *exit_code = '0';
-        if (func == 'M')
-            return min; // MIN
-        else if (func == 'X')
-            return max; // MAX (using 'X' for max)
-        else if (func == 'S')
-            return sum; // SUM
-        else if (func == 'A')
-            return (count > 0) ? sum / count : 0; // AVG
-        else if (func == 'T')
-        { // STDEV: using the algorithm provided
-            double mean = (count > 0) ? (double)sum / count : 0;
-            double variance = (count > 0) ? ((double)sum_sq) / count - mean * mean : 0;
-            // Clamp tiny negative variance due to floating point error.
-            if (variance < 0 && fabs(variance) < 1e-12)
-                variance = 0;
+        if (func == 'M') { // MIN
+            // (Existing implementation can be used for MIN, MAX, SUM, AVG)
+            int first = 1;
+            int cur_min = 0;
+            for (int r = start_row; r <= end_row; r++) {
+                for (int c = start_col; c <= end_col; c++) {
+                    SCell *cell = get_scell_by_coordinates(ss, r, c);
+                    if (cell) {
+                        if (first) {
+                            cur_min = cell->value;
+                            first = 0;
+                        } else if (cell->value < cur_min) {
+                            cur_min = cell->value;
+                        }
+                    }
+                }
+            }
+            return cur_min;
+        } else if (func == 'X') { // MAX (using 'X' for max)
+            int first = 1;
+            int cur_max = 0;
+            for (int r = start_row; r <= end_row; r++) {
+                for (int c = start_col; c <= end_col; c++) {
+                    SCell *cell = get_scell_by_coordinates(ss, r, c);
+                    if (cell) {
+                        if (first) {
+                            cur_max = cell->value;
+                            first = 0;
+                        } else if (cell->value > cur_max) {
+                            cur_max = cell->value;
+                        }
+                    }
+                }
+            }
+            return cur_max;
+        } else if (func == 'S') { // SUM
+            int sum = 0;
+            for (int r = start_row; r <= end_row; r++) {
+                for (int c = start_col; c <= end_col; c++) {
+                    SCell *cell = get_scell_by_coordinates(ss, r, c);
+                    if (cell) {
+                        sum += cell->value;
+                    }
+                }
+            }
+            return sum;
+        } else if (func == 'A') { // AVG
+            int sum = 0;
+            int cnt = 0;
+            for (int r = start_row; r <= end_row; r++) {
+                for (int c = start_col; c <= end_col; c++) {
+                    SCell *cell = get_scell_by_coordinates(ss, r, c);
+                    if (cell) {
+                        sum += cell->value;
+                        cnt++;
+                    }
+                }
+            }
+            return (cnt > 0) ? sum / cnt : 0;
+        } else if (func == 'T') { // STDEV: using the provided two-pass algorithm
+            if (count <= 1) return 0;  // Avoid division by zero
+            int *values = malloc(sizeof(int) * count);
+            if (!values) {
+                *exit_code = '3';
+                return 0;
+            }
+            int idx = 0;
+            // Second pass: store all cell values in an array.
+            for (int r = start_row; r <= end_row; r++) {
+                for (int c = start_col; c <= end_col; c++) {
+                    SCell *cell = get_scell_by_coordinates(ss, r, c);
+                    if (cell) {
+                        values[idx++] = cell->value;
+                    }
+                }
+            }
+            int total = 0;
+            for (int i = 0; i < count; i++) {
+                total += values[i];
+            }
+            int mean = total / count;
+            double variance = 0.0;
+            for (int i = 0; i < count; i++) {
+                variance += (values[i] - mean) * (values[i] - mean);
+            }
+            variance /= count;
+            free(values);
+            // printf("STDEV: count=%d, total=%d, mean=%d, variance=%f\n", count, total, mean, variance);
             return (int)round(sqrt(variance));
         }
         return 0;
     }
+    
     default:
         *exit_code = '4';
         return 0;
@@ -1057,7 +1112,7 @@ void terminal_control_unit(Spread_Sheet *ss)
             {
                 int rows = 0, cols = 0;
                 parse_cell_name(command_buff + 4, &rows, &cols);
-                SCell *sc = get_scell_by_coordinates(ss, rows, cols);
+                // SCell *sc = get_scell_by_coordinates(ss, rows, cols);
                 debug_print_scell(ss, rows, cols);
                 exit_code = '0';
             }

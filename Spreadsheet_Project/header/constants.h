@@ -39,9 +39,9 @@
     "|((MIN|MAX|AVG|SUM|STDEV)\\([ \t]*" \
        "([A-Z]{1,3}[1-9][0-9]{0,2}:[A-Z]{1,3}[1-9][0-9]{0,2})" \
        "[ \t]*\\))" \
-    /* 5) A SLEEP(...) call, which takes either a positive int or cell */ \
+    /* 5) A SLEEP(...) call, which takes either a signed int or cell */ \
     "|(SLEEP\\([ \t]*" \
-       "((([0-9]+)|([A-Z]{1,3}[1-9][0-9]{0,2})))" \
+       "((([+-]?[0-9]+)|([A-Z]{1,3}[1-9][0-9]{0,2})))" \
        "[ \t]*\\))" \
   ")" \
   "[ \t]*$"

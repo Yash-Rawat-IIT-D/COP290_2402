@@ -1,0 +1,7 @@
+A1=2
+B1=A1+3
+C1=MAX(A1:B1)
+D1=MIN(A1:B1)
+E1=AVG(A1:B1)
+A1=5
+q

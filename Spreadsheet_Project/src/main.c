@@ -49,11 +49,11 @@ int main(int argc, char *argv[])
 
     if(ss_my == NULL)
     {
-        printf("Error in Spread Sheet Initialization\n");
+        // printf("Error in Spread Sheet Initialization\n");
         return 1;
     }
 
-    printf("Rows: %d, Cols: %d\n", ss_my->SS_ROWS ,ss_my->SS_COLS);
+    // printf("Rows: %d, Cols: %d\n", ss_my->SS_ROWS ,ss_my->SS_COLS);
     // printf("%lu\n",sizeof(SCell));
     terminal_control_unit(ss_my);
     return 0;

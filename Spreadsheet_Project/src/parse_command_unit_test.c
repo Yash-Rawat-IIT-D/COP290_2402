@@ -410,7 +410,7 @@ void test_parse_function_expr_stdev_range() {
     parse_function_expr("STDEV(A1:A1)", &cf, ss, &exit_code);
     printf("Test Function Expression - STDEV Range:\n");
     printf("  Input Expression: \"STDEV(A1:A1)\"\n");
-    printf("  Expected: valid_exp_type = '8', function = 'S', range = (A1:A1) i.e., start=(0,0), end=(0,0)\n");
+    printf("  Expected: valid_exp_type = '8', function = 'D', range = (A1:A1) i.e., start=(0,0), end=(0,0)\n");
     printf("  Actual:   valid_exp_type = '%c', function = '%c', range = (start=(%d,%d), end=(%d,%d))\n\n",
            cf.valid_exp_type, cf.ffunc.function,
            cf.ffunc.start_row, cf.ffunc.start_col,
@@ -419,7 +419,7 @@ void test_parse_function_expr_stdev_range() {
     assert(cf.valid_exp_type == '8');
     // Note: Because the code uses the first letter of the function name,
     // STDEV will have 'S' (same as SUM) in this implementation.
-    assert(cf.ffunc.function == 'S');
+    assert(cf.ffunc.function == 'D');
     assert(cf.ffunc.start_row == 0);
     assert(cf.ffunc.start_col == 0);
     assert(cf.ffunc.end_row == 0);

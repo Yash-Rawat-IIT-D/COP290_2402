@@ -7,7 +7,7 @@ char init_scell(SCell *scell)
 {
     if (scell == NULL)
     {
-        printf("Error: Malloc SCell\n");
+        // printf("Error: Malloc SCell\n");
         return '1';
     }
 
@@ -18,7 +18,7 @@ char init_scell(SCell *scell)
 
     if (cf_exit_code == '1')
     {
-        printf("Error: Malloc Cell_Formula\n");
+        // printf("Error: Malloc Cell_Formula\n");
         free(scell);
         return '1';
     }
@@ -55,7 +55,7 @@ void debug_print_scell(Spread_Sheet *ss, int row, int col)
         printf("Dependent Cell %d : (%d, %d) , Value : %d\n", i, scell->dependent_scells[i].x, scell->dependent_scells[i].y, tempv);
     }
 
-    debug_print_cell_formula(ss, make_pair(row, col));
+    // debug_print_cell_formula(ss, make_pair(row, col));
     printf("%s\n", LONG_SPACER);
 
     return;
@@ -69,7 +69,7 @@ char init_cell_formula(CELL_FORMULA *cf)
 {
     if (cf == NULL)
     {
-        printf("Error: Malloc Cell_Formula\n");
+        // printf("Error: Malloc Cell_Formula\n");
         return '1';
     }
 
@@ -150,7 +150,7 @@ Spread_Sheet *init_spread_sheet(int rows, int cols)
     Spread_Sheet *ss = (Spread_Sheet *)malloc(sizeof(Spread_Sheet));
     if (ss == NULL)
     {
-        printf("Error: Malloc Spread_Sheet\n");
+        // printf("Error: Malloc Spread_Sheet\n");
         return NULL;
     }
 
@@ -160,7 +160,7 @@ Spread_Sheet *init_spread_sheet(int rows, int cols)
     ss->arr = (SCell *)malloc(rows * cols * sizeof(SCell));
     if (ss->arr == NULL)
     {
-        printf("Error: Malloc SCells * Array\n");
+        // printf("Error: Malloc SCells * Array\n");
         free(ss);
         return NULL;
     }
@@ -173,7 +173,7 @@ Spread_Sheet *init_spread_sheet(int rows, int cols)
             exit_code = init_scell(&(ss->arr[i * cols + j]));
             if (exit_code == '1')
             {
-                printf("Error: Malloc SCell\n");
+                // printf("Error: Malloc SCell\n");
                 free(ss->arr);
                 free(ss);
                 return NULL;
@@ -188,7 +188,7 @@ SCell *get_scell_by_coordinates(Spread_Sheet *ss, int row, int col)
 {
     if (row < 0 || row >= ss->SS_ROWS || col < 0 || col >= ss->SS_COLS)
     {
-        printf("Error: Out of Bounds\n");
+        // printf("Error: Out of Bounds\n");
         return NULL;
     }
 
@@ -209,7 +209,7 @@ char add_dependency_to_cell(Spread_Sheet *ss, Pair target, Pair dep)
 
         if (scell->dependent_scells == NULL)
         {
-            printf("Error: Malloc for Dependency List\n");
+            // printf("Error: Malloc for Dependency List\n");
             return '1';
         }
 
@@ -224,7 +224,7 @@ char add_dependency_to_cell(Spread_Sheet *ss, Pair target, Pair dep)
 
         if (new_deps == NULL)
         {
-            printf("Error: Realloc for Dependency List\n");
+            // printf("Error: Realloc for Dependency List\n");
             return '1';
         }
 
@@ -246,7 +246,7 @@ char remove_dependency_from_cell(Spread_Sheet *ss, Pair target, Pair dep)
     SCell *scell = &(ss->arr[target.x * ss->SS_COLS + target.y]);
     if (scell->dependent_scells == NULL)
     {
-        printf("Error: Dependency List is NULL\n");
+        // printf("Error: Dependency List is NULL\n");
         return '1';
     }
 
@@ -261,7 +261,7 @@ char remove_dependency_from_cell(Spread_Sheet *ss, Pair target, Pair dep)
 
     if (i == scell->dependent_scells_size)
     {
-        printf("Error: Dependency not found\n");
+        // printf("Error: Dependency not found\n");
         return '1';
     }
 
@@ -277,7 +277,7 @@ char resize_dependency_list(Spread_Sheet *ss, Pair target, int new_capacity)
 
     if (scell->dependent_scells == NULL)
     {
-        printf("Error: Dependency List is NULL\n");
+        // printf("Error: Dependency List is NULL\n");
         return '1';
     }
 
@@ -285,7 +285,7 @@ char resize_dependency_list(Spread_Sheet *ss, Pair target, int new_capacity)
 
     if (new_deps == NULL)
     {
-        printf("Error: Realloc for Dependency List\n");
+        // printf("Error: Realloc for Dependency List\n");
         return '1';
     }
 
@@ -331,7 +331,7 @@ char push_stack(Stack_SCell *stack, Pair item)
             return '1';
         }
 
-        free(stack->items);
+        // free(stack->items);
         stack->items = new_items;
         stack->capacity = new_capacity;
     }
@@ -773,12 +773,12 @@ char update_cell_value(Spread_Sheet *ss, Pair node)
         short int end_row = scell->cell_formula->ffunc.end_row;
         short int end_col = scell->cell_formula->ffunc.end_col;
 
-        int sum, sum_sq, count, min, max;
-        double mean, stdev;
+        int sum, sum_sq, count, min, max, mean;
+        double stdev;
         sum = 0;
         sum_sq = 0;
         count = 0;
-        mean = 0.0;
+        mean = 0;
         stdev = 0.0;
 
         char err_flag = '0';
@@ -817,21 +817,33 @@ char update_cell_value(Spread_Sheet *ss, Pair node)
                 count++;
             }
 
-            if (err_flag == '1')
+            if (err_flag == '3')
             {
                 break;
             }
         }
 
-        if (err_flag == '1')
+        if (err_flag == '3')
         {
             ss->arr[node.x * ss->SS_COLS + node.y].visited_err_flag = '3';
             break;
         }
         else
         {
-            mean = (double)1.0 * sum / count;
-            stdev = sqrt((double)(1.0 * sum_sq / count - 1.0 * mean * mean));
+            mean =  sum / count;
+            double variance = 0;
+            for (int r = start_row; r <= end_row; r++)
+        {
+            for (int c = start_col; c <= end_col; c++)
+            {
+                int val = ss->arr[r * ss->SS_COLS + c].value;
+                variance += (val - mean) * (val - mean);
+
+            }
+        }
+            variance = variance / count;
+            // printf("Variance : %lf\n", variance);
+            stdev = (int)round(sqrt(variance));
 
             switch (scell->cell_formula->ffunc.function)
             {
@@ -892,7 +904,7 @@ char topological_sort_and_update(Spread_Sheet *ss, Pair start)
 
     if (init_stack(&stack, INIT_SCELL_SIZE) != '0')
     {
-        printf("Error: Failed to initialize topological sort stack.\n");
+        // printf("Error: Failed to initialize topological sort stack.\n");
         return '1';
     }
 
@@ -956,7 +968,7 @@ char remove_old_dependencies(Spread_Sheet *ss, Pair target)
         ecode = remove_dependency_from_cell(ss, make_pair(scell->cell_formula->fvcell.cell_row, scell->cell_formula->fvcell.cell_col), target);
         if (ecode == '1')
         {
-            printf("Error: Removing Dependency\n");
+            // printf("Error: Removing Dependency\n");
             return '1';
         }
 
@@ -971,7 +983,7 @@ char remove_old_dependencies(Spread_Sheet *ss, Pair target)
         ecode = remove_dependency_from_cell(ss, make_pair(scell->cell_formula->farith_cons_cell.right_cell_row, scell->cell_formula->farith_cons_cell.right_cell_col), target);
         if (ecode == '1')
         {
-            printf("Error: Removing Dependency\n");
+            // printf("Error: Removing Dependency\n");
             return '1';
         }
         break;
@@ -981,7 +993,7 @@ char remove_old_dependencies(Spread_Sheet *ss, Pair target)
         ecode = remove_dependency_from_cell(ss, make_pair(scell->cell_formula->farith_cell_cons.left_cell_row, scell->cell_formula->farith_cell_cons.left_cell_col), target);
         if (ecode == '1')
         {
-            printf("Error: Removing Dependency\n");
+            // printf("Error: Removing Dependency\n");
             return '1';
         }
         break;
@@ -991,14 +1003,14 @@ char remove_old_dependencies(Spread_Sheet *ss, Pair target)
         ecode = remove_dependency_from_cell(ss, make_pair(scell->cell_formula->farith_cell_cell.left_cell_row, scell->cell_formula->farith_cell_cell.left_cell_col), target);
         if (ecode == '1')
         {
-            printf("Error: Removing Dependency\n");
+            // printf("Error: Removing Dependency\n");
             return '1';
         }
 
         ecode = remove_dependency_from_cell(ss, make_pair(scell->cell_formula->farith_cell_cell.right_cell_row, scell->cell_formula->farith_cell_cell.right_cell_col), target);
         if (ecode == '1')
         {
-            printf("Error: Removing Dependency\n");
+            // printf("Error: Removing Dependency\n");
             return '1';
         }
         break;
@@ -1012,7 +1024,7 @@ char remove_old_dependencies(Spread_Sheet *ss, Pair target)
         ecode = remove_dependency_from_cell(ss, make_pair(scell->cell_formula->fsleep_cell.sleep_cell_row, scell->cell_formula->fsleep_cell.sleep_cell_col), target);
         if (ecode == '1')
         {
-            printf("Error: Removing Dependency\n");
+            // printf("Error: Removing Dependency\n");
             return '1';
         }
         break;
@@ -1031,7 +1043,7 @@ char remove_old_dependencies(Spread_Sheet *ss, Pair target)
                 ecode = remove_dependency_from_cell(ss, make_pair(r, c), target);
                 if (ecode == '1')
                 {
-                    printf("Error: Removing Dependency\n");
+                    // printf("Error: Removing Dependency\n");
                     return '1';
                 }
             }
@@ -1075,7 +1087,7 @@ char add_new_dependencies(Spread_Sheet *ss, Pair node)
         ecode = add_dependency_to_cell(ss, make_pair(scell->cell_formula->fvcell.cell_row, scell->cell_formula->fvcell.cell_col), node);
         if (ecode == '1')
         {
-            printf("Error: Adding Dependency\n");
+            // printf("Error: Adding Dependency\n");
             return '1';
         }
         break;
@@ -1089,7 +1101,7 @@ char add_new_dependencies(Spread_Sheet *ss, Pair node)
         ecode = add_dependency_to_cell(ss, make_pair(scell->cell_formula->farith_cons_cell.right_cell_row, scell->cell_formula->farith_cons_cell.right_cell_col), node);
         if (ecode == '1')
         {
-            printf("Error: Adding Dependency\n");
+            // printf("Error: Adding Dependency\n");
             return '1';
         }
         break;
@@ -1099,7 +1111,7 @@ char add_new_dependencies(Spread_Sheet *ss, Pair node)
         ecode = add_dependency_to_cell(ss, make_pair(scell->cell_formula->farith_cell_cons.left_cell_row, scell->cell_formula->farith_cell_cons.left_cell_col), node);
         if (ecode == '1')
         {
-            printf("Error: Adding Dependency\n");
+            // printf("Error: Adding Dependency\n");
             return '1';
         }
         break;
@@ -1109,7 +1121,7 @@ char add_new_dependencies(Spread_Sheet *ss, Pair node)
         ecode = add_dependency_to_cell(ss, make_pair(scell->cell_formula->farith_cell_cell.left_cell_row, scell->cell_formula->farith_cell_cell.left_cell_col), node);
         if (ecode == '1')
         {
-            printf("Error: Adding Dependency\n");
+            // printf("Error: Adding Dependency\n");
             return '1';
         }
 
@@ -1118,7 +1130,7 @@ char add_new_dependencies(Spread_Sheet *ss, Pair node)
             ecode = add_dependency_to_cell(ss, make_pair(scell->cell_formula->farith_cell_cell.right_cell_row, scell->cell_formula->farith_cell_cell.right_cell_col), node);
             if (ecode == '1')
             {
-                printf("Error: Adding Dependency\n");
+                // printf("Error: Adding Dependency\n");
                 return '1';
             }
         }
@@ -1134,7 +1146,7 @@ char add_new_dependencies(Spread_Sheet *ss, Pair node)
         ecode = add_dependency_to_cell(ss, make_pair(scell->cell_formula->fsleep_cell.sleep_cell_row, scell->cell_formula->fsleep_cell.sleep_cell_col), node);
         if (ecode == '1')
         {
-            printf("Error: Adding Dependency\n");
+            // printf("Error: Adding Dependency\n");
             return '1';
         }
         break;
@@ -1153,7 +1165,7 @@ char add_new_dependencies(Spread_Sheet *ss, Pair node)
                 ecode = add_dependency_to_cell(ss, make_pair(r, c), node);
                 if (ecode == '1')
                 {
-                    printf("Error: Adding Dependency\n");
+                    // printf("Error: Adding Dependency\n");
                     return '1';
                 }
             }
@@ -1162,7 +1174,7 @@ char add_new_dependencies(Spread_Sheet *ss, Pair node)
     }
     default:
     {
-        printf("Error: Invalid Expression Type\n");
+        // printf("Error: Invalid Expression Type\n");
         return '1';
         break;
     }
@@ -1186,7 +1198,7 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
 
     if (scell->cell_formula == NULL || new_formula == NULL)
     {
-        printf("Error: Cell Formula is NULL\n");
+        // printf("Error: Cell Formula is NULL\n");
         return '1';
     }
 
@@ -1268,7 +1280,15 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
         data_tl = make_pair(new_formula->farith_cell_cell.left_cell_row, new_formula->farith_cell_cell.left_cell_col);
         data_br = make_pair(new_formula->farith_cell_cell.right_cell_row, new_formula->farith_cell_cell.right_cell_col);
 
-        exit_code = dfs_cycle_check(ss, target, data_tl, data_br);
+        exit_code = dfs_cycle_check(ss, target, data_tl, data_tl);
+
+        if (exit_code == '1')
+        {
+            // printf("Error: Cycle Detected\n");
+            return '5';
+        }
+
+        exit_code = dfs_cycle_check(ss, target, data_br, data_br);
 
         if (exit_code == '1')
         {
@@ -1331,7 +1351,7 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
     }
     default:
     {
-        printf("Error: Invalid Expression Type\n");
+        // printf("Error: Invalid Expression Type\n");
         return '1';
     }
     }
@@ -1349,7 +1369,7 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
 
     if (exit_code == '1')
     {
-        printf("Error: Removing Old Dependencies\n");
+        // printf("Error: Removing Old Dependencies\n");
         scell->cell_formula = old_formula;
         free(new_formula);
 
@@ -1366,7 +1386,7 @@ char update_logic_unit(Spread_Sheet *ss, Pair target, CELL_FORMULA *new_formula)
 
     if (exit_code == '1')
     {
-        printf("Error: Topological Sort and Update\n");
+        // printf("Error: Topological Sort and Update\n");
         return '1';
     }
 
