@@ -1,4 +1,4 @@
-```md
+
 # COP 290 Spreadsheet Program
 
 This repository contains the source code and documentation for our memory-optimized, command-line spreadsheet program developed for COP 290. The project implements cell assignment, formula evaluation, and efficient recalculation using DFS-based cycle detection and topological sorting. Our final report (available as a PDF generated via `make report`) describes the design decisions, optimizations, and test cases in detail.
@@ -19,7 +19,7 @@ To build the project, follow these steps:
 1. **Navigate to the project directory:**
    ```bash
    cd Spreadsheet_Project
-   ```
+   
 
 2. **Compile the project:**
    ```bash
@@ -95,4 +95,4 @@ The design of the spreadsheet program is detailed in our final report (see [main
   - Ishan Rehal (2023CS10019)
 
 For additional resources and a video demonstration of our project, please refer to the links provided in the final report.
-```
+
